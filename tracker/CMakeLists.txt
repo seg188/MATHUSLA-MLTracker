@@ -9,6 +9,7 @@ project(MLTracker)
 
 
 find_package(ROOT 6.22 CONFIG REQUIRED)
+find_package(dlib REQUIRED)
 
 # Defines useful ROOT functions and ROOT macros (e.g. ROOT_GENERATE_DICTIONARY).
 include(${ROOT_USE_FILE})
@@ -17,11 +18,13 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
 add_library(tracker-lib SHARED
-    src/ROOT_IO.cc
+    src/RunManager.cc
+    src/TrackFinder.cc
 )
 
 target_link_libraries(tracker-lib PUBLIC
-    ${ROOT_LIBRARIES})
+    ${ROOT_LIBRARIES}
+    ${DLIB_LIBRARIES})
 
 
 # add the executable
