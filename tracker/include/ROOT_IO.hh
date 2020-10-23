@@ -3,6 +3,6 @@
 
 namespace ROOT_IO {
 
-	
-	
+	void test();
+
 };

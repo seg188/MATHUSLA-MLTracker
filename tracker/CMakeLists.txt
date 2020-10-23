@@ -16,13 +16,21 @@ include(${ROOT_USE_FILE})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
+add_library(tracker-lib SHARED
+    src/ROOT_IO.cc
+)
+
+target_link_libraries(tracker-lib PUBLIC
+    ${ROOT_LIBRARIES})
+
+
 # add the executable
-add_executable(MLTracker tracking.cc)
+add_executable(tracker src/tracking.cc)
+
 
 # Creates a shared library with a generated dictionary.
-target_link_libraries(MLTracker ${ROOT_LIBRARIES})
 
-
+target_link_libraries(tracker PUBLIC tracker-lib)
 
 
 
