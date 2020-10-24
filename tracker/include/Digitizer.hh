@@ -17,13 +17,17 @@ public:
 	//std::vector<physics::digi_hit*> Digitize();
 	Geometry* _geometry;
 
-	void AddHit(physics::sim_hit &hit){hits.push_back(&hit);}
+	void AddHit(physics::sim_hit *hit){
+		hit->det_id = (_geometry->GetDetID(hit));
+		hits.push_back(hit);
+	}
 
 	Digitizer(){ _geometry = new Geometry; }
 
 	~Digitizer() 
 	{
 		delete _geometry;
+		for (auto p : hits) delete p;
 	}
 
 

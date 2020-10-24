@@ -15,11 +15,21 @@ public:
 	//the uncertainty along each directiion in the layer
 	std::vector<double> widths(){
 		if ( (index % 2 ) == 0){
-			return { detector::time_resolution*constants::c, detector::scintillator_length };
+			return { detector::scintillator_width, detector::scintillator_length };
 		} 
 
-		return {  detector::scintillator_length, detector::time_resolution*constants::c };
+		return {  detector::scintillator_length, detector::scintillator_width  };
 	}
+	std::vector<double> uncertainty(){
+		if ( (index % 2 ) == 0){
+			return { detector::scintillator_width, detector::time_resolution*constants::c };
+		} 
+
+		return {  detector::time_resolution*constants::c, detector::scintillator_width  };
+
+	}
+
+	
 
 	Layer(int _index, double _min, double _max){
 		index = _index;
@@ -27,7 +37,10 @@ public:
 		max = _max;
 	}
 
-	bool in_layer(double y){return (y < min and y < max);}
+	bool in_layer(double y){ 
+		if (y > min and y < max) return true;
+		return false;
+	 }
 	
 };
 
@@ -60,11 +73,11 @@ public:
 
 	}
 
-	int is_inside(double x, double y, double z){
-		if ( !(x > xmin and x < xmax ) ) return -1;
-		if ( !(y > ymin and y < ymax ) ) return -1;
-		if ( !(z > zmin and z < zmax ) ) return -1;
-		return 1;
+	bool is_inside(double x, double y, double z){
+		if ( !(x > xmin and x < xmax ) ) return false;
+		if ( !(y > ymin and y < ymax ) ) return false;
+		if ( !(z > zmin and z < zmax ) ) return false;
+		return true;
 	}
 };
 
@@ -76,15 +89,27 @@ public:
 	int layerIndex;
 	int xIndex;
 	int zIndex;
+	bool _null;
+
+	detID(){_null = true;}
+
+	void Print(){
+		std::cout << "***************Printing DetID*************" << std::endl;
+		std::cout << "Module Index: " << moduleIndex << std::endl;
+		std::cout << "Layer Index: " << layerIndex << std::endl;
+		std::cout << "x Index: " << xIndex << std::endl;
+		std::cout << "z Index: " << zIndex << std::endl;
+	}
 
 	detID(int _module_index, int _layer_index, int _x_index, int _z_index){
 		moduleIndex = _module_index;
-		layerIndex = layerIndex;
+		layerIndex = _layer_index;
 		xIndex = _x_index;
 		zIndex = _z_index;
 	}
 
 	bool operator==(const detID &detID2){
+		if (_null) return false;
 		if (moduleIndex != detID2.moduleIndex) return false;
 		if (layerIndex != detID2.layerIndex) return false;
 		if (xIndex != detID2.xIndex) return false;
@@ -103,6 +128,7 @@ public:
 	
 		for (int _index = 0; _index < detector::n_layers; _index++ ){
 			layer_list.push_back(new Layer(_index, detector::LAYERS_Y[_index][0], detector::LAYERS_Y[_index][1])); 
+	
 		}
 	
 
@@ -138,6 +164,8 @@ public:
 			}
 		}
 
+		if (module_index == -1){return detID();}
+
 		for (auto layer : layer_list){
 			if (layer->in_layer(y)){
 				layer_number = layer->index;
@@ -145,6 +173,8 @@ public:
 				break;
 			}
 		}
+
+		if (layer_number == -1){return detID();}
 
 		std::vector<double> local_position = (module_list[module_index])->LocalPosition(x, y, z);
 		layer_widths = layer_list[layer_number]->widths();
@@ -155,6 +185,11 @@ public:
 		return detID(module_index, layer_number, x_index, z_index);
 
 	} //GetDetID
+
+	template<class Hit>
+	detID GetDetID(Hit _hit){
+		return GetDetID(_hit->x, _hit->y, _hit->z);
+	}
 
 		
 

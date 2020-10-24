@@ -1,6 +1,6 @@
 #include<iostream>
 #include <TLorentzVector.h>
-
+#include "Geometry.hh"
 
 #ifndef PHYSICS_DEFINE
 #define PHYSICS_DEFINE
@@ -10,22 +10,24 @@ namespace physics{
 	//defines detector hit
 	class sim_hit{
 	public:
+
 		sim_hit(double _x, double _y, double _z, double _t){
 			x = _x;
 			y = _y;
 			z = _z;
 			t = _t;
 		}
-
 		std::size_t index;
 		double x;
 		double y;
 		double z;
 		double t;
+		detID det_id;
 	}; //sim
 
 	class digi_hit{
 	public:
+		detID det_id;
 		std::size_t index;
 		double x, ex;
 		double y, ey;

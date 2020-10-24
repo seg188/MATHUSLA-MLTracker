@@ -17,7 +17,7 @@ int RunManager::StartTracking(){
 	while (TH->Next() >= 0){
 
 		TH->LoadEvent(); //copying the data to the new tree, and loading all the variables, incrementing index
-		
+
 		auto hits_x = *(TH->sim_hit_x);
 		auto hits_y = *(TH->sim_hit_y);
 		auto hits_z = *(TH->sim_hit_z);
@@ -25,13 +25,15 @@ int RunManager::StartTracking(){
 
 		
 		//adding all hits of the tree into the digitizer
+		std::cout << TH->sim_numhits << std::endl;
 		for (int n_hit = 0; n_hit < TH->sim_numhits; n_hit++){
-			physics::sim_hit current(hits_x[n_hit], hits_y[n_hit], hits_z[n_hit], hits_t[n_hit] ); 
+			physics::sim_hit* current = new physics::sim_hit(hits_x[n_hit], hits_y[n_hit], hits_z[n_hit], hits_t[n_hit] ); 
 			_digitizer->AddHit(current);
 		}
 		
 		//std::vector<physics::digi_hit*> digi_list = _digitizer->Digitize();
-
+		
+		_digitizer->Digitize();
 		TH->Fill();
 	}
 	

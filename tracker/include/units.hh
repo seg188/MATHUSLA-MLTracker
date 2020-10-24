@@ -13,7 +13,7 @@ namespace units{
 namespace detector{
 
 	//specifies the bottom and top y position of every layer
-	const std::vector<std::vector<double>> LAYERS_Y = {  	{5950.0, 6050.0},  //layer 0
+	const std::vector<std::vector<double>> LAYERS_Y = {{5950.0, 6050.0},  //layer 0
  												 	{6060.0, 6150.0}, //layer 1
  													{7900.0, 8050.0}, //layer 2
  													{8050.0, 8150.0}, //layer 3
@@ -36,7 +36,7 @@ namespace detector{
 													{3050.0*cm,  3950.0*cm},
 													{4050.0*cm,  4950.0*cm} };
 
-	const std::vector<std::vector<double>> MODULE_Z = { 	{7000.0*cm, 7900.0*cm},
+	const std::vector<std::vector<double>> MODULE_Z = {{7000.0*cm, 7900.0*cm},
 													{8000.0*cm, 8900.0*cm},
 													{9000.0*cm, 9900.0*cm},
 													{10000.0*cm, 10900.0*cm},
@@ -48,7 +48,7 @@ namespace detector{
 													{16000.0*cm, 16900.0*cm} };
 
 	const int n_modules = 100;
-	const double scintillator_length = 45.0*units::cm;
+	const double scintillator_length = 450.0*units::cm;
 	const double scintillator_width = 4.5*units::cm;
 
 	const double time_resolution = 1.0*units::ns;
