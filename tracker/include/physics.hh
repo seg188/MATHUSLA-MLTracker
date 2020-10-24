@@ -7,23 +7,31 @@
 
 namespace physics{
 
+	
+	
 	//defines detector hit
 	class sim_hit{
 	public:
 
-		sim_hit(double _x, double _y, double _z, double _t){
+		sim_hit(double _x, double _y, double _z, double _t, double _e){
 			x = _x;
 			y = _y;
 			z = _z;
 			t = _t;
+			e = _e;
 		}
 		std::size_t index;
 		double x;
 		double y;
 		double z;
 		double t;
+		double e;
 		detID det_id;
+
+	
 	}; //sim
+
+
 
 	class digi_hit{
 	public:
@@ -34,6 +42,11 @@ namespace physics{
 		double z, ez;
 		double t, et;
 		std::vector<sim_hit*> comp_hits;
+
+		void AddHit(sim_hit* hit){comp_hits.push_back(hit);}
+
+
+
 	}; //digi
 
 	class track{

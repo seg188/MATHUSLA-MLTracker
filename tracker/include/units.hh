@@ -20,8 +20,8 @@ namespace detector{
  													{8400.0, 8550.0}, //layer 4
  													{8560.0, 8650.0}, //layer 5
  													{8660.0, 8750.0}, //layer 6
- 													{7760.0, 8850.0}, //layer 7
-													{8950.0, 9050.0} };  //layer 8
+ 													{8760.0, 8850.0}, //layer 7
+													{8860.0, 9050.0} };  //layer 8
 	const int n_layers = 9;
 
 	using namespace units;
@@ -49,7 +49,7 @@ namespace detector{
 
 	const int n_modules = 100;
 	const double scintillator_length = 450.0*units::cm;
-	const double scintillator_width = 4.5*units::cm;
+	const double scintillator_width = 4.50*units::cm;
 
 	const double time_resolution = 1.0*units::ns;
 
@@ -64,6 +64,7 @@ namespace constants{
 namespace cuts{
 
 	const double digi_spacing = 20.0*units::ns;
+	const double SiPM_energy_threshold = 0.65*units::MeV;
 
 
 };

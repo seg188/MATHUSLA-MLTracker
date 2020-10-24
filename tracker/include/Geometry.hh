@@ -27,14 +27,13 @@ public:
 
 		return {  detector::time_resolution*constants::c, detector::scintillator_width  };
 
-	}
-
-	
+	}	
 
 	Layer(int _index, double _min, double _max){
 		index = _index;
 		min = _min;
 		max = _max;
+		center = (min + max)/2.0;
 	}
 
 	bool in_layer(double y){ 
@@ -89,12 +88,17 @@ public:
 	int layerIndex;
 	int xIndex;
 	int zIndex;
-	bool _null;
+	bool _null = false;
 
 	detID(){_null = true;}
 
 	void Print(){
+
 		std::cout << "***************Printing DetID*************" << std::endl;
+		if (_null){
+			std::cout << "NOT IN KNOWN DETECTOR ELEMENT" << std::endl;
+			return;
+		}
 		std::cout << "Module Index: " << moduleIndex << std::endl;
 		std::cout << "Layer Index: " << layerIndex << std::endl;
 		std::cout << "x Index: " << xIndex << std::endl;
@@ -106,7 +110,10 @@ public:
 		layerIndex = _layer_index;
 		xIndex = _x_index;
 		zIndex = _z_index;
+		_null == false;
 	}
+
+	bool IsNull(){return _null;}
 
 	bool operator==(const detID &detID2){
 		if (_null) return false;
@@ -164,7 +171,9 @@ public:
 			}
 		}
 
-		if (module_index == -1){return detID();}
+		if (module_index == -1){
+			std::cout << "NOT IN MODULE" << std::endl;
+			return detID();}
 
 		for (auto layer : layer_list){
 			if (layer->in_layer(y)){
@@ -174,7 +183,10 @@ public:
 			}
 		}
 
-		if (layer_number == -1){return detID();}
+		if (layer_number == -1){
+			std::cout << "NOT IN layer" << std::endl;
+			std::cout << y <<std::endl;
+			return detID();}
 
 		std::vector<double> local_position = (module_list[module_index])->LocalPosition(x, y, z);
 		layer_widths = layer_list[layer_number]->widths();
@@ -189,6 +201,30 @@ public:
 	template<class Hit>
 	detID GetDetID(Hit _hit){
 		return GetDetID(_hit->x, _hit->y, _hit->z);
+	}
+
+	std::vector<double> GetCenter(detID _id){
+		if (_id.IsNull()) return {};
+
+		auto module = module_list[_id.moduleIndex];
+		auto layer = layer_list[_id.layerIndex];
+
+		std::vector<double> module_layer_center = {module->cx, layer->center, module->cz};
+		std::vector<double> widths = layer->widths();
+
+		
+
+		module_layer_center[0] += widths[0]*static_cast<double>(_id.xIndex) + widths[0]/2.0;
+		module_layer_center[2] += widths[1]*static_cast<double>(_id.zIndex) + widths[1]/2.0;
+
+		
+
+		if (GetDetID(module_layer_center[0], module_layer_center[1], module_layer_center[2]) == _id) return module_layer_center;
+		else{
+			std::cout << "WARNING: GEOMETRY MISMATCH! " << std::endl;
+			std::cout << "Make sure GetDetID and GetCenter(detID) are consistent!  " << std::endl;
+			return module_layer_center;
+		}
 	}
 
 		

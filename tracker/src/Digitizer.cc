@@ -3,19 +3,98 @@
 #include <TRandom.h>
 #include <time.h>
 #include <stdlib.h>
+#include <algorithm>
+#include <functional>
+#include <array>
+#include <iostream>
+#include <vector>
 //#include "units.hh"
 //DIGITIZATION ALGORITHM
+namespace physics{
+	bool time_sort(physics::sim_hit *hit1, physics::sim_hit *hit2) {return (hit1->t < hit2->t);}
+};
 
-void Digitizer::Digitize(){
+std::vector<physics::digi_hit*> Digitizer::Digitize(){
 
-	for (auto hit : hits) {
-	//	hit->det_id.Print();
-	//	std::cout << "x: " <<  hit->x << std::endl;
-	//	std::cout << "y: " <<  hit->y << std::endl;
-	//	std::cout << "z: " <<  hit->z << std::endl;
-	//	std::cout << "t: " <<  hit->t << std::endl;
+	//this is the vector of digi_hits we will return at the end of the function
+	std::vector<physics::digi_hit*> digis;
+
+
+	//looping through each detector ID 
+	std::vector<physics::sim_hit*> current_hits;
+	std::vector<physics::sim_hit*> current_remaining_hits = hits;
+	std::vector<physics::sim_hit*> next_remaining_hits;
+
+	while (current_remaining_hits.size() > 0){
+
+		//current detector id which we are working in
+		auto current_id = (current_remaining_hits[0])->det_id;
+
+
+		//taking out all hits with the same detector id to be digitized, leaving the remaing for the next iteration
+		for (auto hit : current_remaining_hits){
+			if (hit->det_id.IsNull()) continue;
+			if (hit->det_id == current_id){ current_hits.push_back(hit);}
+			else {next_remaining_hits.push_back(hit);}
+			
+		}
+
+		//time sorting current hits
+		std::sort(current_hits.begin(), current_hits.end(), &physics::time_sort);
+
+
+		// going through all hits until they are either all added to digis, or dropped
+		while (current_hits.size() > 0){
+
+			std::vector<physics::sim_hit*> used_hits;
+			std::vector<physics::sim_hit*> unused_hits;
+
+			double t0 = (current_hits[0])->t;
+			double e_sum = 0;
+
+			for (auto hit : current_hits){
+				if ( hit->t < t0 + cuts::digi_spacing ){
+					e_sum += hit->e; 
+					used_hits.push_back(hit);
+				} else { unused_hits.push_back(hit);}
+			}
+
+			if (e_sum > cuts::SiPM_energy_threshold){
+				physics::digi_hit* current_digi = new physics::digi_hit();
+				current_digi->det_id = current_id;
+				for (auto hit : used_hits){current_digi->AddHit(hit);}
+				digis.push_back(current_digi);
+			} 
+
+			current_hits = unused_hits;
+		}
+			
+		//resetting all the sorting vectors, and assigning the next remianing hits to the next iteration for current remaining
+		current_remaining_hits.clear();
+		current_remaining_hits = next_remaining_hits;
+		next_remaining_hits.clear();
+		current_hits.clear();
 	}
+
+	//at this point, all of the digi_hits in the digi_vector have the hits which will make them up. However, they don't have any of their energy, position, or timing information added.
+	//Below, we compute the energy, time, and position of all of the digi hits
+	//We incoorporate the time and position smearing into this calculation as well
 	
+	std::cout << "produced: " << digis.size() << " digis" <<std::endl;
+
+	for (auto digi : digis){
+		auto center = _geometry->GetCenter(digi->det_id);
+
+		digi->y = center[2];
+	}
+
+	return digis;
+
+
+
+
+
+
 }
 
 

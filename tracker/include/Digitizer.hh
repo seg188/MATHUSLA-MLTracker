@@ -13,8 +13,8 @@
 class Digitizer{
 public:
 	std::vector<physics::sim_hit*> hits{};
-	void Digitize();
-	//std::vector<physics::digi_hit*> Digitize();
+	
+	std::vector<physics::digi_hit*> Digitize();
 	Geometry* _geometry;
 
 	void AddHit(physics::sim_hit *hit){
