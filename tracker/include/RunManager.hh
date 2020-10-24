@@ -1,6 +1,8 @@
 #include <TString.h>
 #include "TrackFinder.hh"
 #include "TreeHandler.hh"
+#include "Digitizer.hh"
+#include "units.hh"
 
 
 #ifndef RUN_MANAGER_DEFINE
@@ -16,6 +18,17 @@ public:
 	void SetInputFile(TString name){_InputFile_Name = name;}
 	void SetOutputFile(TString name){_OutputFile_Name = name;}
 
+	RunManager(){
+		
+		_digitizer = new Digitizer();
+		_tracker = new TrackFinder();
+	} 
+
+	~RunManager(){
+		delete _digitizer;
+		delete _tracker;
+	}
+
 
 private:
 
@@ -23,7 +36,7 @@ private:
 	int LoadEvent(int);
 	TreeHandler* TH;
 
-	Digitizer* _digi;
+	Digitizer* _digitizer;
 	TrackFinder* _tracker;
 
 	//DATA IO NAMES AND FILES
@@ -32,10 +45,6 @@ private:
 
 	TString _InputTree_Name = TString("box_run");
 	TString _OutputTree_Name = TString("integral_tree");
-
-
-
-
 
 
 

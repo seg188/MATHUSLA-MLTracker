@@ -20,6 +20,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_library(tracker-lib SHARED
     src/RunManager.cc
     src/TrackFinder.cc
+    src/Digitizer.cc
 )
 
 target_link_libraries(tracker-lib PUBLIC

@@ -11,9 +11,16 @@ public:
 	TTree* OutputTree; 
 	TTree* InputTree;
 	TFile* OutputFile;
-	int _index;
+	int index = -1;
+	int NumEntries;
 
-	int LoadEvent(int index){
+	int Next(){
+		index++;
+		if (index > NumEntries) return -1;
+		return index;
+	}
+
+	int LoadEvent(){
 		if (InputTree == nullptr) return -1;
 		InputTree->GetEvent(index);
 		return 0;
@@ -22,7 +29,7 @@ public:
 	void Fill(){
 		OutputFile->cd();
 		gROOT->cd();
-		InputTree->GetEvent(_index);
+		InputTree->GetEvent(index);
 		OutputTree->Fill();
 	}
 
@@ -35,6 +42,7 @@ public:
 
 	TreeHandler(TString input_tree_name, TString input_file_name, TString output_tree_name, TString outfile_name) 
 	{
+
 		auto InputFile = TFile::Open(input_file_name);
 		InputTree = (TTree*) InputFile->Get(input_tree_name);
 	
@@ -91,6 +99,7 @@ public:
  		InputTree->SetBranchAddress("EXTRA_14", &sim_EXTRA_14);
  		InputTree->SetBranchAddress("EXTRA_15", &sim_EXTRA_15);
 
+ 		NumEntries = InputTree->GetEntries();
  		
  		OutputFile = new TFile(outfile_name, "RECREATE");
 		OutputTree = new TTree(output_tree_name, "MATHUSLA Tree");
@@ -202,7 +211,6 @@ public:
 
 
 	}
-
 
 
   //____________________________________________________________________________________________
