@@ -182,7 +182,6 @@ public:
 		}
 
 		if (module_index == -1){
-			std::cout << "NOT IN MODULE" << std::endl;
 			return detID();}
 
 		for (auto layer : layer_list){
@@ -194,8 +193,6 @@ public:
 		}
 
 		if (layer_number == -1){
-			std::cout << "NOT IN layer" << std::endl;
-			std::cout << y <<std::endl;
 			return detID();}
 
 		std::vector<double> local_position = (module_list[module_index])->LocalPosition(x, y, z);

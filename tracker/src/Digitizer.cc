@@ -1,5 +1,6 @@
 #include "Digitizer.hh"
 #include "physics.hh"
+#include "units.hh"
 #include <TRandom.h>
 #include <time.h>
 #include <stdlib.h>
@@ -130,8 +131,27 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		generator.SetSeed( rand()*current_id.moduleIndex*current_id.layerIndex );
 
 		digi->t += generator.Gaus(0.0, digi->et);
-		if (long_direction_index == 0) digi->x += generator.Gaus(0.0, digi->ex);
-		if (long_direction_index == 1) digi->z += generator.Gaus(0.0, digi->ez);
+		if (long_direction_index == 0) {
+			double smeared_x = digi->x + generator.Gaus(0.0, digi->ex);
+			if (!(_geometry->GetDetID(smeared_x, digi->y, digi->z) == current_id) ){
+				if (smeared_x > center[0]) { smeared_x = center[0] + (layer->widths())[0]/2.0 - 0.5*units::cm; }
+				else {smeared_x = center[0] - (layer->widths())[0]/2.0 + 0.5*units::cm; }
+			}
+
+			digi->x = smeared_x;
+
+		} else if (long_direction_index == 1){
+			double smeared_z = digi->z + generator.Gaus(0.0, digi->ez);
+			if (!(_geometry->GetDetID(digi->x, digi->y, smeared_z) == current_id) ){
+				if (smeared_z > center[2]) {smeared_z = center[2] + (layer->widths())[1]/2.0 - 0.5*units::cm;}
+				else {smeared_z = center[2] - (layer->widths())[1]/2.0 + 0.5*units::cm; }
+			}
+			digi->z = smeared_z;
+		} 
+
+		if ( !(_geometry->GetDetID(digi->x, digi->y, digi->z) == current_id) ){
+			std::cout << "Warning!!! Smearing function error--digi was smeared to be outside of known detector element!!" << std::endl;
+		}
 
 	}
 
