@@ -83,9 +83,56 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 	std::cout << "produced: " << digis.size() << " digis" <<std::endl;
 
 	for (auto digi : digis){
-		auto center = _geometry->GetCenter(digi->det_id);
+		auto current_id = digi->det_id;
+		auto center = _geometry->GetCenter(current_id);
+		auto layer = _geometry->layer_list[current_id.layerIndex];
+		auto long_direction_index = layer->long_direction_index;
+		auto uncertainty = layer->uncertainty();
 
-		digi->y = center[2];
+		double e_sum = 0;
+		double long_direction_sum = 0.0;
+		double t_sum = 0;
+
+		for (auto hit : digi->hits){
+			e_sum += hit->e;
+			t_sum += hit->t * hit->e;
+
+			if (long_direction_index == 0){
+				long_direction_sum += hit->x * hit->e;
+			} else {
+				long_direction_sum += hit->z * hit->e;
+			}
+		}
+
+		digi->e = e_sum;
+		digi->t = t_sum/e_sum;
+		digi->y = center[1];
+		digi->ey = uncertainty[1];
+		digi->ex = uncertainty[0];
+		digi->ez = uncertainty[2];
+		//note: et is the same for all of them and is set in the digi class defintion 
+
+		if (long_direction_index == 0){
+			digi->x = long_direction_sum/e_sum;
+			digi->z = center[2];
+		} else {
+			digi->z= long_direction_sum/e_sum;
+			digi->x = center[0];
+		}
+
+
+		//TIME AND POSITION SMEARING!!!!!!!!!!!!!!!
+		//we see the random number generator with a number that should be completly random:
+		//the clock time times the layer index times the number of digis
+
+		srand( time(NULL) );
+		TRandom generator;
+		generator.SetSeed( rand()*current_id.moduleIndex*current_id.layerIndex );
+
+		digi->t += generator.Gaus(0.0, digi->et);
+		if (long_direction_index == 0) digi->x += generator.Gaus(0.0, digi->ex);
+		if (long_direction_index == 1) digi->z += generator.Gaus(0.0, digi->ez);
+
 	}
 
 	return digis;

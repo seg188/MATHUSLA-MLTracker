@@ -11,6 +11,8 @@ public:
 	double min;
 	double max;
 	double center;
+	int long_direction_index;
+	int short_direction_index;
 
 	//the uncertainty along each directiion in the layer
 	std::vector<double> widths(){
@@ -22,10 +24,10 @@ public:
 	}
 	std::vector<double> uncertainty(){
 		if ( (index % 2 ) == 0){
-			return { detector::scintillator_width, detector::time_resolution*constants::c };
+			return { detector::scintillator_width, max-min, detector::time_resolution*constants::c };
 		} 
 
-		return {  detector::time_resolution*constants::c, detector::scintillator_width  };
+		return {  detector::time_resolution*constants::c, max-min, detector::scintillator_width  };
 
 	}	
 
@@ -34,6 +36,14 @@ public:
 		min = _min;
 		max = _max;
 		center = (min + max)/2.0;
+
+		if (index % 2 == 0){
+			short_direction_index = 0;
+			long_direction_index = 1;
+		} else {
+			short_direction_index = 1;
+			long_direction_index = 0;
+		}
 	}
 
 	bool in_layer(double y){ 

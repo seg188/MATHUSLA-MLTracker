@@ -33,8 +33,26 @@ int RunManager::StartTracking(){
 		}
 		
 		std::vector<physics::digi_hit*> digi_list = _digitizer->Digitize();
+		for (auto digi : digi_list){
+			TH->digi_hit_x.push_back(digi->x);
+			TH->digi_hit_y.push_back(digi->y);
+			TH->digi_hit_z.push_back(digi->z);
+			TH->digi_hit_t.push_back(digi->t);
+			TH->digi_hit_e.push_back(digi->e);
+		}
 		
+		
+		//digis now finished and stored in tree!!!
+		//now, we begin the seeding algorithm
+
+
+
+
+
+
+
 		TH->Fill();
+
 	}
 	
 	TH->Write();

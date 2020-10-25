@@ -1,7 +1,7 @@
 #include<iostream>
 #include <TLorentzVector.h>
 #include "Geometry.hh"
-
+#include "units.hh"
 #ifndef PHYSICS_DEFINE
 #define PHYSICS_DEFINE
 
@@ -40,10 +40,13 @@ namespace physics{
 		double x, ex;
 		double y, ey;
 		double z, ez;
-		double t, et;
-		std::vector<sim_hit*> comp_hits;
+		double t;
+		double e;
+		double et = detector::time_resolution;
 
-		void AddHit(sim_hit* hit){comp_hits.push_back(hit);}
+		std::vector<sim_hit*> hits;
+
+		void AddHit(sim_hit* hit){hits.push_back(hit);}
 
 
 
