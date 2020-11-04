@@ -131,7 +131,7 @@ void TrackFinder::FindTracks(){
 		current_track->par_errors(fitter.parameter_errors);
 
 		
-		if ( current_track->nlayers() >= cuts::track_nlayers) {
+		if ( current_track->nlayers() >= cuts::track_nlayers and current_track->chi2_per_dof() < cuts::track_chi2) {
 			tracks.push_back(current_track);
 			hits = second_unused_hits;
 			

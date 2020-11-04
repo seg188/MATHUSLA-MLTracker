@@ -119,15 +119,12 @@ namespace physics{
 			for (auto hit : hits){
 				t = (hit->y - y0)/vy;
 				
-				res_x = ((x0 + vx*t) - hit->x)/ex0;
-				res_z = ((z0 + vz*t) - hit->z)/ez0;
+				res_x = ((x0 + vx*t) - hit->x)/hit->ex;
+				res_z = ((z0 + vz*t) - hit->z)/hit->ez;
 
-				//res_t is the time difference between when the hit is in the layer
-				// and the time t predicted above
-				double res_t_error = TMath::Sqrt( (ey0/vy)*(ey0/vy) + (t*evy/vy)*(t*evy/vy) ); 
-				res_t = (t - hit->t)/res_t_error;
+			//	res_t = ( (t0 + t) - hit->t)/hit->et;
 
-				chi_2 += res_t*res_t + res_x*res_x + res_z*res_z;
+				chi_2 +=  res_x*res_x + res_z*res_z;
 
 			}
 
@@ -136,7 +133,7 @@ namespace physics{
 
       double chi2_per_dof(){
       	int n_track_params = 6;
-      	int ndof = (hits.size() - n_track_params );
+      	int ndof = (4.0*hits.size() - n_track_params );
       	if (ndof < 1) ndof = 1;
       	std::cout << chi2()/ndof << std::endl;
       	return chi2()/ndof; //FIX ME
