@@ -210,6 +210,11 @@ public:
 		return GetDetID(_hit->x, _hit->y, _hit->z);
 	}
 
+
+	detID GetDetID(std::vector<double> _hit){
+		return GetDetID(_hit[0], _hit[1], _hit[2]);
+	}
+
 	std::vector<double> GetCenter(detID _id){
 		if (_id.IsNull()) return {};
 

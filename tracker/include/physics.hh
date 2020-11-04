@@ -67,6 +67,9 @@ namespace physics{
 		double ex0, ey0, ez0;
 		double t0, et0;
 		std::vector<int> hits_to_drop = {};
+		std::vector<int> _missing_layers;
+
+		void missing_layers(std::vector<int> layers){_missing_layers = layers; };
 
 		void Refit();
 
@@ -202,6 +205,22 @@ namespace physics{
     	return layer_indices.size();
     } //nlayers
 
+    std::vector<int> layers(){
+    	//returns the number of layers that a track has hits in
+    	std::vector<int> layer_indices;
+    	for (auto hit : hits){
+
+    		int layer_index = hit->det_id.layerIndex;
+    		for (int layer_n : layer_indices){
+    			if (layer_n == layer_index) break;
+    		}
+
+    		layer_indices.push_back(layer_index);
+    	}
+
+    	return layer_indices;
+    } //nlayers
+
     void AddHitToDrop(int index) { hits_to_drop.push_back(index); } 
     
     void DropHits(){
@@ -223,6 +242,14 @@ namespace physics{
     }
 
 
+    std::vector<double> Position_at_Y(double y){
+
+    	double delta_t = (y-y0)/vy;
+
+    	if (delta_t < 0) return {0.,0.,0.};
+
+    	return { x0 + delta_t*vx, y, z0 + delta_t*vz    };
+    }
 
 	}; //track
   

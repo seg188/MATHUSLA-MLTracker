@@ -45,6 +45,7 @@ int RunManager::StartTracking(){
 		_tracker->hits = digi_list;
 		_tracker->Seed();
 		_tracker->FindTracks();
+		_tracker->CalculateMissingHits(_digitizer->_geometry);
 		TH->ExportTracks(_tracker->tracks);
 
 		TH->Fill();

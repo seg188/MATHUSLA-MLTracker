@@ -2,6 +2,7 @@
 #include "units.hh"
 #include <TMath.h>
 #include <TRandom.h>
+#include "Geometry.hh"
 
 #ifndef TF_DEFINE
 #define TF_DEFINE
@@ -103,7 +104,8 @@ public:
 	std::vector<seed> seeds;
 	std::vector<physics::track*> tracks;
 
-	void CalculateMissingHits();
+
+	void CalculateMissingHits(Geometry* geo);
 
 	void clear(){ 
 		seeds.clear();

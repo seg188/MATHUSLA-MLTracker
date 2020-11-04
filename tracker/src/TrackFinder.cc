@@ -5,6 +5,7 @@
 #include <TRandom.h>
 #include "TMinuit.h"
 #include "statistics.hh"
+#include "Geometry.hh"
 
 void TrackFinder::Seed(){
 
@@ -193,3 +194,43 @@ void TrackFitter::chi2_error(int &npar, double *gin, double &f, double *pars, in
 	f = error;
 }
 
+
+void TrackFinder::CalculateMissingHits(Geometry* geo){
+
+
+	for (auto track : tracks){
+
+		std::vector<int> layers = track->layers();
+		std::vector<int> expected_layers;
+
+		int layer_n = 0;
+		for (auto layer_lims : detector::LAYERS_Y){
+
+			double y_center = (5.0*layer_lims[0] + layer_lims[1])/6.0;
+			auto track_position = track->Position_at_Y(y_center);
+
+			if (track_position[0] > detector::x_min and track_position[0] < detector::x_max){
+				if (track_position[2] > detector::z_min and track_position[2] < detector::z_max){
+					if ( ! (geo->GetDetID(track_position).IsNull()) ) expected_layers.push_back(layer_n);
+				}
+			}
+
+			layer_n++;
+		}
+
+		std::vector<int> missing_layers;
+		for (auto expected_index : expected_layers){
+			bool missing = true;
+			for (auto existing_index : layers){
+				if (expected_index == existing_index) missing = false;
+			}
+
+			if (missing) missing_layers.push_back(expected_index);
+		}
+
+		track->missing_layers(missing_layers);
+
+	}
+
+
+}
