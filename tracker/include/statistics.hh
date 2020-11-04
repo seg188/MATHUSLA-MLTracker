@@ -45,7 +45,7 @@ public:
 			minimizer.mnparm(3, "vx", guess[3], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			minimizer.mnparm(4, "vy", guess[4], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			minimizer.mnparm(5, "vz", guess[5], first_step_size, -1.0*constants::c,constants::c,ierflg);
-			minimizer.mnparm(4, "t0", guess[6], first_step_size,0,0,ierflg);
+			minimizer.mnparm(6, "t0", guess[6], first_step_size,0,0,ierflg);
 			
 			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 

@@ -395,6 +395,7 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
       track_chi2_per_dof.push_back(tr->chi2_per_dof());
       track_beta.push_back(tr->beta());
       track_beta_error.push_back(tr->beta_err());
+      track_t.push_back(tr->t0);
       track_x.push_back(tr->x0);
       track_y.push_back(tr->y0);
       track_z.push_back(tr->z0);

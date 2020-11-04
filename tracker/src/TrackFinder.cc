@@ -61,7 +61,7 @@ void TrackFinder::FindTracks(){
 
 		for (auto hit : hits){
 
-			if (current_seed.timeless_residual(hit) < cuts::seed_residual) {
+			if (current_seed.timeless_residual(hit) < cuts::seed_residual and current_seed.time_difference(hit) < cuts::seed_time_difference) {
 				track_pts.push_back(hit);
 			} else {
 				//std::cout << current_seed.timeless_residual(hit) << std::endl;
@@ -95,7 +95,7 @@ void TrackFinder::FindTracks(){
 		std::vector<physics::digi_hit*> second_unused_hits;
 
 		for (auto hit : unused_hits){
-			if (current_track->untimed_residual(hit) < cuts::residual_add){
+			if (current_track->untimed_residual(hit) < cuts::residual_add and current_seed.time_difference(hit) < cuts::seed_time_difference){
 				current_track->AddHit(hit);
 			} else {
 				second_unused_hits.push_back(hit);
@@ -114,7 +114,7 @@ void TrackFinder::FindTracks(){
 
 		std::vector<physics::digi_hit*> good_hits;
 		for (auto hit : current_track->hits){
-			if (current_track->untimed_residual(hit) > cuts::residual_drop){
+			if (current_track->untimed_residual(hit) > cuts::residual_drop or current_seed.time_difference(hit) > cuts::time_difference_drop){
 				second_unused_hits.push_back(hit);
 			} else {
 				good_hits.push_back(hit);
@@ -167,7 +167,7 @@ std::vector<physics::digi_hit*> TrackFitter::digi_list = {};
 std::vector<double> TrackFitter::parameters = {};
 std::vector<double> TrackFitter::parameter_errors = {};
 void TrackFitter::chi2_error(int &npar, double *gin, double &f, double *pars, int iflag ){
-	double error = 0.0;
+	
 	double x0 = pars[0];
 	double y0 = pars[1];
 	double z0 = pars[2];
@@ -176,17 +176,18 @@ void TrackFitter::chi2_error(int &npar, double *gin, double &f, double *pars, in
 	double vz = pars[5];
 	double t0 = pars[6];
 
+	double error = 0.0 ;
+
 
 	for (auto hit : TrackFitter::digi_list){
 		double t = (hit->t - t0);
-		if (t < 0) {f = 10000000.0; return;}
 		double dt = (hit->y - y0)/vy;
 		double expected_x = x0 + dt*vx;
 		double expected_z = z0 + dt*vz;
 		double _ex = (expected_x - hit->x)/hit->ex; 
 		double _ez = (expected_z - hit->z)/hit->ez;
 		double _et = (t - dt)/hit->et;  
-		error += 12.0*(_ex*_ex + _ez*_ez) + _et*_et ;
+		error += (_ex*_ex + _ez*_ez) + _et*_et ;
 	}
 
 	f = error;

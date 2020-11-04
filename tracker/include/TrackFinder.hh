@@ -31,6 +31,18 @@ public:
 	}
 
 	template<typename hit>
+	double time_difference(hit AHit){
+		std::vector<double> pars = guess();
+
+		double seed_t = (AHit->y - pars[1])/pars[4];
+
+		double hit_t = AHit->t - hits.first->t;
+
+		return TMath::Abs(seed_t - hit_t);
+
+	}
+
+	template<typename hit>
 	double timeless_residual(hit AHit){
 
 		//calculate residual from the track using the two hits 
@@ -90,6 +102,8 @@ public:
 	std::vector<physics::digi_hit*> hits;
 	std::vector<seed> seeds;
 	std::vector<physics::track*> tracks;
+
+	void CalculateMissingHits();
 
 	void clear(){ 
 		seeds.clear();

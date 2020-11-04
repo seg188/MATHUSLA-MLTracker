@@ -77,12 +77,14 @@ namespace cuts{
 	const double SiPM_energy_threshold = 0.65*units::MeV;
 	const double seed_ds2 = 75.*units::ns;
 	const double seed_residual = 100.0*units::cm;
-	const double residual_drop = 100.*units::cm;
+	const double residual_drop = 75.*units::cm;
 	const double residual_add = 25.*units::cm;
 	const double track_chi2 = 10.0;
 	const int track_nlayers = 3;
 	const int nseed_hits = 4;
 
+	const double time_difference_drop = 500.0*units::ns;
+	const double seed_time_difference = 500.0*units::ns;
 
 };
 

@@ -135,12 +135,12 @@ namespace physics{
       	int n_track_params = 6;
       	int ndof = (4.0*hits.size() - n_track_params );
       	if (ndof < 1) ndof = 1;
-      	std::cout << chi2()/ndof << std::endl;
+
       	return chi2()/ndof; //FIX ME
       }
 
       double beta(){
-      	return TMath::Sqrt( vx*vx + vy*vy + vz*vz  )/constants::c;
+      	return TMath::Sqrt( vx*vx + vy*vy + vz*vz  );
       }
 
       double beta_err(){
@@ -173,6 +173,18 @@ namespace physics{
     	double res2 = (track_x - hit->x)*(track_x - hit->x) + (track_y - hit->y)*(track_y - hit->y) + (track_z - hit->z)*(track_z - hit->z);
     	return TMath::Sqrt(  res2  );
     }
+
+    template<typename ahit>
+    double time_difference(ahit* hit){
+    	
+    	//calculate the time the track particle would enter layer
+
+    	double t_track = (hit->y - y0)/vy;
+    	double t_hit = hit->t - t0;
+ 	
+    	return TMath::Abs(t_track - t_hit);
+    }
+
 
     int nlayers(){
     	//returns the number of layers that a track has hits in
