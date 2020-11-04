@@ -2,7 +2,7 @@
 #include "TrackFinder.hh"
 #include "TreeHandler.hh"
 #include "Digitizer.hh"
-#include "units.hh"
+#include "globals.hh"
 
 
 #ifndef RUN_MANAGER_DEFINE

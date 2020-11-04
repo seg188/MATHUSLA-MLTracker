@@ -1,6 +1,6 @@
 #include "Digitizer.hh"
 #include "physics.hh"
-#include "units.hh"
+#include "globals.hh"
 #include <TRandom.h>
 #include <time.h>
 #include <stdlib.h>

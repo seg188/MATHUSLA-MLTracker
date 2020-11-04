@@ -1,13 +1,19 @@
 #include <iostream>
 #include "RunManager.hh"
-#include "units.hh"
+#include "globals.hh"
 #include <dlib/dnn.h>
-
-TString input_name = "/home/stephen/hex/mathusla_all/sept20/data/run0.root";
-TString outfile_name = "statistics0.root";
 
 
 int main(int argc, char *argv[]){
+
+	if (argc != 3) {
+		std::cout << "Need 2 Arguments! \n First argument: input_file_name \n Second argument: output_file_name" << std::endl;
+		return 0;
+	}
+
+	TString input_name = TString(argv[1]);
+	TString outfile_name = TString(argv[2]);
+
 
 	RunManager RM;
 

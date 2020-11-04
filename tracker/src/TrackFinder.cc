@@ -1,5 +1,5 @@
 #include "TrackFinder.hh"
-#include "units.hh"
+#include "globals.hh"
 #include "physics.hh"
 #include <TMath.h>
 #include <TRandom.h>
@@ -137,7 +137,6 @@ void TrackFinder::FindTracks(){
 			hits = second_unused_hits;
 			
 		} else {
-			std::cout << "failed chi2 or nlayers cut" << std::endl;
 			delete current_track;
 			continue;
 		}

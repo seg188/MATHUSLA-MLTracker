@@ -37,7 +37,7 @@ The Mu-Simulation repository can be found here: https://github.com/MATHUSLA/Mu-S
 An example command to run the tracker:
 
 ```bash
-$ ./tracker --input path_to_input_file --output path_to_write_output 
+$ ./tracker path_to_input_file path_to_write_output 
 ```
 
 ## Visualization and Understanding the Output
