@@ -15,8 +15,9 @@ public:
 	int NumEntries;
 
 	int Next(){
-		index++;
-		if (index > NumEntries) return -1;
+    index++;
+		if (index >= NumEntries) return -1;
+    if (index > 5000) return -1;
 		return index;
 	}
 
@@ -39,6 +40,11 @@ public:
 		OutputFile->Close();
 	}
 
+  template<class digi_hit>
+  void ExportDigis(std::vector<digi_hit*>);
+
+  template<class track>
+  void ExportTracks(std::vector<track*>);
 
 	TreeHandler(TString input_tree_name, TString input_file_name, TString output_tree_name, TString outfile_name) 
 	{
@@ -310,7 +316,7 @@ public:
   	std::vector<double> track_vx_error;
   	std::vector<double> track_vy_error;
   	std::vector<double> track_vz_error;
-  	std::vector<int>track_expected_hit_layer;
+  	std::vector<int> track_expected_hit_layer;
   	std::vector<int> track_missing_hit_layer;
   	Double_t numtracks;
 
@@ -328,13 +334,84 @@ public:
   	Double_t Digi_numHits;
 
 
-
-
-
 }; //class TreeHandler
 
+template<class digi_hit>
+void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
+      Digi_numHits = digi_list.size();
+      digi_hit_indices.clear();
+      digi_hit_t.clear();
+      digi_hit_x.clear();
+      digi_hit_y.clear();
+      digi_hit_z.clear();
+      digi_hit_e.clear();
+
+      for (auto digi : digi_list){
+        digi_hit_t.push_back(digi->t);
+        digi_hit_x.push_back(digi->x);
+        digi_hit_y.push_back(digi->y);
+        digi_hit_z.push_back(digi->z);
+        digi_hit_e.push_back(digi->e);
+        for (auto hit : digi->hits){
+          digi_hit_indices.push_back(hit->index);
+        }
+      }
+
+}
+
+template<class Track>
+void TreeHandler::ExportTracks(std::vector<Track*> track_list){
+
+    track_numHits.clear();
+    track_chi2.clear();
+    track_chi2_per_dof.clear();
+    track_chi2_p_value.clear();
+    track_beta.clear();
+    track_beta_error.clear();
+    track_angle.clear();
+    track_angle_error.clear();
+    unique_detector_count.clear();
+    track_t.clear();
+    track_x.clear();
+    track_y.clear();
+    track_z.clear();
+    track_vx.clear();
+    track_vy.clear();
+    track_vz.clear();
+    track_t_error.clear();
+    track_x_error.clear();
+    track_y_error.clear();
+    track_z_error.clear();
+    track_vx_error.clear();
+    track_vy_error.clear();
+    track_vz_error.clear();
+    digi_hit_indices.clear();
 
 
+    numtracks = track_list.size();
+    for (auto tr : track_list){
+      track_numHits.push_back( (tr->hits).size() );
+      track_chi2.push_back(tr->chi2());
+      track_chi2_per_dof.push_back(tr->chi2_per_dof());
+      track_beta.push_back(tr->beta());
+      track_beta_error.push_back(tr->beta_err());
+      track_x.push_back(tr->x0);
+      track_y.push_back(tr->y0);
+      track_z.push_back(tr->z0);
+      track_vx.push_back(tr->vx);
+      track_vy.push_back(tr->vy);
+      track_vz.push_back(tr->vz);
+      track_x_error.push_back(tr->x0);
+      track_y_error.push_back(tr->y0);
+      track_z_error.push_back(tr->z0);
+      track_vx_error.push_back(tr->evx);
+      track_vy_error.push_back(tr->evy);
+      track_vz_error.push_back(tr->evz);
 
+      for (auto hit : tr->hits) { digi_hit_indices.push_back(hit->index); }
+      digi_hit_indices.push_back(-1.);
+    }
+
+}
 
 #endif

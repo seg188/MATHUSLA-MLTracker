@@ -64,6 +64,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 				physics::digi_hit* current_digi = new physics::digi_hit();
 				current_digi->det_id = current_id;
 				for (auto hit : used_hits){current_digi->AddHit(hit);}
+				current_digi->index = ( digis.size() );
 				digis.push_back(current_digi);
 			} 
 
@@ -81,8 +82,6 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 	//Below, we compute the energy, time, and position of all of the digi hits
 	//We incoorporate the time and position smearing into this calculation as well
 	
-	std::cout << "produced: " << digis.size() << " digis" <<std::endl;
-
 	for (auto digi : digis){
 		auto current_id = digi->det_id;
 		auto center = _geometry->GetCenter(current_id);

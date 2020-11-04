@@ -8,8 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(MLTracker)
 
 
-find_package(ROOT 6.22 CONFIG REQUIRED)
+find_package(ROOT REQUIRED COMPONENTS MathCore Minuit)
 find_package(dlib REQUIRED)
+find_package(BLAS REQUIRED)
 
 # Defines useful ROOT functions and ROOT macros (e.g. ROOT_GENERATE_DICTIONARY).
 include(${ROOT_USE_FILE})
@@ -25,7 +26,8 @@ add_library(tracker-lib SHARED
 
 target_link_libraries(tracker-lib PUBLIC
     ${ROOT_LIBRARIES}
-    ${DLIB_LIBRARIES})
+    ${DLIB_LIBRARIES}
+    ${BLAS_LIBRARIES})
 
 
 # add the executable

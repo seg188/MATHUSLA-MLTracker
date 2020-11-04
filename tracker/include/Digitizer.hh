@@ -22,6 +22,13 @@ public:
 		hits.push_back(hit);
 	}
 
+	void clear(){
+		
+		for (auto hit : hits) delete hit;
+		hits.clear();
+	
+	}
+
 	Digitizer(){ _geometry = new Geometry; }
 
 	~Digitizer() 

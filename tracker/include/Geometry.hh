@@ -230,6 +230,14 @@ public:
 		else{
 			std::cout << "WARNING: GEOMETRY MISMATCH! " << std::endl;
 			std::cout << "Make sure GetDetID and GetCenter(detID) are consistent!  " << std::endl;
+			
+			_id.Print();
+			std::cout << "module center: " << module->cx << ", " << module->cz << std::endl;
+			std::cout << "widths : " << widths[0] << ", " << widths[1] << std::endl;
+			std::cout << "calculated: " << module_layer_center[0] << ", " << module_layer_center[2] << std::endl;
+
+
+
 			return module_layer_center;
 		}
 	}
