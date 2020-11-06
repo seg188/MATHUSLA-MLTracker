@@ -22,7 +22,7 @@ namespace detector{
  													{8560.0*cm, 8650.0*cm}, //layer 5
  													{8660.0*cm, 8750.0*cm}, //layer 6
  													{8760.0*cm, 8850.0*cm}, //layer 7
-													{8860.0*cm, 9050.0*cm} };  //layer 8
+													{8860.0*cm, 8950.0*cm} };  //layer 8
 	const int n_layers = 9;
 
 	
@@ -73,18 +73,32 @@ namespace constants{
 
 namespace cuts{
 
+	//digi cuts and constants
 	const double digi_spacing = 20.0*units::ns;
 	const double SiPM_energy_threshold = 0.65*units::MeV;
-	const double seed_ds2 = 75.*units::ns;
-	const double seed_residual = 100.0*units::cm;
-	const double residual_drop = 75.*units::cm;
-	const double residual_add = 25.*units::cm;
+	
+	//seeding
+	const double seed_ds2 = 10.0; //sigma
+	const double seed_residual = 10.0; //sigma
+	
+	//tracking
+	const double residual_drop = 12.0; //sigma
+	const double residual_add = 10.0; //sigma
 	const double track_chi2 = 10.0;
-	const int track_nlayers = 3;
+	const int track_nlayers = 4;
 	const int nseed_hits = 4;
+	const double time_difference_drop = 12.0; //sigma
+	const double seed_time_difference = 10.0; //sigma
+	const int ntrack_hits = 4;
 
-	const double time_difference_drop = 500.0*units::ns;
-	const double seed_time_difference = 500.0*units::ns;
+	//merging
+	const double merge_cos_theta = 0.96; 
+	const double merge_distance = 20*units::cm;
+
+	//cleaning step
+	const double chi2_add = 9.0;
+	const double chi2_drop = 16.0;
+	const int cleaning_nhits = 6;
 
 };
 

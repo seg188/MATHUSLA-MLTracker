@@ -143,7 +143,7 @@ namespace physics{
       }
 
       double beta(){
-      	return TMath::Sqrt( vx*vx + vy*vy + vz*vz  );
+      	return TMath::Sqrt( vx*vx + vy*vy + vz*vz  )/constants::c;
       }
 
       double beta_err(){
@@ -160,7 +160,10 @@ namespace physics{
     	double track_x = x0 + vx*track_delta_t;
     	double track_z = z0 + vz*track_delta_t;
 
-    	double res2 = (track_x - hit->x)*(track_x - hit->x) + (track_z - hit->z)*(track_z - hit->z);
+    	double ex2 = (hit->ex)*(hit->ex);
+    	double ez2 = (hit->ez)*(hit->ez);
+
+    	double res2 = (track_x - hit->x)*(track_x - hit->x)/ex2 + (track_z - hit->z)*(track_z - hit->z)/ez2;
     	return TMath::Sqrt(  res2  );
     }
 
@@ -173,7 +176,11 @@ namespace physics{
     	double track_y = y0 + vz*track_delta_t;
     	double track_z = z0 + vz*track_delta_t;
 
-    	double res2 = (track_x - hit->x)*(track_x - hit->x) + (track_y - hit->y)*(track_y - hit->y) + (track_z - hit->z)*(track_z - hit->z);
+    	double ex2 = (hit->ex)*(hit->ex);
+    	double ey2 = (hit->ey)*(hit->ey);
+    	double ez2 = (hit->ez)*(hit->ez);
+
+    	double res2 = (track_x - hit->x)*(track_x - hit->x)/ex2 + (track_y - hit->y)*(track_y - hit->y)/ey2 + (track_z - hit->z)*(track_z - hit->z)/ez2;
     	return TMath::Sqrt(  res2  );
     }
 
@@ -185,7 +192,7 @@ namespace physics{
     	double t_track = (hit->y - y0)/vy;
     	double t_hit = hit->t - t0;
  	
-    	return TMath::Abs(t_track - t_hit);
+    	return TMath::Abs(t_track - t_hit)/hit->et;
     }
 
 
@@ -250,6 +257,25 @@ namespace physics{
 
     	return { x0 + delta_t*vx, y, z0 + delta_t*vz    };
     }
+
+    std::vector<double> direction(){ 
+
+    	double velocity = beta()*constants::c;
+    	return { vx/velocity, vy/velocity, vz/velocity };
+    }
+
+
+    std::vector<double> position(double t){ //global time t
+
+    	if (t < t0) return {};
+
+    	double dt = t-t0;
+
+    	return {x0 + vx*dt, y0 + vy*dt, z0 + vz*dt};
+    }
+
+
+
 
 	}; //track
   

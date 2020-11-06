@@ -317,7 +317,7 @@ public:
   	std::vector<double> track_vy_error;
   	std::vector<double> track_vz_error;
   	std::vector<int> track_expected_hit_layer;
-  	std::vector<int> track_missing_hit_layer;
+  	std::vector<double> track_missing_hit_layer;
   	Double_t numtracks;
 
   
@@ -410,8 +410,8 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
       track_vy_error.push_back(tr->evy);
       track_vz_error.push_back(tr->evz);
 
-      for (auto missing_layer : tr->_missing_layers) track_missing_hit_layer.push_back(missing_layer);
-      track_expected_hit_layer.push_back(-1);
+      for (auto missing_layer : tr->_missing_layers) track_missing_hit_layer.push_back( static_cast<double>(missing_layer) );
+      track_missing_hit_layer.push_back(-1);
 
       for (auto hit : tr->hits) { digi_hit_indices.push_back(hit->index); }
       digi_hit_indices.push_back(-1.);

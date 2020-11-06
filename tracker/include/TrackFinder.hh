@@ -39,7 +39,7 @@ public:
 
 		double hit_t = AHit->t - hits.first->t;
 
-		return TMath::Abs(seed_t - hit_t);
+		return TMath::Abs(seed_t - hit_t)/AHit->et;;
 
 	}
 
@@ -84,10 +84,11 @@ public:
 		double expected_x = x0 + delta_t*vx;
 		double expected_z = z0 + delta_t*vz;
 
-		double res2 = (x1 - expected_x)*(x1 - expected_x) + (z1 - expected_z)*(z1 - expected_z);
+		double ex2 = (AHit->ex)*(AHit->ex);
+    	double ey2 = (AHit->ey)*(AHit->ey);
+    	double ez2 = (AHit->ez)*(AHit->ez);
 
-
-
+		double res2 = (x1 - expected_x)*(x1 - expected_x)/ex2 + (z1 - expected_z)*(z1 - expected_z)/ez2;
 
 
 		return TMath::Sqrt(res2);
@@ -121,6 +122,7 @@ public:
 	void CleanTracks();
 	void Reseed(bool);
 	void CheckSeeds();
+	void MergeTracks();
 
 	double _score();
 	double c_score(physics::digi_hit* hit1, physics::digi_hit* hit2){
