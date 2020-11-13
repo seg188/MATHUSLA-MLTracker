@@ -90,7 +90,7 @@ namespace cuts{
 	const double time_difference_drop = 12.0; //sigma
 	const double seed_time_difference = 10.0; //sigma
 	const int ntrack_hits = 4;
-	const double distance_to_hit = 25*units::cm;
+	const double distance_to_hit = 75.0*units::cm;
 
 	//merging
 	const double merge_cos_theta = 0.96; 

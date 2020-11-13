@@ -216,29 +216,37 @@ namespace physics{
     	//returns the number of layers that a track has hits in
     	std::vector<int> layer_indices;
     	for (auto hit : hits){
-
+    		bool new_layer = true;
     		int layer_index = hit->det_id.layerIndex;
     		for (int layer_n : layer_indices){
-    			if (layer_n == layer_index) break;
+    			if (layer_n == layer_index){
+    				new_layer = false;
+    				break;
+    			} 
     		}
 
-    		layer_indices.push_back(layer_index);
+	    	if (new_layer) layer_indices.push_back(layer_index);
+
     	}
 
     	return layer_indices.size();
     } //nlayers
 
     std::vector<int> layers(){
-    	//returns the number of layers that a track has hits in
+    	//returns  layers that a track has hits in
     	std::vector<int> layer_indices;
     	for (auto hit : hits){
-
+    		bool new_layer = true;
     		int layer_index = hit->det_id.layerIndex;
     		for (int layer_n : layer_indices){
-    			if (layer_n == layer_index) break;
+    			if (layer_n == layer_index){
+    				new_layer = false;
+    				break;
+    			} 
     		}
 
-    		layer_indices.push_back(layer_index);
+	    	if (new_layer) layer_indices.push_back(layer_index);
+
     	}
 
     	return layer_indices;
