@@ -26,8 +26,10 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 	std::vector<physics::sim_hit*> current_remaining_hits = hits;
 	std::vector<physics::sim_hit*> next_remaining_hits;
 
-	while (current_remaining_hits.size() > 0){
 
+
+	while (current_remaining_hits.size() > 0){
+	
 		//current detector id which we are working in
 		auto current_id = (current_remaining_hits[0])->det_id;
 
@@ -41,10 +43,11 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		}
 
 		//time sorting current hits
+
 		std::sort(current_hits.begin(), current_hits.end(), &physics::time_sort);
 
-
 		// going through all hits until they are either all added to digis, or dropped
+
 		while (current_hits.size() > 0){
 
 			std::vector<physics::sim_hit*> used_hits;
@@ -66,9 +69,10 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 				for (auto hit : used_hits){current_digi->AddHit(hit);}
 				current_digi->index = ( digis.size() );
 				digis.push_back(current_digi);
-			} 
+				current_hits = unused_hits;
+			}  else { current_hits.erase(current_hits.begin());}
 
-			current_hits = unused_hits;
+			
 		}
 			
 		//resetting all the sorting vectors, and assigning the next remianing hits to the next iteration for current remaining
@@ -76,13 +80,22 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		current_remaining_hits = next_remaining_hits;
 		next_remaining_hits.clear();
 		current_hits.clear();
+
 	}
+
+
 
 	//at this point, all of the digi_hits in the digi_vector have the hits which will make them up. However, they don't have any of their energy, position, or timing information added.
 	//Below, we compute the energy, time, and position of all of the digi hits
 	//We incoorporate the time and position smearing into this calculation as well
 	
+
+	srand( time(NULL) );
+	TRandom generator;
+	generator.SetSeed( rand()*rand()*rand() % rand() );
+
 	for (auto digi : digis){
+		
 		auto current_id = digi->det_id;
 		auto center = _geometry->GetCenter(current_id);
 		auto layer = _geometry->layer_list[current_id.layerIndex];
@@ -125,9 +138,6 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		//we see the random number generator with a number that should be completly random:
 		//the clock time times the layer index times the number of digis
 
-		srand( time(NULL) );
-		TRandom generator;
-		generator.SetSeed( rand()*current_id.moduleIndex*current_id.layerIndex );
 
 		digi->t += generator.Gaus(0.0, digi->et);
 		if (long_direction_index == 0) {
@@ -152,12 +162,11 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 			std::cout << "Warning!!! Smearing function error--digi was smeared to be outside of known detector element!!" << std::endl;
 		}
 
+		
 	}
 
+
 	return digis;
-
-
-
 
 
 

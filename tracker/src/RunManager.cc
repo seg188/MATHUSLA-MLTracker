@@ -14,7 +14,7 @@ int RunManager::StartTracking(){
 	int events_handled = 0;
 
 //looping over every event in the loop.
-	while (TH->Next() >= 0){
+	while (TH->Next() >= 0){ 
 		_digitizer->clear();
 		_tracker->clear();
 
@@ -36,7 +36,6 @@ int RunManager::StartTracking(){
 
 		std::vector<physics::digi_hit*> digi_list = _digitizer->Digitize();
 
-
 		TH->ExportDigis(digi_list);
 		
 		//digis now finished and stored in tree!!!
@@ -50,8 +49,8 @@ int RunManager::StartTracking(){
 
 		TH->Fill();
 		events_handled++;
-		if (events_handled % 50 == 0) std::cout << "tracked " << events_handled << " events" << std::endl;
 
+		if (events_handled % 50 == 0) std::cout << "finished " << events_handled << " events" << std::endl;
 	}
 	
 	TH->Write();

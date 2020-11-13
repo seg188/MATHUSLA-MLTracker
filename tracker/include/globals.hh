@@ -78,18 +78,19 @@ namespace cuts{
 	const double SiPM_energy_threshold = 0.65*units::MeV;
 	
 	//seeding
-	const double seed_ds2 = 10.0; //sigma
+	const double seed_ds2 = 5.0; //sigma
 	const double seed_residual = 10.0; //sigma
 	
 	//tracking
 	const double residual_drop = 12.0; //sigma
 	const double residual_add = 10.0; //sigma
-	const double track_chi2 = 10.0;
+	const double track_chi2 = 8.0;
 	const int track_nlayers = 4;
 	const int nseed_hits = 4;
 	const double time_difference_drop = 12.0; //sigma
 	const double seed_time_difference = 10.0; //sigma
 	const int ntrack_hits = 4;
+	const double distance_to_hit = 25*units::cm;
 
 	//merging
 	const double merge_cos_theta = 0.96; 
@@ -99,6 +100,7 @@ namespace cuts{
 	const double chi2_add = 9.0;
 	const double chi2_drop = 16.0;
 	const int cleaning_nhits = 6;
+
 
 };
 

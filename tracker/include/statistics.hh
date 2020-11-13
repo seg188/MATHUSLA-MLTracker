@@ -39,11 +39,34 @@ public:
 
 			minimizer.SetPrintLevel(quiet_mode);
 
+			//we now add a boundary for the value of y0. If a hit was added to the track list, we assume y0 was less than the lowest y 
+			//(or greater than, depending on the direction of travel of the seed)
+			//we calculate the upper (lower) bound for y in these cases
+
+			double vel_y_direction = guess[4];
+			double y0_lim;
+
+			//upwaard going particle, find min y
+
+			if (vel_y_direction >= 0){
+				y0_lim = 99999.0;
+				for (auto hit : digi_list){
+					if (hit->y < y0_lim) y0_lim = hit->y;
+				}
+			} else if (vel_y_direction < 0){
+				y0_lim = -99999.0;
+				for (auto hit : digi_list){
+					if (hit->y > y0_lim) y0_lim = hit->y;
+				}
+			}
+
 			minimizer.mnparm(0, "x0", guess[0], first_step_size, detector::x_min,detector::x_max,ierflg);
-			minimizer.mnparm(1, "y0", guess[1], first_step_size, detector::y_min,detector::y_max,ierflg);
+			if (vel_y_direction >= 0) minimizer.mnparm(1, "y0", guess[1], first_step_size, y0_lim,detector::y_max,ierflg);
+			if (vel_y_direction  < 0) minimizer.mnparm(1, "y0", guess[1], first_step_size, detector::y_min, y0_lim,ierflg);
 			minimizer.mnparm(2, "z0", guess[2], first_step_size, detector::z_min,detector::z_max,ierflg);
 			minimizer.mnparm(3, "vx", guess[3], first_step_size, -1.0*constants::c,constants::c,ierflg);
-			minimizer.mnparm(4, "vy", guess[4], first_step_size, -1.0*constants::c,constants::c,ierflg);
+			if (vel_y_direction >= 0) minimizer.mnparm(4, "vy", guess[4], first_step_size, 0.0,constants::c,ierflg);
+			if (vel_y_direction  < 0) minimizer.mnparm(4, "vy", guess[4], first_step_size,constants::c,0.0,ierflg);
 			minimizer.mnparm(5, "vz", guess[5], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			minimizer.mnparm(6, "t0", guess[6], first_step_size,0,0,ierflg);
 			

@@ -168,6 +168,22 @@ namespace physics{
     }
 
     template<typename ahit>
+    double distance_to_hit(ahit* hit){
+
+    	double hit_y = hit->y;
+
+    	double track_delta_t = (hit_y - y0)/vy;
+
+    	double track_x = x0 + vx*track_delta_t;
+    	double track_z = z0 + vz*track_delta_t;
+
+    	double res2 = (track_x - hit->x)*(track_x - hit->x) + (track_z - hit->z)*(track_z - hit->z);
+    	return TMath::Sqrt(  res2  );
+
+
+    }
+
+    template<typename ahit>
     double residual(ahit* hit){
     	
     	double track_delta_t = hit->t - t0;
@@ -253,7 +269,7 @@ namespace physics{
 
     	double delta_t = (y-y0)/vy;
 
-    	if (delta_t < 0) return {0.,0.,0.};
+    	//if (delta_t < 0) return {0.,0.,0.};
 
     	return { x0 + delta_t*vx, y, z0 + delta_t*vz    };
     }

@@ -43,13 +43,18 @@ void TrackFinder::FindTracks(){
 
 	//we take the first seed now
 
+
 	int total_hits = hits.size();
 	bool iterate = true;	
 	int j = 0;
+	int MAX_ITS = 25;
+
 	while (iterate) {
 		
 		if (seeds.size() == 0) return;
 		if (hits.size() == 0) return;
+
+
 
 		int min_index = min_seed();
 		auto current_seed = seeds[min_index];
@@ -61,9 +66,12 @@ void TrackFinder::FindTracks(){
 		//now we use the seed::residual function to get the residual from the seed of all of the available hits.
 		//if the residual is good, we add it to the track_pts vector 
 
+
 		for (auto hit : hits){
 
-			if (current_seed.timeless_residual(hit) < cuts::seed_residual and current_seed.time_difference(hit) < cuts::seed_time_difference) {
+			if ( (current_seed.timeless_residual(hit) < cuts::seed_residual or current_seed.distance_to_hit(hit) < cuts::distance_to_hit) 
+													and current_seed.time_difference(hit) < cuts::seed_time_difference) 
+			{
 				track_pts.push_back(hit);
 			} else {
 				//std::cout << current_seed.timeless_residual(hit) << std::endl;
@@ -72,7 +80,7 @@ void TrackFinder::FindTracks(){
 			}
 		}
 
-		
+	
 
 		//we check that there are at least cuts::nseed_hits hits in the track_pts
 		//if not, we move on to the next seed
@@ -81,6 +89,7 @@ void TrackFinder::FindTracks(){
 			continue;
 		}
 	
+
 
 		//at this point, all we have done is erase the seed, and none of the hits have been modified
 		TrackFitter fitter;
@@ -97,7 +106,9 @@ void TrackFinder::FindTracks(){
 		std::vector<physics::digi_hit*> second_unused_hits;
 
 		for (auto hit : unused_hits){
-			if (current_track->untimed_residual(hit) < cuts::residual_add and current_track->time_difference(hit) < cuts::seed_time_difference){
+			if ( (current_track->untimed_residual(hit) < cuts::residual_add or current_track->distance_to_hit(hit) < cuts::distance_to_hit) 
+																			and current_track->time_difference(hit) < cuts::seed_time_difference )
+			{
 				current_track->AddHit(hit);
 			} else {
 				second_unused_hits.push_back(hit);
@@ -148,6 +159,8 @@ void TrackFinder::FindTracks(){
 
 	} //while iterate
 
+
+
 	//MergeTracks();
 	//CleanTracks();
 
@@ -160,6 +173,8 @@ void TrackFinder::FindTracks(){
 		std::cout << "used: " << total_tracked_points << std::endl;
 		std::cout << "unused:" << hits.size() << std::endl;
 	}
+
+	if (j++ > MAX_ITS) iterate = false;
 	
 }
 
