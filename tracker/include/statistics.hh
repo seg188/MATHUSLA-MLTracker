@@ -93,9 +93,13 @@ public:
 		return 0.0;
 	}
 
-	
-
 }; //class TrackFinder
+
+
+class VertexFitter{
+
+
+}; //class VertexFitter
 
 
 

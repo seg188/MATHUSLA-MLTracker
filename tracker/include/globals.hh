@@ -14,15 +14,15 @@ namespace units{
 namespace detector{
 	using namespace units;
 	//specifies the bottom and top y position of every layer
-	const std::vector<std::vector<double>> LAYERS_Y={{5950.0*cm, 6050.0*cm},  //layer 0
- 												 	{6060.0*cm, 6150.0*cm}, //layer 1
- 													{7900.0*cm, 8050.0*cm}, //layer 2
- 													{8050.0*cm, 8150.0*cm}, //layer 3
- 													{8400.0*cm, 8550.0*cm}, //layer 4
- 													{8560.0*cm, 8650.0*cm}, //layer 5
- 													{8660.0*cm, 8750.0*cm}, //layer 6
- 													{8760.0*cm, 8850.0*cm}, //layer 7
-													{8860.0*cm, 8950.0*cm} };  //layer 8
+	const std::vector<std::vector<double>> LAYERS_Y={{6001.0*cm, 6004.0*cm},  //layer 0
+ 												 	{6104.0*cm, 6107.0*cm}, //layer 1
+ 													{8001.0*cm, 8004.0*cm}, //layer 2
+ 													{8104.0*cm, 8107.0*cm}, //layer 3
+ 													{8500.1*cm, 8504.0*cm}, //layer 4
+ 													{8604.0*cm, 8607.0*cm}, //layer 5
+ 													{8707.0*cm, 8710.0*cm}, //layer 6
+ 													{8810.0*cm, 8813.0*cm}, //layer 7
+													{8913.0*cm, 8916.0*cm} };  //layer 8
 	const int n_layers = 9;
 
 	

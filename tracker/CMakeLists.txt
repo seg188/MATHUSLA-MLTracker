@@ -22,6 +22,7 @@ add_library(tracker-lib SHARED
     src/RunManager.cc
     src/TrackFinder.cc
     src/Digitizer.cc
+    src/VertexFinder.cc
 )
 
 target_link_libraries(tracker-lib PUBLIC
