@@ -142,6 +142,7 @@ void TrackFinder::FindTracks(){
 		fitter.fit(current_track->hits, current_track->parameters());
 		current_track->parameters(fitter.parameters);
 		current_track->par_errors(fitter.parameter_errors);
+		current_track->CovMatrix(fitter.cov_matrix, fitter.npar);
 
 		
 		if ( current_track->nlayers() >= cuts::track_nlayers and current_track->chi2_per_dof() < cuts::track_chi2 and current_track->hits.size() > cuts::ntrack_hits) {
@@ -287,6 +288,7 @@ void TrackFinder::CleanTracks(){
 std::vector<physics::digi_hit*> TrackFitter::digi_list = {};
 std::vector<double> TrackFitter::parameters = {};
 std::vector<double> TrackFitter::parameter_errors = {};
+double TrackFitter::cov_matrix[TrackFitter::npar][TrackFitter::npar];
 void TrackFitter::chi2_error(int &npar, double *gin, double &f, double *pars, int iflag ){
 	
 	double x0 = pars[0];

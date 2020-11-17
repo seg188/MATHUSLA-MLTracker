@@ -6,9 +6,13 @@
 class VertexFinder{
 public:
 
-	std::vector<physics::track*> track_list;
+	std::vector<physics::track*> tracks;
 
-	void FindTracks();
+	void clear(){
+		tracks.clear();
+	}
+
+	void FindVertices();
 
 }; //class VertexFinder
 

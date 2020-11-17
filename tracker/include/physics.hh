@@ -3,6 +3,8 @@
 #include "Geometry.hh"
 #include "globals.hh"
 #include "TFitter.h"
+#include "TMatrix.h"
+#include "TMatrixD.h"
 
 
 #ifndef PHYSICS_DEFINE
@@ -57,6 +59,21 @@ namespace physics{
 
 	}; //digi
 
+	class vertex{
+	public:
+		double x, y, z, t;
+		std::vector<int> track_indices;
+
+		vertex(std::vector<double> pars){
+			x = pars[0];
+			y = pars[1];
+			z = pars[2];
+			t = pars[3];
+		}
+
+		vertex(){}
+	};
+
 	class track{
 	public:
 		std::size_t index;
@@ -68,6 +85,21 @@ namespace physics{
 		double t0, et0;
 		std::vector<int> hits_to_drop = {};
 		std::vector<int> _missing_layers;
+		TMatrixD cov_matrix;
+
+		template<typename matrix>
+		void CovMatrix(matrix mat, int size){
+
+			cov_matrix.ResizeTo(size, size);
+			for (int i = 0; i < size; i++){
+				for (int j = i; j < size; j++){
+				
+					cov_matrix[i][j] = mat[i][j];
+					cov_matrix[j][i] = cov_matrix[i][j];
+				}
+			}	
+
+		}
 
 		void missing_layers(std::vector<int> layers){_missing_layers = layers; };
 
@@ -296,6 +328,49 @@ namespace physics{
     	double dt = t-t0;
 
     	return {x0 + vx*dt, y0 + vy*dt, z0 + vz*dt};
+    }
+
+
+    double distance_to(double x, double y, double z, double t){
+
+    	auto pos = position(t);
+
+    	return TMath::Sqrt( (pos[0] - x)*(pos[0] - x) + (pos[1] - y)*(pos[1] - y) + (pos[2] - z)*(pos[2] - z)     );
+
+    }
+
+    double err_distance_to(double x, double y, double z, double t){
+
+    	std::vector<double> derivatives = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; //partial derivates of position_at
+    	double dist = distance_to(x, y, z, t);
+
+    	derivatives[0] = ((t-t0)*vx - x + x0)/dist;
+    	derivatives[2] = ((t-t0)*vz - z + z0)/dist;
+    	derivatives[3] = (t-t0)*((t-t0)*vx - x + x0)/dist;
+    	derivatives[4] = (t-t0)*((t-t0)*vy - y + y0)/dist;
+    	derivatives[5] = (t-t0)*((t-t0)*vz - z + z0)/dist;
+    	derivatives[6] = -1.0*(vx*((t-t0)*vx - x + x0) + vy*((t-t0)*vy - y + y0) + vz*((t-t0)*vz - z + z0))/dist;
+
+    	//now we calculate the actual error
+    	double error = 0.0;
+
+    	for (int i = 0; i < derivatives.size(); i++){
+    		for (int j = 0; j < derivatives.size(); j++){
+    			error += derivatives[i]*derivatives[j]*cov_matrix[i][j];
+    		}
+    	}
+
+    	return TMath::Sqrt(error);
+    }
+
+    double vertex_residual(std::vector<double> params){
+
+    	double x = params[0];
+    	double y = params[1];
+    	double z = params[2];
+    	double t = params[3];
+
+    	return distance_to(x, y, z, t)/err_distance_to(x, y, z, t);
     }
 
 

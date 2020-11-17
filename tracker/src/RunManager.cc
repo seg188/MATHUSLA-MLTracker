@@ -17,6 +17,7 @@ int RunManager::StartTracking(){
 	while (TH->Next() >= 0){ 
 		_digitizer->clear();
 		_tracker->clear();
+		_vertexer->clear();
 
 		TH->LoadEvent(); //copying the data to the new tree, and loading all the variables, incrementing index
 

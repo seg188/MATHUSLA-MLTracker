@@ -101,6 +101,9 @@ namespace cuts{
 	const double chi2_drop = 16.0;
 	const int cleaning_nhits = 6;
 
+	//vertexing
+	const double vertex_chi2 = 10.0;
+
 
 };
 

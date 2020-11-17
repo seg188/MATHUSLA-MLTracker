@@ -3,6 +3,7 @@
 #include "TreeHandler.hh"
 #include "Digitizer.hh"
 #include "globals.hh"
+#include "VertexFinder.hh"
 
 
 #ifndef RUN_MANAGER_DEFINE
@@ -22,11 +23,13 @@ public:
 		
 		_digitizer = new Digitizer();
 		_tracker = new TrackFinder();
+		_vertexer = new VertexFinder();
 	} 
 
 	~RunManager(){
 		delete _digitizer;
 		delete _tracker;
+		delete _vertexer;
 	}
 
 
@@ -38,6 +41,7 @@ private:
 
 	Digitizer* _digitizer;
 	TrackFinder* _tracker;
+	VertexFinder* _vertexer;
 
 	//DATA IO NAMES AND FILES
 	TString _InputFile_Name;
