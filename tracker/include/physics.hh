@@ -341,15 +341,16 @@ namespace physics{
     double err_distance_to(double x, double y, double z, double t){
 
     	std::vector<double> derivatives = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; //partial derivates of position_at
+    	//note, we don't include the derivative with respect to y. y0 is fixed, and so it isnt included in the covariance matrix
     	double dist = distance_to(x, y, z, t);
 
     	derivatives[0] = ((t-t0)*vx - x + x0)/dist;
-    	derivatives[1] = detector::scintillator_height;
-    	derivatives[2] = ((t-t0)*vz - z + z0)/dist;
-    	derivatives[3] = (t-t0)*((t-t0)*vx - x + x0)/dist;
-    	derivatives[4] = (t-t0)*((t-t0)*vy - y + y0)/dist;
-    	derivatives[5] = (t-t0)*((t-t0)*vz - z + z0)/dist;
-    	derivatives[6] = -1.0*(vx*((t-t0)*vx - x + x0) + vy*((t-t0)*vy - y + y0) + vz*((t-t0)*vz - z + z0))/dist;
+    	//derivatives[1] = detector::scintillator_height;
+    	derivatives[1] = ((t-t0)*vz - z + z0)/dist;
+    	derivatives[2] = (t-t0)*((t-t0)*vx - x + x0)/dist;
+    	derivatives[3] = (t-t0)*((t-t0)*vy - y + y0)/dist;
+    	derivatives[4] = (t-t0)*((t-t0)*vz - z + z0)/dist;
+    	derivatives[5] = -1.0*(vx*((t-t0)*vx - x + x0) + vy*((t-t0)*vy - y + y0) + vz*((t-t0)*vz - z + z0))/dist;
 
     	//now we calculate the actual error
     	double error = 0.0;

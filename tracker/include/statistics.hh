@@ -63,7 +63,7 @@ public:
 			minimizer.mnparm(5, "vz", guess[5], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			minimizer.mnparm(6, "t0", guess[6], first_step_size,0,0,ierflg);
 
-			//minimizer.FixParameter(1);
+			minimizer.FixParameter(1);
 			
 			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
@@ -143,9 +143,33 @@ public:
 
 			minimizer.SetPrintLevel(quiet_mode);
 
+			//we impose some bounds on the vertex of the y.
+			//there cant be any hits before the vertex associated to a track. 
+			//thus, for all of the tracks, we find the first y val, and require this to be either
+			//the minimum or the maximum for the fit, depending on the direction of the track
+
+			double min_y = detector::y_min - 10.0*units::cm;
+			double max_y = detector::y_max + 10.0*units::cm;
+
+
+			for (auto track : track_list){
+				double min_t = 9999999.9;
+				double y_val = min_y;
+				bool min = track->vy > 0 ? true : false;
+				for (auto hit : track->hits){
+					if (hit->t < min_t){
+						min_t = hit->t;
+						y_val = hit->y;
+					}
+				}
+
+				if (min) min_y = y_val > min_y ? y_val : min_y;
+				else max_y = y_val < max_y ? y_val : max_y;
+
+			}
 
 			minimizer.mnparm(0, "x", guess[0], first_step_size, 0,0,ierflg);
-			minimizer.mnparm(1, "y", guess[1], first_step_size, 0,0,ierflg);
+			minimizer.mnparm(1, "y", guess[1], first_step_size, min_y,max_y,ierflg);
 			minimizer.mnparm(2, "z", guess[2], first_step_size, 0,0,ierflg);
 			minimizer.mnparm(3, "t", guess[3], first_step_size, 0,0,ierflg); 
 
