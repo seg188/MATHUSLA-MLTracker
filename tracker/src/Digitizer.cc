@@ -165,6 +165,9 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		
 	}
 
+	//setting digi indices
+	int k = 0;
+	for (auto digi : digis) digi->index = k++;
 
 	return digis;
 

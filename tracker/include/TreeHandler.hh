@@ -206,8 +206,9 @@ public:
      	OutputTree->Branch("Track_detCount", &unique_detector_count);
       	OutputTree->Branch("Track_expectedHitLayer", &track_expected_hit_layer);
       	OutputTree->Branch("Track_missingHitLayer", &track_missing_hit_layer);
+        OutputTree->Branch("Track_hitIndices", &track_hit_indices);
 
-      	OutputTree->Branch("Digi_numHits", &Digi_numHits, "Digi_numHits/D");
+      	OutputTree->Branch("Digi_numHits", &Digi_numHits);
       	OutputTree->Branch("Digi_time", &digi_hit_t);
       	OutputTree->Branch("Digi_x", &digi_hit_x);
       	OutputTree->Branch("Digi_y", &digi_hit_y);
@@ -321,6 +322,7 @@ public:
   	std::vector<double> track_vz_error;
   	std::vector<int> track_expected_hit_layer;
   	std::vector<double> track_missing_hit_layer;
+    std::vector<int> track_hit_indices;
   	Double_t numtracks;
 
   
@@ -334,14 +336,13 @@ public:
   	std::vector<double> digi_hit_py;
   	std::vector<double> digi_hit_pz;
   	std::vector<int> digi_hit_indices;
-  	Double_t Digi_numHits;
+  	std::vector<int> Digi_numHits;
 
 
 }; //class TreeHandler
 
 template<class digi_hit>
 void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
-      Digi_numHits = digi_list.size();
       digi_hit_indices.clear();
       digi_hit_t.clear();
       digi_hit_x.clear();
@@ -350,6 +351,7 @@ void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
       digi_hit_e.clear();
 
       for (auto digi : digi_list){
+        Digi_numHits.push_back(digi->hits.size());
         digi_hit_t.push_back(digi->t);
         digi_hit_x.push_back(digi->x);
         digi_hit_y.push_back(digi->y);
@@ -388,7 +390,7 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
     track_vx_error.clear();
     track_vy_error.clear();
     track_vz_error.clear();
-    digi_hit_indices.clear();
+    track_hit_indices.clear();
     track_missing_hit_layer.clear();
 
 
@@ -406,9 +408,9 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
       track_vx.push_back(tr->vx);
       track_vy.push_back(tr->vy);
       track_vz.push_back(tr->vz);
-      track_x_error.push_back(tr->x0);
-      track_y_error.push_back(tr->y0);
-      track_z_error.push_back(tr->z0);
+      track_x_error.push_back(tr->ex0);
+      track_y_error.push_back(tr->ey0);
+      track_z_error.push_back(tr->ez0);
       track_vx_error.push_back(tr->evx);
       track_vy_error.push_back(tr->evy);
       track_vz_error.push_back(tr->evz);
@@ -416,8 +418,8 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
       for (auto missing_layer : tr->_missing_layers) track_missing_hit_layer.push_back( static_cast<double>(missing_layer) );
       track_missing_hit_layer.push_back(-1);
 
-      for (auto hit : tr->hits) { digi_hit_indices.push_back(hit->index); }
-      digi_hit_indices.push_back(-1.);
+      for (auto hit : tr->hits) { track_hit_indices.push_back(hit->index); }
+      track_hit_indices.push_back(-1.);
     }
 
 }

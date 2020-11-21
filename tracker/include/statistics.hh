@@ -78,6 +78,7 @@ public:
 			minimizer.mnemat(&cov_matrix[0][0], npar);
 			//std::cout << std::endl;
 
+			for (int k = 0; k < parameter_errors.size(); k++) parameter_errors[k] = TMath::Sqrt(cov_matrix[k][k]);
 
 
 
