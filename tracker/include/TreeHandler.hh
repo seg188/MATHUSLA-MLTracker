@@ -349,6 +349,7 @@ void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
       digi_hit_y.clear();
       digi_hit_z.clear();
       digi_hit_e.clear();
+      Digi_numHits.clear();
 
       for (auto digi : digi_list){
         Digi_numHits.push_back(digi->hits.size());

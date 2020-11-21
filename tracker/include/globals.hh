@@ -18,7 +18,7 @@ namespace detector{
  												 	{6104.0*cm, 6107.0*cm}, //layer 1
  													{8001.0*cm, 8004.0*cm}, //layer 2
  													{8104.0*cm, 8107.0*cm}, //layer 3
- 													{8500.1*cm, 8504.0*cm}, //layer 4
+ 													{8501.0*cm, 8504.0*cm}, //layer 4
  													{8604.0*cm, 8607.0*cm}, //layer 5
  													{8707.0*cm, 8710.0*cm}, //layer 6
  													{8810.0*cm, 8813.0*cm}, //layer 7
