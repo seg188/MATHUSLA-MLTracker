@@ -2,48 +2,62 @@
 #include "VertexFinder.hh"
 #include "statistics.hh"
 #include "physics.hh"
+#include "LinearAlgebra.hh"
 
+void VertexFinder::Seed(){
+	for (int n1 = 0; n1 < tracks.size(); n1++){
+		for (int n2 = n1+1; n2 < tracks.size(); n2++){
+
+			auto tr1 = tracks[n1];
+			auto tr2 = tracks[n2];
+
+			if (tr1->closest_approach(tr2) < cuts::seed_closest_approach) seeds.push_back( vertex_seed(tr1, tr2)  );
+
+		} //n2
+	}//n1
+
+	std::sort( seeds.begin(), seeds.end(), [](vertex_seed a, vertex_seed b)->bool { return a.score() < b.score();  } );
+}//VF:Seed
 
 void VertexFinder::FindVertices(){
 
-	if (tracks.size() < 2) return; // no vertices with just 1 track, obviously
+	if (seeds.size() < 1) return; // no seeds
 
-	//now, we find vertices as follows:
-	//we start with the first two tracks, and fit it to a vertex
-	//if the vertex passes a strict chi2 cut, we try to add other tracks sequentially
-	//we sort the tracks by the distance of their (x0, y0, z0, t0) to the vertex, and start with the closest ones
-	//we also use a distance cut in order to increase the efficiency--if the track is very far from the spacetime point
-	//of the vertex, then there is no reason to try and fit it to the vertex
+	
+	while (seeds.size() > 0 and tracks.size() > 0){ 
 
-	//once a track is added to a vertex, we remove it from the list of available tracks
-	//we iterate until all possible combinations of tracks are exhausted
+		std::vector<physics::track*> used_tracks = {};
+		std::vector<physics::track*> unused_tracks = {};
 
-	auto first_track = tracks[0];
+		auto current_seed = seeds[0];
 
-	//now, we find the track that has the closest x, y, z, t to this track
+		seeds.erase(seeds.begin());
 
-	double min = 99999999.9;
-	int min_index = -1;
-
-	for (int trackn = 1; trackn < tracks.size(); trackn++){
-		auto curr_track = tracks[trackn];
-		double dist = first_track->distance_to(curr_track->x0, curr_track->y0, curr_track->z0, curr_track->t0);
-		if (dist < min){
-			min = dist;
-			min_index = trackn;
+		for (auto tr : tracks){
+			if (current_seed.closest_approach(tr) < cuts::closest_approach_add){
+				used_tracks.push_back(tr);
+			} else {
+				unused_tracks.push_back(tr);
+			}
 		}
+	
+
+		VertexFitter fitter;
+		auto status = fitter.fit(used_tracks, current_seed.guess());
+
+		if (status == 4 or fitter.merit() > cuts::vertex_chi2){
+			std::cout << fitter.merit() << std::endl;
+			continue;
+		} 
+
+		vertices.push_back(new physics::vertex(fitter.parameters));
+		tracks = unused_tracks;
+
+
 	}
 
-	std::vector<physics::track*> tracks_to_fit = {first_track, tracks[min_index]};
 
-	//now we have the track whose point is closest, we try and fit a vertex
 
-	VertexFitter fitter;
-	fitter.fit(tracks_to_fit, {first_track->x0, first_track->y0, first_track->z0, first_track->t0});
-
-	if (fitter.merit() > cuts::vertex_chi2) return;
-
-	auto curr_vertex = physics::vertex(fitter.parameters);
 
 
 }
@@ -54,24 +68,38 @@ void VertexFinder::FindVertices(){
 std::vector<physics::track*> VertexFitter::track_list = {};
 std::vector<double> VertexFitter::parameters = {};
 std::vector<double> VertexFitter::parameter_errors = {};
+bool VertexFitter::bad_fit = false;
 void VertexFitter::nll(int &npar, double *gin, double &f, double *pars, int iflag ){
 	
-	double x = pars[0];
-	double y = pars[1];
-	double z = pars[2];
-	double t = pars[3];
+	double _x = pars[0];
+	double _y = pars[1];
+	double _z = pars[2];
+	double _t = pars[3];
 
+	
 	double error = 0.0 ;
 
+	int n = 0;
 
 	for (auto track : VertexFitter::track_list){
 
-		double dist = track->distance_to(x, y, z, t);
-		double err = track->err_distance_to(x, y, z, t);
+		double dist = track->distance_to(_x, _y, _z, _t);
+		
+		double err = track->err_distance_to(_x, _y, _z, _t);
 
-		error += TMath::Log(TMath::Abs(error)) + 0.5*(dist/err)*(dist/err);
+		if (err > 0) error += TMath::Log(TMath::Abs(err) ) + 0.5*(dist/err)*(dist/err);
+		
+	
+		if (isnan(error)){ 
+			bad_fit = true;
+			std::cout << dist << " " << err << std::endl;
+			track->cov_matrix.Print();
+			return;
+		}	
+
 		
 	}
 
+	
 	f = error;
 }

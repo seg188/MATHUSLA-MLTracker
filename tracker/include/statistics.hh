@@ -63,7 +63,7 @@ public:
 			minimizer.mnparm(5, "vz", guess[5], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			minimizer.mnparm(6, "t0", guess[6], first_step_size,0,0,ierflg);
 
-			minimizer.FixParameter(1);
+			//minimizer.FixParameter(1);
 			
 			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
@@ -74,7 +74,7 @@ public:
 				//std::cout << parameters[k] << ", ";
 			}
 
-
+		//	minimizer.mnfree(0);
 			minimizer.mnemat(&cov_matrix[0][0], npar);
 			//std::cout << std::endl;
 
@@ -100,6 +100,7 @@ public:
 	static std::vector<double> parameters;
 	static std::vector<double> parameter_errors;
 	const static int npar = 4;
+	static bool bad_fit;
 	static double cov_matrix[npar][npar];
 
 	double merit(){
@@ -110,11 +111,16 @@ public:
 		}
 
 		double ndof = static_cast<double>(npar*(track_list.size()-1));
+		ndof = ndof > 1. ? ndof :  1.0;
 		return chi2/ndof;
 	}
 
 	int fit(std::vector<physics::track*> _track_list, std::vector<double> arg_guess = {}){
+
 			track_list = _track_list;
+
+			bad_fit = false;
+
 			parameters.resize(npar);
 			parameter_errors.resize(npar);
 
@@ -126,7 +132,7 @@ public:
 
 			double first_step_size = 0.1;
 			auto maxcalls = 500000.0;
-			auto tolerance = 0.1;
+			auto tolerance = 0.10;
 			double arglist[2];
 			arglist[0] = maxcalls;
 			arglist[1] = tolerance;
@@ -136,19 +142,30 @@ public:
 
 			minimizer.SetPrintLevel(quiet_mode);
 
+
 			minimizer.mnparm(0, "x", guess[0], first_step_size, 0,0,ierflg);
 			minimizer.mnparm(1, "y", guess[1], first_step_size, 0,0,ierflg);
 			minimizer.mnparm(2, "z", guess[2], first_step_size, 0,0,ierflg);
-			minimizer.mnparm(6, "t", guess[3], first_step_size, 0,0,ierflg);
-			
+			minimizer.mnparm(3, "t", guess[3], first_step_size, 0,0,ierflg); 
+
+
 			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
+			if (bad_fit) {
+				std::cout << "bad fit" << std::endl;
+				return 4;
+			}
+
+
 			//while (ierflg) minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
+
+
 
 			for (int k = 0; k < npar; k++){
 				minimizer.GetParameter(k, parameters[k], parameter_errors[k] );
 				//std::cout << parameters[k] << ", ";
 			}
+
 
 			//std::cout << std::endl;
 

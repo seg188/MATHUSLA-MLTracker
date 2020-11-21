@@ -5,15 +5,15 @@
 #include "TFitter.h"
 #include "TMatrix.h"
 #include "TMatrixD.h"
+#include "LinearAlgebra.hh"
 
 
 #ifndef PHYSICS_DEFINE
 #define PHYSICS_DEFINE
 
+
 namespace physics{
 
-
-	
 	
 	//defines detector hit
 	class sim_hit{
@@ -323,8 +323,7 @@ namespace physics{
 
     std::vector<double> position(double t){ //global time t
 
-    	if (t < t0) return {};
-
+    
     	double dt = t-t0;
 
     	return {x0 + vx*dt, y0 + vy*dt, z0 + vz*dt};
@@ -345,6 +344,7 @@ namespace physics{
     	double dist = distance_to(x, y, z, t);
 
     	derivatives[0] = ((t-t0)*vx - x + x0)/dist;
+    	derivatives[1] = detector::scintillator_height;
     	derivatives[2] = ((t-t0)*vz - z + z0)/dist;
     	derivatives[3] = (t-t0)*((t-t0)*vx - x + x0)/dist;
     	derivatives[4] = (t-t0)*((t-t0)*vy - y + y0)/dist;
@@ -356,7 +356,9 @@ namespace physics{
 
     	for (int i = 0; i < derivatives.size(); i++){
     		for (int j = 0; j < derivatives.size(); j++){
+    			
     			error += derivatives[i]*derivatives[j]*cov_matrix[i][j];
+    			
     		}
     	}
 
@@ -371,6 +373,46 @@ namespace physics{
     	double t = params[3];
 
     	return distance_to(x, y, z, t)/err_distance_to(x, y, z, t);
+    }
+
+    double closest_approach(track* tr2){
+
+    	using namespace vector;
+
+    	std::vector<double> rel_v = { tr2->vx - vx, tr2->vy - vy, tr2->vz - vz  };
+
+    	double rel_v2 = dot(rel_v, rel_v);
+
+    	std::vector<double> displacement = {x0 - tr2->x0 , y0 - tr2->y0 , z0 - tr2->z0  };
+
+    	double t_ca  = ( dot(displacement, rel_v)/rel_v2 ) - (   dot( add(scaler_multiply(-1.0*tr2->t0, {tr2->vx, tr2->vy, tr2->vz}), scaler_multiply(1.0*t0, {vx, vy, vz})), rel_v)/rel_v2  );    	
+
+    	std::vector<double> pos1 = {x0 + (t_ca - t0)*vx, y0 + (t_ca - t0)*vy, z0 + (t_ca - t0)*vz };
+    	std::vector<double> pos2 = {tr2->x0 + (t_ca - tr2->t0)*tr2->vx, tr2->y0 + (t_ca - tr2->t0)*tr2->vy, tr2->z0 + (t_ca - tr2->t0)*tr2->vz };
+
+    	auto disp = add(pos1, scaler_multiply(-1.0, pos2));
+
+    	return TMath::Sqrt( dot(disp, disp)      );
+    }
+
+    std::vector<double> closest_approach_midpoint(track* tr2){
+
+    	using namespace vector;
+
+    	std::vector<double> rel_v = { tr2->vx - vx, tr2->vy - vy, tr2->vz - vz  };
+
+    	double rel_v2 = dot(rel_v, rel_v);
+
+    	std::vector<double> displacement = { tr2->x0 - x0, tr2->y0 - y0, tr2->z0 - z0  };
+
+    	double t_ca  = ( dot(displacement, rel_v)/rel_v2 ) - (   dot(add(scaler_multiply(-1.0*tr2->t0, {tr2->vx, tr2->vy, tr2->vz}), scaler_multiply(1.0*t0, {vx, vy, vz})), rel_v)/rel_v2  );    	
+
+    	std::vector<double> pos1 = {x0 + (t_ca - t0)*vx, y0 + (t_ca - t0)*vy, z0 + (t_ca - t0)*vz, t_ca };
+    	std::vector<double> pos2 = {tr2->x0 + (t_ca - tr2->t0)*tr2->vx, tr2->y0 + (t_ca - tr2->t0)*tr2->vy, tr2->z0 + (t_ca - tr2->t0)*tr2->vz, t_ca };
+
+    	auto sum = add(pos1, pos2);
+
+    	return scaler_multiply(0.50, sum) ;
     }
 
 

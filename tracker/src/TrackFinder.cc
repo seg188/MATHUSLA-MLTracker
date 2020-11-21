@@ -43,7 +43,7 @@ void TrackFinder::FindTracks(){
 
 	//we take the first seed now
 
-
+	int index = 0;
 	int total_hits = hits.size();
 	bool iterate = true;	
 	int j = 0;
@@ -146,7 +146,9 @@ void TrackFinder::FindTracks(){
 
 		
 		if ( current_track->nlayers() >= cuts::track_nlayers and current_track->chi2_per_dof() < cuts::track_chi2 and current_track->hits.size() > cuts::ntrack_hits) {
+			current_track->index = index++;
 			tracks.push_back(current_track);
+
 			
 		} else {
 			delete current_track;

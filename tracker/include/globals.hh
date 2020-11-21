@@ -51,6 +51,7 @@ namespace detector{
 	const int n_modules = 100;
 	const double scintillator_length = 450.0*units::cm;
 	const double scintillator_width = 4.50*units::cm;
+	const double scintillator_height = 3.0*units::cm;
 	const double time_resolution = 1.0*units::ns;
 
 	const double x_min = MODULE_X[0][0];
@@ -102,7 +103,9 @@ namespace cuts{
 	const int cleaning_nhits = 6;
 
 	//vertexing
-	const double vertex_chi2 = 10.0;
+	const double seed_closest_approach = 100*units::cm;
+	const double vertex_chi2 = 20.0;
+	const double closest_approach_add = 100*units::cm;
 
 
 };

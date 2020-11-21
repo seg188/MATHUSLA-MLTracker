@@ -46,6 +46,9 @@ public:
   template<class track>
   void ExportTracks(std::vector<track*>);
 
+  template<typename vertex>
+  void ExportVertices(std::vector<vertex*>);
+
 	TreeHandler(TString input_tree_name, TString input_file_name, TString output_tree_name, TString outfile_name) 
 	{
 
@@ -415,6 +418,36 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
 
       for (auto hit : tr->hits) { digi_hit_indices.push_back(hit->index); }
       digi_hit_indices.push_back(-1.);
+    }
+
+}
+
+template<typename vertex>
+void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
+
+    vertex_numTracks.clear();
+    vertex_chi2.clear();
+    vertex_chi2_per_dof.clear();
+    vertex_chi2_p_value.clear();
+    vertex_t.clear();
+    vertex_x.clear();
+    vertex_y.clear();
+    vertex_z.clear();
+    vertex_t_error.clear();
+    vertex_x_error.clear();
+    vertex_y_error.clear();
+    vertex_z_error.clear();
+
+    numvertices = vertices.size();
+
+
+    for (auto v : vertices){
+      vertex_numTracks.push_back(v->track_indices.size());
+      vertex_t.push_back(v->t);
+      vertex_x.push_back(v->x);
+      vertex_y.push_back(v->y);
+      vertex_z.push_back(v->z);
+      
     }
 
 }

@@ -48,7 +48,15 @@ int RunManager::StartTracking(){
 		_tracker->CalculateMissingHits(_digitizer->_geometry);
 		TH->ExportTracks(_tracker->tracks);
 
+
+		_vertexer->tracks = _tracker->tracks;
+		_vertexer->Seed();
+		_vertexer->FindVertices();
+
+		TH->ExportVertices(_vertexer->vertices);
+
 		TH->Fill();
+
 		events_handled++;
 
 		if (events_handled % 50 == 0) std::cout << "finished " << events_handled << " events" << std::endl;
