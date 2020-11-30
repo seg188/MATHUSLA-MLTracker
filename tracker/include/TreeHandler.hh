@@ -168,6 +168,7 @@ public:
 
  		OutputTree->Branch("NumVertices", &numvertices, "NumVertices/D");
       	OutputTree->Branch("Vertex_numTracks", &vertex_numTracks);
+        OutputTree->Branch("Vertex_cosOpeningAngle", &vertex_cosOpeningAngle);
       	OutputTree->Branch("Vertex_t", &vertex_t);
       	OutputTree->Branch("Vertex_x", &vertex_x);
       	OutputTree->Branch("Vertex_y", &vertex_y);
@@ -280,7 +281,8 @@ public:
  	std::vector<double> *sim_EXTRA_15 = nullptr;
 
  		//__Make Vertex Branches________________________________________________________________________
-  	std::vector<double> vertex_numTracks;
+  	std::vector<int> vertex_numTracks;
+    std::vector<double> vertex_cosOpeningAngle;
   	std::vector<double> vertex_chi2;
   	std::vector<double> vertex_chi2_per_dof;
  	std::vector<double> vertex_chi2_p_value;
@@ -429,6 +431,7 @@ template<typename vertex>
 void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
 
     vertex_numTracks.clear();
+    vertex_cosOpeningAngle.clear();
     vertex_chi2.clear();
     vertex_chi2_per_dof.clear();
     vertex_chi2_p_value.clear();
@@ -446,6 +449,7 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
 
     for (auto v : vertices){
       vertex_numTracks.push_back(v->track_indices.size());
+      vertex_cosOpeningAngle.push_back(v->cos_opening_angle);
       vertex_t.push_back(v->t);
       vertex_x.push_back(v->x);
       vertex_y.push_back(v->y);

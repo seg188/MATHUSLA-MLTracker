@@ -132,8 +132,8 @@ public:
 			minimizer.SetFCN(nll);
 
 			double first_step_size = 0.1;
-			auto maxcalls = 500000.0;
-			auto tolerance = 0.10;
+			auto maxcalls = 5000000.0;
+			auto tolerance = 0.010;
 			double arglist[2];
 			arglist[0] = maxcalls;
 			arglist[1] = tolerance;

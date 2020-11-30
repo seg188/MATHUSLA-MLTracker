@@ -85,8 +85,8 @@ namespace cuts{
 	//tracking
 	const double residual_drop = 12.0; //sigma
 	const double residual_add = 10.0; //sigma
-	const double track_chi2 = 8.0;
-	const int track_nlayers = 4;
+	const double track_chi2 = 5.0;
+	const int track_nlayers = 3;
 	const int nseed_hits = 4;
 	const double time_difference_drop = 12.0; //sigma
 	const double seed_time_difference = 10.0; //sigma
@@ -98,13 +98,13 @@ namespace cuts{
 	const double merge_distance = 20*units::cm;
 
 	//cleaning step
-	const double chi2_add = 9.0;
+	const double chi2_add = 10.0;
 	const double chi2_drop = 16.0;
 	const int cleaning_nhits = 6;
 
 	//vertexing
 	const double seed_closest_approach = 100*units::cm;
-	const double vertex_chi2 = 10.0;
+	const double vertex_chi2 = 9.0;
 	const double closest_approach_add = 100*units::cm;
 
 

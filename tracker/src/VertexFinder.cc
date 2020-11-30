@@ -40,6 +40,8 @@ void VertexFinder::FindVertices(){
 				unused_tracks.push_back(tr);
 			}
 		}
+
+		if (used_tracks.size() < 2) continue;
 	
 
 		VertexFitter fitter;
@@ -50,11 +52,28 @@ void VertexFinder::FindVertices(){
 			continue;
 		} 
 
-		vertices.push_back(new physics::vertex(fitter.parameters));
+		double cos_opening_angle = -1.0;
+		if (used_tracks.size() == 2){
+
+			auto tr1 = used_tracks[0];
+			auto tr2 = used_tracks[1];
+
+			cos_opening_angle = tr1->vx*tr2->vx + tr1->vy*tr2->vy + tr1->vz*tr2->vz;
+			cos_opening_angle = cos_opening_angle/( tr1->beta()*tr2->beta()*constants::c*constants::c );
+		}
+
+		auto good_vertex = new physics::vertex(fitter.parameters, cos_opening_angle);
+		
+		for (auto track : used_tracks){
+			good_vertex->track_indices.push_back(track->index);
+		}
+
+		vertices.push_back(good_vertex);
 		tracks = unused_tracks;
 
 
 	}
+
 
 
 
@@ -87,7 +106,8 @@ void VertexFitter::nll(int &npar, double *gin, double &f, double *pars, int ifla
 		
 		double err = track->err_distance_to(_x, _y, _z, _t);
 
-		if (err > 0) error += TMath::Log(TMath::Abs(err) ) + 0.5*(dist/err)*(dist/err);
+		error += 0.5*(dist/err)*(dist/err);
+
 		
 	
 		if (isnan(error)){ 

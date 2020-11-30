@@ -12,6 +12,7 @@ public:
 	{  }
 
 	double closest_approach(physics::track* tr){
+
 		double ca1 = tracks.first->closest_approach(tr);
 		double ca2 = tracks.second->closest_approach(tr);
 

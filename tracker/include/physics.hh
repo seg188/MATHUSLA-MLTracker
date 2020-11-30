@@ -64,11 +64,14 @@ namespace physics{
 		double x, y, z, t;
 		std::vector<int> track_indices;
 
-		vertex(std::vector<double> pars){
+        double cos_opening_angle = -2.0;
+
+		vertex(std::vector<double> pars, double cos_angle = -2){
 			x = pars[0];
 			y = pars[1];
 			z = pars[2];
 			t = pars[3];
+            cos_opening_angle = cos_angle;
 		}
 
 		vertex(){}
@@ -379,6 +382,8 @@ namespace physics{
     double closest_approach(track* tr2){
 
     	using namespace vector;
+
+        if (tr2->index == index) return 0.00;
 
     	std::vector<double> rel_v = { tr2->vx - vx, tr2->vy - vy, tr2->vz - vz  };
 
