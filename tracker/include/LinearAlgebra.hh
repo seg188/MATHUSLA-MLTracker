@@ -28,8 +28,35 @@ namespace vector{
 
 	}
 	
+
+
+class Vector {
+private:
+        int x, y, z;
+        // 3D Coordinates of the Vector
+
+public:
+        Vector(int x, int y, int z)
+        {
+                // Constructor
+                this->x = x;
+                this->y = y;
+                this->z = z;
+        }
+        Vector operator+(Vector v); // ADD 2 Vectors
+        Vector operator-(Vector v); // Subtraction
+        int operator^(Vector v); // Dot Product
+        Vector operator*(Vector v); // Cross Product
+        double magnitude()
+        {
+                return sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2));
+        }
+        friend std::ostream& operator<<(std::ostream& out, const Vector& v);
+        // To output the Vector
 };
 
+
+};
 
 
 #endif

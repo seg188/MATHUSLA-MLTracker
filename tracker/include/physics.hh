@@ -421,6 +421,32 @@ namespace physics{
     	return scaler_multiply(0.50, sum) ;
     }
 
+    double cos_angle_from_ip(){
+
+        using namespace detector;
+
+        std::vector<double> ip_direction = {x0 - ip_x, y0 - ip_y, z0 - ip_z };
+        double ip_direction_mag = sqrt(pow(ip_direction[0], 2) + pow(ip_direction[1], 2) + pow(ip_direction[2], 2));
+        std::vector<double> track_direction = {vx, vy, vz};
+        double track_direction_mag = beta()*constants::c;
+
+        double cos_angle_w_ip = (ip_direction[0] * track_direction[0] + ip_direction[1] * track_direction[1] + ip_direction[2] * track_direction[2])/(track_direction_mag*ip_direction_mag);
+
+        return cos_angle_w_ip;
+
+    }
+
+    // calculate shortest dist. from point to line
+    double shortDistance(vector::Vector point = vector::Vector(detector::ip_x, detector::ip_y, detector::ip_z ))
+    {
+        //      std::cout << "222: " << line_point2 << " 111: " << line_point1 << "\n";
+        vector::Vector AB = vector::Vector(vx, vy, vz);
+        vector::Vector AC = point - vector::Vector(x0, y0, z0);
+        double area = vector::Vector(AB * AC).magnitude();
+        double CD = area / AB.magnitude();
+        return CD;
+    }
+    
 
 
 

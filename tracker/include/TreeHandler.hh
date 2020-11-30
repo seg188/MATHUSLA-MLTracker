@@ -208,6 +208,7 @@ public:
       	OutputTree->Branch("Track_expectedHitLayer", &track_expected_hit_layer);
       	OutputTree->Branch("Track_missingHitLayer", &track_missing_hit_layer);
         OutputTree->Branch("Track_hitIndices", &track_hit_indices);
+        OutputTree->Branch("track_ipDistance", &track_distance_to_ip);
 
       	OutputTree->Branch("Digi_numHits", &Digi_numHits);
       	OutputTree->Branch("Digi_time", &digi_hit_t);
@@ -325,6 +326,7 @@ public:
   	std::vector<int> track_expected_hit_layer;
   	std::vector<double> track_missing_hit_layer;
     std::vector<int> track_hit_indices;
+    std::vector<double> track_distance_to_ip;
   	Double_t numtracks;
 
   
@@ -395,6 +397,7 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
     track_vz_error.clear();
     track_hit_indices.clear();
     track_missing_hit_layer.clear();
+    track_distance_to_ip.clear();
 
 
     numtracks = track_list.size();
@@ -417,6 +420,8 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
       track_vx_error.push_back(tr->evx);
       track_vy_error.push_back(tr->evy);
       track_vz_error.push_back(tr->evz);
+      track_angle.push_back(tr->cos_angle_from_ip());
+      track_distance_to_ip.push_back(tr->shortDistance());
 
       for (auto missing_layer : tr->_missing_layers) track_missing_hit_layer.push_back( static_cast<double>(missing_layer) );
       track_missing_hit_layer.push_back(-1);

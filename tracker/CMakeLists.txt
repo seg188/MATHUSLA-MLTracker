@@ -23,6 +23,7 @@ add_library(tracker-lib SHARED
     src/TrackFinder.cc
     src/Digitizer.cc
     src/VertexFinder.cc
+    src/LinearAlgebra.cc
 )
 
 target_link_libraries(tracker-lib PUBLIC
