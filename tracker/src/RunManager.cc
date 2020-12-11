@@ -52,8 +52,9 @@ int RunManager::StartTracking(){
 		_tracker->FindTracks();
 		_tracker->CalculateMissingHits(_digitizer->_geometry);
 		_tracker->MergeTracks();
-		TH->ExportTracks(_tracker->tracks);
 		_tracker->CalculateMissingHits(_digitizer->_geometry);
+		TH->ExportTracks(_tracker->tracks);
+		
 
 
 		_vertexer->tracks = _tracker->tracks;

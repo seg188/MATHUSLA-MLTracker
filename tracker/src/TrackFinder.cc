@@ -210,7 +210,53 @@ void TrackFinder::MergeTracks(){
 
 			//at this point, we need to check if they have a certain number of missing hits
 
-			if (tr1->_missing_layers.size() < 3 or tr2->_missing_layers.size() < 3) continue;
+			//if (tr1->_missing_layers.size() < 3 or tr2->_missing_layers.size() < 3) continue;
+			std::vector<int> joint_missing_hit_layers = {};
+			for (int i = 0; i < tr1->_missing_layers.size(); i++){
+				auto layer = tr1->_missing_layers[i];
+				bool missing = true;
+				for (int j = 0; j < tr2->_missing_layers.size(); j++){
+
+					auto layer2 = tr2->_missing_layers[j];
+
+					if (layer2 == layer){
+						missing = false;
+						continue;
+					}
+				}
+
+				if (missing) joint_missing_hit_layers.push_back(layer);
+			}
+
+			for (int i = 0; i < tr2->_missing_layers.size(); i++){
+				auto layer = tr2->_missing_layers[i];
+				bool missing = true;
+				for (int j = 0; j < tr1->_missing_layers.size(); j++){
+
+					auto layer2 = tr2->_missing_layers[j];
+
+					if (layer2 == layer){
+						missing = false;
+						continue;
+					}
+				}
+
+				for (int j = 0; j < joint_missing_hit_layers.size(); j++){
+
+					auto layer2 = joint_missing_hit_layers[j];
+
+					if (layer2 == layer){
+						missing = false;
+						continue;
+					}
+				}
+
+				if (missing) joint_missing_hit_layers.push_back(layer);
+			}
+
+			if ( joint_missing_hit_layers.size() > 3 ) continue;
+
+
 
 			for (auto hit : tr2->hits) tr1->AddHit(hit);
 

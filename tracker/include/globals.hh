@@ -98,7 +98,7 @@ namespace cuts{
 
 	//merging
 	const double merge_cos_theta = 0.96; 
-	const double merge_distance = 20*units::cm;
+	const double merge_distance = 50*units::cm;
 
 	//cleaning step
 	const double chi2_add = 10.0;
