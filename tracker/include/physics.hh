@@ -99,6 +99,7 @@ namespace physics{
 		double x0, y0, z0;
 		double ex0, ey0, ez0;
 		double t0, et0;
+        int first_layer;
 		std::vector<int> hits_to_drop = {};
 		std::vector<int> _missing_layers;
 		TMatrixD cov_matrix;
@@ -294,8 +295,9 @@ namespace physics{
     		}
 
 	    	if (new_layer) layer_indices.push_back(layer_index);
-
     	}
+
+        std::sort(layer_indices.begin(), layer_indices.end());
 
     	return layer_indices;
     } //nlayers

@@ -198,8 +198,13 @@ void TrackFinder::MergeTracks(){
 			auto tr1 = tracks[first_track];
 			auto tr2 = tracks[second_track];
 
+			auto first_layer = tr1->layers()[0] < tr2->layers()[0] ? tr1->layers()[0] : tr2->layers()[0];
+
 			auto d1 = tr1->direction();
 			auto d2 = tr2->direction();
+
+			int tr1_missing_hits = 0;
+			int tr2_missing_hits = 0;
 
 
 			auto cos_theta = d1[0]*d2[0] + d1[1]*d2[1] + d1[2]*d2[2];
@@ -214,6 +219,9 @@ void TrackFinder::MergeTracks(){
 			std::vector<int> joint_missing_hit_layers = {};
 			for (int i = 0; i < tr1->_missing_layers.size(); i++){
 				auto layer = tr1->_missing_layers[i];
+				if (layer < first_layer) continue;
+				tr1_missing_hits++;
+				
 				bool missing = true;
 				for (int j = 0; j < tr2->_missing_layers.size(); j++){
 
@@ -230,6 +238,8 @@ void TrackFinder::MergeTracks(){
 
 			for (int i = 0; i < tr2->_missing_layers.size(); i++){
 				auto layer = tr2->_missing_layers[i];
+				if (layer < first_layer) continue;
+				tr2_missing_hits++;
 				bool missing = true;
 				for (int j = 0; j < tr1->_missing_layers.size(); j++){
 
@@ -254,7 +264,19 @@ void TrackFinder::MergeTracks(){
 				if (missing) joint_missing_hit_layers.push_back(layer);
 			}
 
-			if ( joint_missing_hit_layers.size() > 3 ) continue;
+			bool merge = false;
+			
+			if ( joint_missing_hit_layers.size() < 3  and  (tr1_missing_hits > 3 or tr2_missing_hits > 3) ) merge = true;
+
+			if (!merge) continue;
+
+			std::cout << "merging!!" << std::endl;
+
+			std::cout << "**first layer: " << tr1->layers()[0] << std::endl;
+			std::cout << "**first layer: " << tr2->layers()[0] << std::endl;
+			std::cout << "*****" << std::endl;
+			for (auto layer : joint_missing_hit_layers) std::cout << layer << std::endl;
+				std::cout << "*****" << std::endl;
 
 
 
