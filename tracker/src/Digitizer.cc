@@ -54,11 +54,12 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 			std::vector<physics::sim_hit*> unused_hits;
 
 			double t0 = (current_hits[0])->t;
+		
 			double e_sum = 0;
 
 			for (auto hit : current_hits){
 				if ( hit->t < t0 + cuts::digi_spacing ){
-					e_sum += hit->e; 
+					e_sum += hit->e;
 					used_hits.push_back(hit);
 				} else { unused_hits.push_back(hit);}
 			}
@@ -71,6 +72,8 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 				digis.push_back(current_digi);
 				current_hits = unused_hits;
 			}  else { current_hits.erase(current_hits.begin());}
+
+
 
 			
 		}
@@ -106,9 +109,16 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		double long_direction_sum = 0.0;
 		double t_sum = 0;
 
+		double px_sum = 0;
+		double py_sum = 0;
+		double pz_sum = 0;
+
 		for (auto hit : digi->hits){
 			e_sum += hit->e;
 			t_sum += hit->t * hit->e;
+			px_sum += hit->px * hit->e;
+			py_sum += hit->py * hit->e;
+			pz_sum += hit->pz * hit->e;
 
 			if (long_direction_index == 0){
 				long_direction_sum += hit->x * hit->e;
@@ -123,6 +133,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		digi->ey = uncertainty[1];
 		digi->ex = uncertainty[0];
 		digi->ez = uncertainty[2];
+		digi->SetParticleMomentum({px_sum/e_sum, py_sum/e_sum, pz_sum/e_sum });
 		//note: et is the same for all of them and is set in the digi class defintion 
 
 		if (long_direction_index == 0){

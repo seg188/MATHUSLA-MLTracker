@@ -353,6 +353,9 @@ void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
       digi_hit_y.clear();
       digi_hit_z.clear();
       digi_hit_e.clear();
+      digi_hit_px.clear();
+      digi_hit_py.clear();
+      digi_hit_pz.clear();
       Digi_numHits.clear();
 
       for (auto digi : digi_list){
@@ -362,6 +365,9 @@ void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
         digi_hit_y.push_back(digi->y);
         digi_hit_z.push_back(digi->z);
         digi_hit_e.push_back(digi->e);
+        digi_hit_px.push_back(digi->px);
+        digi_hit_py.push_back(digi->py);
+        digi_hit_pz.push_back(digi->pz);
         for (auto hit : digi->hits){
           digi_hit_indices.push_back(hit->index);
         }

@@ -27,12 +27,19 @@ namespace physics{
 			t = _t;
 			e = _e;
 		}
+        void SetMomentum(std::vector<double> momentum){
+            px = momentum[0];
+            py = momentum[1];
+            pz = momentum[2];
+        }
+        std::vector<double> GetParticleMomentum(){ return {px, py, pz}; }
 		std::size_t index;
 		double x;
 		double y;
 		double z;
 		double t;
 		double e;
+        double px, py, pz; //momentum of particle which made the hit
 		detID det_id;
 
 	
@@ -50,10 +57,16 @@ namespace physics{
 		double t;
 		double e;
 		double et = detector::time_resolution;
+        double px, py, pz; // momentum of particle which made the hit
 
 		std::vector<sim_hit*> hits;
 
 		void AddHit(sim_hit* hit){hits.push_back(hit);}
+        void SetParticleMomentum(std::vector<double> momentum){
+            px = momentum[0];
+            py = momentum[1];
+            pz = momentum[2];
+        }
 
 
 
