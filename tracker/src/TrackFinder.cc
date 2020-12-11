@@ -204,30 +204,13 @@ void TrackFinder::MergeTracks(){
 
 			auto cos_theta = d1[0]*d2[0] + d1[1]*d2[1] + d1[2]*d2[2];
 
-			if (cos_theta < cuts::merge_cos_theta) continue;
+			double distance = tr1->closest_approach(tr2);
 
-			//we see that the tracks are now very closely aligned. We now check how close they are to eachother, and ensure
-			//they were not very close in time
+			if (distance > cuts::merge_distance or cos_theta < cuts::merge_cos_theta) continue;
 
-			auto p2 = tr2->position(tr1->t0); //position of second track when the first track was created
-			auto p1 = tr1->position(tr2->t0); //sane for tr1
+			//at this point, we need to check if they have a certain number of missing hits
 
-			//one of these is empty, so we check both
-
-			double distance = 0.0;
-
-			if (p1.size() == 0){
-
-				distance = TMath::Sqrt((p2[0]-tr1->x0)*(p2[0]-tr1->x0) + (p2[1]-tr1->y0)*(p2[1]-tr1->y0) + (p2[2]-tr1->z0)*(p2[2]-tr1->z0));
-			
-			} else if (p2.size() == 0){
-
-				distance = TMath::Sqrt((p1[0]-tr2->x0)*(p1[0]-tr2->x0) + (p1[1]-tr2->y0)*(p1[1]-tr2->y0) + (p1[2]-tr2->z0)*(p1[2]-tr2->z0));
-			}
-
-			if (distance > cuts::merge_distance) continue;
-
-			//at this point, the tracks need to be merged
+			if (tr1->_missing_layers.size() < 3 or tr2->_missing_layers.size() < 3) continue;
 
 			for (auto hit : tr2->hits) tr1->AddHit(hit);
 
@@ -253,7 +236,9 @@ void TrackFinder::MergeTracks(){
 			if (del_index == k) add = false;
 		}
 
-		if (add) good_tracks.push_back(tracks[k]); 
+		if (add){
+			good_tracks.push_back(tracks[k]);
+		} 
 
 	}
 
