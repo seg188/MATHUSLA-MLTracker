@@ -266,7 +266,7 @@ void TrackFinder::MergeTracks(){
 
 			bool merge = false;
 			
-			if ( joint_missing_hit_layers.size() < 3  and  (tr1_missing_hits > 3 or tr2_missing_hits > 3) ) merge = true;
+			if ( joint_missing_hit_layers.size() < 3  and  (tr1_missing_hits > 2 or tr2_missing_hits > 2) ) merge = true;
 
 			if (!merge) continue;
 
