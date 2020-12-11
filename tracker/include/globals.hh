@@ -87,8 +87,8 @@ namespace cuts{
 	
 	//tracking
 	const double residual_drop = 12.0; //sigma
-	const double residual_add = 10.0; //sigma
-	const double track_chi2 = 5.0;
+	const double residual_add = 12.0; //sigma
+	const double track_chi2 = 7.0;
 	const int track_nlayers = 3;
 	const int nseed_hits = 4;
 	const double time_difference_drop = 12.0; //sigma
