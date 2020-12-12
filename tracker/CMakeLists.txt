@@ -22,6 +22,7 @@ add_library(tracker-lib SHARED
     src/RunManager.cc
     src/TrackFinder.cc
     src/Digitizer.cc
+    src/StudiesDoer.cc
     src/VertexFinder.cc
     src/LinearAlgebra.cc
 )

@@ -8,7 +8,7 @@
 class TreeHandler{
 public:
 	//PUT ALL INPUT AND OUTPUT BRANCHES HERE
-	TTree* OutputTree; 
+	TTree* OutputTree;
 	TTree* InputTree;
 	TFile* OutputFile;
 	int index = -1;
@@ -49,12 +49,15 @@ public:
   template<typename vertex>
   void ExportVertices(std::vector<vertex*>);
 
-	TreeHandler(TString input_tree_name, TString input_file_name, TString output_tree_name, TString outfile_name) 
+	void ExportStudies(std::vector<double>, int, std::vector<double>,
+		std::vector<double>, std::vector<double>);
+
+	TreeHandler(TString input_tree_name, TString input_file_name, TString output_tree_name, TString outfile_name)
 	{
 
 		auto InputFile = TFile::Open(input_file_name);
 		InputTree = (TTree*) InputFile->Get(input_tree_name);
-	
+
 		InputTree->SetBranchAddress("NumHits", &sim_numhits);
  		InputTree->SetBranchAddress("Hit_energy", &sim_hit_e);
  		InputTree->SetBranchAddress("Hit_time", &sim_hit_t);
@@ -109,7 +112,7 @@ public:
  		InputTree->SetBranchAddress("EXTRA_15", &sim_EXTRA_15);
 
  		NumEntries = InputTree->GetEntries();
- 		
+
  		OutputFile = new TFile(outfile_name, "RECREATE");
 		OutputTree = new TTree(output_tree_name, "MATHUSLA Tree");
 
@@ -221,7 +224,11 @@ public:
       	OutputTree->Branch("Digi_pz", &digi_hit_pz);
       	OutputTree->Branch("Digi_hitIndices", &digi_hit_indices);
 
-
+				OutputTree->Branch("Studies_muonicfraction", "std::vector<double>", &studies_muon, 32000, 99);
+				OutputTree->Branch("Studies_avgDepositedE", "std::vector<double>", &studies_avge, 32000, 99);
+				OutputTree->Branch("Studies_mu_avgDepositedE", "std::vector<double>", &studies_mu_avge, 32000, 99);
+				OutputTree->Branch("Studies_non_mu_avgDepositedE", "std::vector<double>", &studies_non_mu_avge, 32000, 99);
+				OutputTree->Branch("Studies_muonictrackcuts", &studies_muoncuts, "Studies_muonictrackcuts/D");
 	}
 
 
@@ -229,53 +236,53 @@ public:
 
  //___Make Sim Branches_________________________________________________________________________
  	Double_t sim_numhits;
- 	std::vector<double> *sim_hit_e = nullptr; 
- 	std::vector<double> *sim_hit_t = nullptr; 
- 	std::vector<double> *sim_hit_detId = nullptr; 
- 	std::vector<double> *sim_hit_particlePdgId = nullptr;  
- 	std::vector<double> *sim_hit_G4TrackId = nullptr; 
- 	std::vector<double> *sim_hit_G4ParentTrackId = nullptr;  
- 	std::vector<double> *sim_hit_x = nullptr;  
- 	std::vector<double> *sim_hit_y = nullptr;  
- 	std::vector<double> *sim_hit_z = nullptr;  
- 	std::vector<double> *sim_hit_particleEnergy = nullptr; 
- 	std::vector<double> *sim_hit_px = nullptr;  
+ 	std::vector<double> *sim_hit_e = nullptr;
+ 	std::vector<double> *sim_hit_t = nullptr;
+ 	std::vector<double> *sim_hit_detId = nullptr;
+ 	std::vector<double> *sim_hit_particlePdgId = nullptr;
+ 	std::vector<double> *sim_hit_G4TrackId = nullptr;
+ 	std::vector<double> *sim_hit_G4ParentTrackId = nullptr;
+ 	std::vector<double> *sim_hit_x = nullptr;
+ 	std::vector<double> *sim_hit_y = nullptr;
+ 	std::vector<double> *sim_hit_z = nullptr;
+ 	std::vector<double> *sim_hit_particleEnergy = nullptr;
+ 	std::vector<double> *sim_hit_px = nullptr;
  	std::vector<double> *sim_hit_py = nullptr;
- 	std::vector<double> *sim_hit_pz = nullptr;  
- 	std::vector<double> *sim_hit_weight = nullptr; 
+ 	std::vector<double> *sim_hit_pz = nullptr;
+ 	std::vector<double> *sim_hit_weight = nullptr;
  	Double_t sim_NumGenParticles;
- 	std::vector<double> *sim_GenParticle_index = nullptr;  
- 	std::vector<double> *sim_GenParticle_G4index = nullptr; 
- 	std::vector<double> *sim_GenParticle_pdgid = nullptr;  
- 	std::vector<double> *sim_GenParticle_status = nullptr;  
- 	std::vector<double> *sim_GenParticle_time = nullptr; 
- 	std::vector<double> *sim_GenParticle_x = nullptr;  
- 	std::vector<double> *sim_GenParticle_y = nullptr;  
- 	std::vector<double> *sim_GenParticle_z = nullptr; 
+ 	std::vector<double> *sim_GenParticle_index = nullptr;
+ 	std::vector<double> *sim_GenParticle_G4index = nullptr;
+ 	std::vector<double> *sim_GenParticle_pdgid = nullptr;
+ 	std::vector<double> *sim_GenParticle_status = nullptr;
+ 	std::vector<double> *sim_GenParticle_time = nullptr;
+ 	std::vector<double> *sim_GenParticle_x = nullptr;
+ 	std::vector<double> *sim_GenParticle_y = nullptr;
+ 	std::vector<double> *sim_GenParticle_z = nullptr;
  	std::vector<double> *sim_GenParticle_energy = nullptr;
- 	std::vector<double> *sim_GenParticle_px = nullptr;  
- 	std::vector<double> *sim_GenParticle_py = nullptr; 
- 	std::vector<double> *sim_GenParticle_pz = nullptr;  
- 	std::vector<double> *sim_GenParticle_mo1 = nullptr; 
- 	std::vector<double> *sim_GenParticle_mo2 = nullptr; 
- 	std::vector<double> *sim_GenParticle_dau1 = nullptr;  
- 	std::vector<double> *sim_GenParticle_dau2 = nullptr;  
- 	std::vector<double> *sim_GenParticle_mass = nullptr; 
- 	std::vector<double> *sim_GenParticle_pt = nullptr;  
- 	std::vector<double> *sim_GenParticle_eta = nullptr; 
- 	std::vector<double> *sim_GenParticle_phi = nullptr;  
- 	std::vector<double> *sim_COSMIC_EVENT_ID = nullptr;  
- 	std::vector<double> *sim_COSMIC_CORE_X = nullptr; 
- 	std::vector<double> *sim_COSMIC_CORE_Y = nullptr;  
- 	std::vector<double> *sim_COSMIC_GEN_PRIMARY_ENERGY = nullptr;  
- 	std::vector<double> *sim_COSMIC_GEN_THETA = nullptr;  
- 	std::vector<double> *sim_COSMIC_GEN_PHI = nullptr;  
+ 	std::vector<double> *sim_GenParticle_px = nullptr;
+ 	std::vector<double> *sim_GenParticle_py = nullptr;
+ 	std::vector<double> *sim_GenParticle_pz = nullptr;
+ 	std::vector<double> *sim_GenParticle_mo1 = nullptr;
+ 	std::vector<double> *sim_GenParticle_mo2 = nullptr;
+ 	std::vector<double> *sim_GenParticle_dau1 = nullptr;
+ 	std::vector<double> *sim_GenParticle_dau2 = nullptr;
+ 	std::vector<double> *sim_GenParticle_mass = nullptr;
+ 	std::vector<double> *sim_GenParticle_pt = nullptr;
+ 	std::vector<double> *sim_GenParticle_eta = nullptr;
+ 	std::vector<double> *sim_GenParticle_phi = nullptr;
+ 	std::vector<double> *sim_COSMIC_EVENT_ID = nullptr;
+ 	std::vector<double> *sim_COSMIC_CORE_X = nullptr;
+ 	std::vector<double> *sim_COSMIC_CORE_Y = nullptr;
+ 	std::vector<double> *sim_COSMIC_GEN_PRIMARY_ENERGY = nullptr;
+ 	std::vector<double> *sim_COSMIC_GEN_THETA = nullptr;
+ 	std::vector<double> *sim_COSMIC_GEN_PHI = nullptr;
  	std::vector<double> *sim_COSMIC_GEN_FIRST_HEIGHT = nullptr;
  	std::vector<double> *sim_COSMIC_GEN_ELECTRON_COUNT = nullptr;
- 	std::vector<double> *sim_COSMIC_GEN_MUON_COUNT = nullptr; 
- 	std::vector<double> *sim_COSMIC_GEN_HADRON_COUNT = nullptr;  
+ 	std::vector<double> *sim_COSMIC_GEN_MUON_COUNT = nullptr;
+ 	std::vector<double> *sim_COSMIC_GEN_HADRON_COUNT = nullptr;
  	std::vector<double> *sim_COSMIC_GEN_PRIMARY_ID = nullptr;
- 	std::vector<double> *sim_EXTRA_11 = nullptr; 
+ 	std::vector<double> *sim_EXTRA_11 = nullptr;
  	std::vector<double> *sim_EXTRA_12 = nullptr;
  	std::vector<double> *sim_EXTRA_13 = nullptr;
  	std::vector<double> *sim_EXTRA_14 = nullptr;
@@ -329,7 +336,7 @@ public:
     std::vector<double> track_distance_to_ip;
   	Double_t numtracks;
 
-  
+
   //___Make Digi Branches_____________________________________________________________________
   	std::vector<double> digi_hit_t;
   	std::vector<double> digi_hit_x;
@@ -342,6 +349,13 @@ public:
   	std::vector<int> digi_hit_indices;
   	std::vector<int> Digi_numHits;
 
+  //___Make Studies Branches_____________________________________________________________________
+	  std::vector<double> studies_muon;
+		std::vector<double> studies_avge;
+		std::vector<double> studies_mu_avge;
+		std::vector<double> studies_non_mu_avge;
+
+		Double_t studies_muoncuts;
 
 }; //class TreeHandler
 
@@ -459,9 +473,30 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
       vertex_x.push_back(v->x);
       vertex_y.push_back(v->y);
       vertex_z.push_back(v->z);
-      
+
     }
 
+}
+
+void TreeHandler::ExportStudies(std::vector<double> muons, int muoncuts, std::vector<double> avge,
+	 std::vector<double> mu_avge, std::vector<double> non_mu_avge){
+		studies_muon.clear();
+		studies_avge.clear();
+		studies_mu_avge.clear();
+		studies_non_mu_avge.clear();
+		for (auto mu : muons){
+			studies_muon.push_back(mu);
+		}
+		for (auto avg : avge){
+			studies_avge.push_back(avg);
+		}
+		for (auto e : mu_avge){
+			studies_mu_avge.push_back(e);
+		}
+		for (auto e : non_mu_avge){
+			studies_non_mu_avge.push_back(e);
+		}
+		studies_muoncuts = muoncuts;
 }
 
 #endif

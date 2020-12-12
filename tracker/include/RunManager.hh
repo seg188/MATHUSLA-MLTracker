@@ -3,6 +3,7 @@
 #include "TreeHandler.hh"
 #include "Digitizer.hh"
 #include "globals.hh"
+#include "StudiesDoer.hh"
 #include "VertexFinder.hh"
 
 
@@ -20,11 +21,12 @@ public:
 	void SetOutputFile(TString name){_OutputFile_Name = name;}
 
 	RunManager(){
-		
+
 		_digitizer = new Digitizer();
 		_tracker = new TrackFinder();
+		_studyer = new StudyDoer();
 		_vertexer = new VertexFinder();
-	} 
+	}
 
 	~RunManager(){
 		delete _digitizer;
@@ -41,6 +43,7 @@ private:
 
 	Digitizer* _digitizer;
 	TrackFinder* _tracker;
+	StudyDoer* _studyer;
 	VertexFinder* _vertexer;
 
 	//DATA IO NAMES AND FILES
