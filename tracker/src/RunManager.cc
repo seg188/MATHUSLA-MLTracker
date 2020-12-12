@@ -20,22 +20,10 @@ int RunManager::StartTracking(){
 		_vertexer->clear();
 
 		TH->LoadEvent(); //copying the data to the new tree, and loading all the variables, incrementing index
-
-
-		auto hits_x = *(TH->sim_hit_x);
-		auto hits_y = *(TH->sim_hit_y);
-		auto hits_z = *(TH->sim_hit_z);
-		auto hits_t = *(TH->sim_hit_t);
-		auto hits_e = *(TH->sim_hit_e);
-
-		auto hits_px = *(TH->sim_hit_px);
-		auto hits_py = *(TH->sim_hit_py);
-		auto hits_pz = *(TH->sim_hit_pz);
 		
 		//adding all hits of the tree into the digitizer
 		for (int n_hit = 0; n_hit < TH->sim_numhits; n_hit++){
-			physics::sim_hit* current = new physics::sim_hit(n_hit, hits_x[n_hit], hits_y[n_hit], hits_z[n_hit], hits_t[n_hit], hits_e[n_hit] );
-			current->SetMomentum({hits_px[n_hit], hits_py[n_hit], hits_pz[n_hit]}); 
+			physics::sim_hit* current = new physics::sim_hit(TH, n_hit);
 			_digitizer->AddHit(current);
 		}
 

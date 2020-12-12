@@ -128,6 +128,20 @@ public:
  		OutputTree->Branch("Hit_particlePy", "std::vector<double>", sim_hit_py);
 		OutputTree->Branch("Hit_particlePz", "std::vector<double>", sim_hit_pz);
 		OutputTree->Branch("Hit_weight", "std::vector<double>", sim_hit_weight);
+
+      OutputTree->Branch("Digi_numHits", &Digi_numHits);
+        OutputTree->Branch("Digi_time", &digi_hit_t);
+        OutputTree->Branch("Digi_x", &digi_hit_x);
+        OutputTree->Branch("Digi_y", &digi_hit_y);
+        OutputTree->Branch("Digi_z", &digi_hit_z);
+        OutputTree->Branch("Digi_energy", &digi_hit_e);
+        OutputTree->Branch("Digi_px", &digi_hit_px);
+        OutputTree->Branch("Digi_py", &digi_hit_py);
+        OutputTree->Branch("Digi_pz", &digi_hit_pz);
+        OutputTree->Branch("Digi_particle_energy", &digi_particle_energy);
+        OutputTree->Branch("Digi_pdg_id", &digi_pdg);
+        OutputTree->Branch("Digi_hitIndices", &digi_hit_indices);
+
  		OutputTree->Branch("NumGenParticles", &sim_NumGenParticles);
  		OutputTree->Branch("GenParticle_index", "std::vector<double>", sim_GenParticle_index);
  		OutputTree->Branch("GenParticle_G4index", "std::vector<double>", sim_GenParticle_G4index);
@@ -181,6 +195,7 @@ public:
       	OutputTree->Branch("Vertex_chi2PerNdof", &vertex_chi2_per_dof);
       	OutputTree->Branch("Vertex_chi2PValue", &vertex_chi2_p_value);
 
+
       	OutputTree->Branch("NumTracks", &numtracks, "NumTracks/D");
       	OutputTree->Branch("Track_numHits", &track_numHits);
       	OutputTree->Branch("Track_t0", &track_t);
@@ -210,16 +225,7 @@ public:
         OutputTree->Branch("Track_hitIndices", &track_hit_indices);
         OutputTree->Branch("track_ipDistance", &track_distance_to_ip);
 
-      	OutputTree->Branch("Digi_numHits", &Digi_numHits);
-      	OutputTree->Branch("Digi_time", &digi_hit_t);
-      	OutputTree->Branch("Digi_x", &digi_hit_x);
-      	OutputTree->Branch("Digi_y", &digi_hit_y);
-      	OutputTree->Branch("Digi_z", &digi_hit_z);
-      	OutputTree->Branch("Digi_energy", &digi_hit_e);
-      	OutputTree->Branch("Digi_px", &digi_hit_px);
-      	OutputTree->Branch("Digi_py", &digi_hit_py);
-      	OutputTree->Branch("Digi_pz", &digi_hit_pz);
-      	OutputTree->Branch("Digi_hitIndices", &digi_hit_indices);
+
 
 
 	}
@@ -339,6 +345,8 @@ public:
   	std::vector<double> digi_hit_px;
   	std::vector<double> digi_hit_py;
   	std::vector<double> digi_hit_pz;
+    std::vector<double> digi_particle_energy;
+    std::vector<int> digi_pdg;
   	std::vector<int> digi_hit_indices;
   	std::vector<int> Digi_numHits;
 
@@ -357,6 +365,8 @@ void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
       digi_hit_py.clear();
       digi_hit_pz.clear();
       Digi_numHits.clear();
+      digi_particle_energy.clear();
+      digi_pdg.clear();
 
       for (auto digi : digi_list){
         Digi_numHits.push_back(digi->hits.size());
@@ -368,6 +378,8 @@ void TreeHandler::ExportDigis(std::vector<digi_hit*> digi_list){
         digi_hit_px.push_back(digi->px);
         digi_hit_py.push_back(digi->py);
         digi_hit_pz.push_back(digi->pz);
+        digi_particle_energy.push_back(digi->particle_energy);
+        digi_pdg.push_back(digi->pdg);
         for (auto hit : digi->hits){
           digi_hit_indices.push_back(hit->index);
         }

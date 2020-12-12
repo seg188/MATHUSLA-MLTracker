@@ -19,6 +19,7 @@ public:
 	void SetInputFile(TString name){_InputFile_Name = name;}
 	void SetOutputFile(TString name){_OutputFile_Name = name;}
 
+
 	RunManager(){
 		
 		_digitizer = new Digitizer();

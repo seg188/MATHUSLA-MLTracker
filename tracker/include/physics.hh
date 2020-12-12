@@ -18,6 +18,23 @@ namespace physics{
 	//defines detector hit
 	class sim_hit{
 	public:
+        template <typename tree_manager>
+        sim_hit(tree_manager* tm, int n){
+            index = n;
+            x = (*(tm->sim_hit_x))[n];
+            y = (*(tm->sim_hit_y))[n];
+            z = (*(tm->sim_hit_z))[n];
+            e = (*(tm->sim_hit_e))[n];
+            t = (*(tm->sim_hit_t))[n];
+            px = (*(tm->sim_hit_px))[n];
+            py = (*(tm->sim_hit_py))[n];
+            pz = (*(tm->sim_hit_pz))[n];
+            particle_energy = (*(tm->sim_hit_particleEnergy))[n];
+            pdg_id = (*(tm->sim_hit_particlePdgId))[0];
+            track_id = (*(tm->sim_hit_G4TrackId))[0];
+            particle_parent_trackid = (*(tm->sim_hit_G4ParentTrackId))[0];
+
+        }
 
 		sim_hit(int _index, double _x, double _y, double _z, double _t, double _e){
 			index = _index;
@@ -27,6 +44,7 @@ namespace physics{
 			t = _t;
 			e = _e;
 		}
+
         void SetMomentum(std::vector<double> momentum){
             px = momentum[0];
             py = momentum[1];
@@ -40,6 +58,10 @@ namespace physics{
 		double t;
 		double e;
         double px, py, pz; //momentum of particle which made the hit
+        int track_id;
+        int pdg_id;
+        double particle_energy;
+        double particle_parent_trackid;
 		detID det_id;
 
 	
@@ -58,16 +80,26 @@ namespace physics{
 		double e;
 		double et = detector::time_resolution;
         double px, py, pz; // momentum of particle which made the hit
+        double particle_mass;
+        double particle_energy;
+        int pdg;
+        long int min_track_id = 9999999999;
+
 
 		std::vector<sim_hit*> hits;
 
-		void AddHit(sim_hit* hit){hits.push_back(hit);}
-        void SetParticleMomentum(std::vector<double> momentum){
-            px = momentum[0];
-            py = momentum[1];
-            pz = momentum[2];
+		void AddHit(sim_hit* hit){
+            hits.push_back(hit);
+            if (hit->track_id < min_track_id){
+                min_track_id = hit->track_id;
+                pdg = hit->pdg_id;
+                particle_energy = hit->particle_energy;
+                px = hit->px;
+                py = hit->py;
+                pz = hit->pz;
+            }
         }
-
+ 
 
 
 	}; //digi

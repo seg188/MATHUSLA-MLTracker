@@ -3,7 +3,7 @@ import physics
 import ROOT as root 
 
 
-tracking_file_name = "../build/statistics0.root" 
+tracking_file_name = "../build/h/statistics0.root" 
 tracking_file = root.TFile.Open(tracking_file_name)
 tree = tracking_file.Get("integral_tree")
 
@@ -13,13 +13,26 @@ for event_number in range(int(tree.GetEntries())):
 	
 	tree.GetEntry(event_number)
 	#we can add some cuts here if we would like
+	if (tree.NumTracks < 3):
+		continue
+
 	print(event_number)
-	
-	
+
+	_buffer = []
+	for val in tree.Track_missingHitLayer:
+		if not val == -1:
+			_buffer.append(val)
+		else:
+			print(_buffer)
+			_buffer = []
+	print(_buffer)
+
 	event_display = visualization.Display()
 
-	for k in range(int(tree.Digi_numHits)):
+	for k in range(int(len(tree.Digi_x))):
 		event_display.AddPoint( [tree.Digi_x[k], tree.Digi_y[k], tree.Digi_z[k], tree.Digi_time[k]] )
+
+#	event_display.AddPoint( [tree.Vertex_x[0], tree.Vertex_y[0], tree.Vertex_z[0], tree.Vertex_t[0]], "*" )
 
 
 	for k in range(int(tree.NumTracks)):
