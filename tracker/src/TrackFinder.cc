@@ -270,15 +270,6 @@ void TrackFinder::MergeTracks(){
 
 			if (!merge) continue;
 
-			std::cout << "merging!!" << std::endl;
-
-			std::cout << "**first layer: " << tr1->layers()[0] << std::endl;
-			std::cout << "**first layer: " << tr2->layers()[0] << std::endl;
-			std::cout << "*****" << std::endl;
-			for (auto layer : joint_missing_hit_layers) std::cout << layer << std::endl;
-				std::cout << "*****" << std::endl;
-
-
 
 			for (auto hit : tr2->hits) tr1->AddHit(hit);
 
@@ -395,6 +386,8 @@ void TrackFinder::CalculateMissingHits(Geometry* geo){
 
 			layer_n++;
 		}
+
+		track->SetExpectedLayers(expected_layers);
 
 		std::vector<int> missing_layers;
 

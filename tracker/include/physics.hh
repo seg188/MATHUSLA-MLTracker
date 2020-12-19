@@ -134,6 +134,8 @@ namespace physics{
         int first_layer;
 		std::vector<int> hits_to_drop = {};
 		std::vector<int> _missing_layers;
+        std::vector<int> expected_layers;
+        void SetExpectedLayers(std::vector<int> lyrs){expected_layers = lyrs;}
 		TMatrixD cov_matrix;
 
 		template<typename matrix>

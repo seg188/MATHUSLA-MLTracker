@@ -415,7 +415,7 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
     track_hit_indices.clear();
     track_missing_hit_layer.clear();
     track_distance_to_ip.clear();
-
+    track_expected_hit_layer.clear();
 
     numtracks = track_list.size();
     for (auto tr : track_list){
@@ -442,6 +442,9 @@ void TreeHandler::ExportTracks(std::vector<Track*> track_list){
 
       for (auto missing_layer : tr->_missing_layers) track_missing_hit_layer.push_back( static_cast<double>(missing_layer) );
       track_missing_hit_layer.push_back(-1);
+
+      for (auto exp_layer : tr->expected_layers) track_expected_hit_layer.push_back( static_cast<double>(exp_layer) );
+      track_expected_hit_layer.push_back(-1);
 
       for (auto hit : tr->hits) { track_hit_indices.push_back(hit->index); }
       track_hit_indices.push_back(-1.);
