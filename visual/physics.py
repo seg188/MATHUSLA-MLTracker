@@ -47,6 +47,23 @@ class Track:
 
 		return x, y, z, t
 
+	def untimed_points(self):
+		x, y, z, t = [], [], [], []
+		_x, _y, _z, _t = self.x0, self.y0, self.z0, 0.0
+
+		time_spacing = 0.2 #ns
+		
+		while inside_box(_x, _y, _z):
+			x.append(_x)
+			y.append(_y)
+			z.append(_z)
+			t.append(_t)
+
+			_x += self.vx*time_spacing
+			_y += self.vy*time_spacing
+			_z += self.vz*time_spacing
+
+		return x, y, z, t
 
 
 

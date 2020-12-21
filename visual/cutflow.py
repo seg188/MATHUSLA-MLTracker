@@ -5,10 +5,19 @@ import ROOT as root
 LAYERS_Y=[[6001.0, 6004.0],  [6104.0, 6107.0]]
  												 	
 
+box_lims = [[-5000., 5000.], [5900.0, 9000.0], [6900., 17100.]]
+
+def inside_box(x, y, z):
+	if box_lims[0][0] < x and box_lims[0][1] > x:
+		if box_lims[1][0] < y and box_lims[1][1] > y:
+			if box_lims[2][0] < z and box_lims[2][1] > z:
+				return True
+
+	return False
+
 tracking1_file_name = "../tracker_files/w/statistics0.root" 
-tracking2_file_name = "../tracker_files/h2/statistics0.root"
-tracking3_file_name = "../tracker_files/h5/statistics0.root" 
-tracking4_file_name = "../tracker_files/h10/statistics0.root"  
+tracking2_file_name = "../tracker_files/w/statistics1.root"
+
 
 
 total_passed_cuts = 0
@@ -22,9 +31,11 @@ def in_layer(y_val):
 
 	return 99
 
+store = [0, 0, 0, 0, 0, 0, 0]
+real_total = 0.0
 
-files = [tracking1_file_name, tracking2_file_name, tracking3_file_name, tracking4_file_name]
-plots = [root.TH1D("file1", "cutflow", 7, 0.5, 7.5), root.TH1D("file2", "cutflow", 7, 0.5, 7.5), root.TH1D("file3", "cutflow", 7, 0.5, 7.5), root.TH1D("file4", "cutflow", 7, 0.5, 7.5)]
+files = [tracking1_file_name, tracking2_file_name]#], tracking3_file_name, tracking4_file_name]
+plots = [root.TH1D("file1", "cutflow", 6, 0.5, 6.5), root.TH1D("file2", "cutflow", 6, 0.5, 6.5), root.TH1D("file3", "cutflow", 6, 0.5, 6.5), root.TH1D("file4", "cutflow", 5, 0.5, 5.5)]
 
 c1 = root.TCanvas("c1")
 for i in range(len(files)):
@@ -37,35 +48,22 @@ for i in range(len(files)):
 	total = 0.0
 	for event_number in range(int(tree.GetEntries())):
 		total += 1.0
-		passed[0] += 1.0
+		real_total += 1.
+		passed[0] += 1
 		tree.GetEntry(event_number)
-	
+
 	#we can add some cuts here if we would like
-		if not (tree.NumVertices == 1):
+		if (tree.NumTracks < 2):
 			continue
 
 		passed[1] += 1
 
-		if (tree.NumTracks < 2):
+
+		if not (tree.NumVertices >= 1):
 			continue
+
 
 		passed[2] += 1
-
-		close_to_ip = False
-		for n in range(len(tree.track_ipDistance)):
-			if (tree.track_ipDistance[n] < 320.):
-				close_to_ip = True
-
-		if close_to_ip:
-			continue
-
-		passed[3] += 1
-
-		if not (tree.Vertex_numTracks[0] == 2):
-			continue
-
-		passed[4] += 1
-
 
 		bottom_layer = False
 		for hitn in range(len(tree.Digi_y)):
@@ -73,30 +71,63 @@ for i in range(len(files)):
 			if y_ind < 2:
 				bottom_layer = True
 				continue
-		
 
 		if bottom_layer:
 			continue
 
-		passed[5] += 1
+		passed[3] += 1
 
+		## expected hits in bottom layer!!!
+		## 
+		
+		close_to_ip = False
+		for n in range(len(tree.track_ipDistance)):
+			if (tree.track_ipDistance[n] < 350.):
+				close_to_ip = True
+
+		if close_to_ip:
+			continue
+
+		passed[4] += 1
+		
+
+		expect_hit = False
+		for trn in range(len(tree.Track_x0)):
+			dy = 6510.0 - tree.Track_y0[trn] 
+			x1 = tree.Track_velX[trn]*dy/tree.Track_velY[trn] + tree.Track_x0[trn]
+			z1 = tree.Track_velZ[trn]*dy/tree.Track_velY[trn] + tree.Track_z0[trn]
+			if inside_box(x1, 6107.0, z1):
+				expect_hit = True
+				continue
+
+		if not expect_hit:
+			continue
+
+
+		passed[5] += 1
+	
+
+		
+
+	
 
 
 	#if tree.Vertex_cosOpeningAngle[0] < 0.93:
 	#	continue
 
-		new_missing_hits = []
-		for val in tree.Track_missingHitLayer:
-			if val > 1:
-				new_missing_hits.append(val)
-
-
-		if len(new_missing_hits) > 4:
-			continue
-
-		passed[6] += 1
-
+	print(file)
+	print(total)
+	print(passed)
+	print([x/total for x in passed])
 	
+#	print("********")
+#	print(real_total)
+
+	for kk in range(len(passed)):
+		store[kk] += passed[kk]
+
+#	print([x/real_total for x in store])
+
 	for j in range(len(passed)):
 		plots[i].SetBinContent(j+1, float(passed[j])/total)
 	plots[i].SetLineColor(50+2*i)
@@ -110,9 +141,8 @@ for i in range(len(files)):
 
 legend = root.TLegend(0.65, 0.75, 0.98, 0.95)
 legend.AddEntry(plots[0], "W sample")
-legend.AddEntry(plots[1], "h2 sample")
-legend.AddEntry(plots[2], "h5 sample")
-legend.AddEntry(plots[3], "h10 sample")
+legend.AddEntry(plots[1], "H->aa sample")
+
 legend.Draw("SAME")
 c1.SetLogy()
 c1.Print("cutflow.png", ".png")

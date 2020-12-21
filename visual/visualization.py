@@ -13,7 +13,10 @@ output_dir = "../plots/"
 
 def scatter3d(xs,ys,zs, cs, arg_s, styles, title, write_name,  points=[], colorsMap='jet'):
     cm = plt.get_cmap(colorsMap)
-    cNorm = matplotlib.colors.Normalize(vmin=min(cs[0]), vmax=max(cs[0]))
+    total_c =[]
+    for c in cs:
+    	total_c += c
+    cNorm = matplotlib.colors.Normalize(vmin=min(total_c), vmax=max(total_c))
     scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=cm)
     fig = plt.figure()
     ax = Axes3D(fig)
@@ -88,6 +91,63 @@ class Display:
 			_y.append(self.points[point_n][1])
 			_z.append(self.points[point_n][2])
 			_t.append(self.points[point_n][3])
+
+		draw_s.append(20)
+		draw_style.append(self.point_style)
+
+		draw_x.append(_x)
+		draw_y.append(_y)
+		draw_z.append(_z)
+		draw_t.append(_t)
+
+		_x, _y, _z, _t = [], [], [], []
+
+		for point_n in range(len(self.special_points)):
+			
+			_x.append(self.special_points[point_n][0])
+			_y.append(self.special_points[point_n][1])
+			_z.append(self.special_points[point_n][2])
+			_t.append(self.special_points[point_n][3])
+
+		draw_s.append(20)
+		draw_style.append(self.special_point_style)
+
+		draw_x.append(_x)
+		draw_y.append(_y)
+		draw_z.append(_z)
+		draw_t.append(_t)
+
+		scatter3d( draw_x, draw_y, draw_z, draw_t, draw_s, draw_style, title, name)
+
+	def Draw_NoTime(self, title, name):
+		if len(self.points) == 0 and len(self.tracks) == 0:
+			return
+
+		draw_x = []
+		draw_y = []
+		draw_z = []
+		draw_t = []
+		draw_s = []
+		draw_style = []
+		
+		for track_n in range(len(self.tracks)):
+			tx, ty, tz, tt = self.tracks[track_n].untimed_points()
+			draw_x.append(tx)
+			draw_y.append(ty)
+			draw_z.append(tz)
+			draw_t.append(tt)
+			draw_s.append(1) 
+			draw_style.append(".") 
+
+		_x, _y, _z, _t = [], [], [], []
+
+		for point_n in range(len(self.points)):
+			
+			_x.append(self.points[point_n][0])
+			_y.append(self.points[point_n][1])
+			_z.append(self.points[point_n][2])
+			_t.append(self.points[point_n][3])
+	
 
 		draw_s.append(20)
 		draw_style.append(self.point_style)
