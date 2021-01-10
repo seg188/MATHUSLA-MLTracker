@@ -11,13 +11,14 @@
 #ifndef PHYSICS_DEFINE
 #define PHYSICS_DEFINE
 
+using Vector = vector::Vector;
 
 namespace physics{
-
 	
 	//defines detector hit
 	class sim_hit{
 	public:
+
         template <typename tree_manager>
         sim_hit(tree_manager* tm, int n){
             index = n;
@@ -33,24 +34,19 @@ namespace physics{
             pdg_id = (*(tm->sim_hit_particlePdgId))[0];
             track_id = (*(tm->sim_hit_G4TrackId))[0];
             particle_parent_trackid = (*(tm->sim_hit_G4ParentTrackId))[0];
-
         }
 
-		sim_hit(int _index, double _x, double _y, double _z, double _t, double _e){
-			index = _index;
-			x = _x;
-			y = _y;
-			z = _z;
-			t = _t;
-			e = _e;
+		sim_hit(int index, double x, double y, double z, double t, double e){
+			this->index = index;
+			this->x = x;
+			this->y = y;
+			this->z = z;
+			this->t = t;
+			this->e = e;
 		}
 
-        void SetMomentum(std::vector<double> momentum){
-            px = momentum[0];
-            py = momentum[1];
-            pz = momentum[2];
-        }
-        std::vector<double> GetParticleMomentum(){ return {px, py, pz}; }
+        void SetMomentum(Vector momentum){px = momentum.x; py = momentum.y; pz = momentum.z;}
+        Vector GetParticleMomentum(){ return Vector(px, py, pz); }
 		std::size_t index;
 		double x;
 		double y;
@@ -85,6 +81,7 @@ namespace physics{
         int pdg;
         long int min_track_id = 9999999999;
 
+        Vector PosVector(){ return Vector(x, y, z); }
 
 		std::vector<sim_hit*> hits;
 
@@ -124,6 +121,7 @@ namespace physics{
 
 	class track{
 	public:
+        track(){}
 		std::size_t index;
 		double vx, evx;
 		double vy, evy;
@@ -135,374 +133,184 @@ namespace physics{
 		std::vector<int> hits_to_drop = {};
 		std::vector<int> _missing_layers;
         std::vector<int> expected_layers;
-        void SetExpectedLayers(std::vector<int> lyrs){expected_layers = lyrs;}
-		TMatrixD cov_matrix;
+        TMatrixD cov_matrix;
 
-		template<typename matrix>
-		void CovMatrix(matrix mat, int size){
-
-			cov_matrix.ResizeTo(size, size);
-			for (int i = 0; i < size; i++){
-				for (int j = i; j < size; j++){
-				
-					cov_matrix[i][j] = mat[i][j];
-					cov_matrix[j][i] = cov_matrix[i][j];
-				}
-			}	
-
-		}
-
-		void missing_layers(std::vector<int> layers){_missing_layers = layers; };
-
-		void Refit();
-
+        
+        //list of component hits
 		std::vector<digi_hit*> hits;
+
+        //add hit to list of hits
+        //DOES NOT DO ANY RE-FITTING until used by TrackFitter
 		void AddHit(physics::digi_hit* hit){ hits.push_back(hit); }
-		track(){}
-		track(std::vector<double> params, std::vector<double> par_errors){
-			x0 = params[0]; ex0 = par_errors[0];
-			y0 = params[1]; ey0 = par_errors[1];
-			z0 = params[2]; ez0 = par_errors[2];
-			vx = params[3]; evx = par_errors[3];
-			vy = params[4]; evy = par_errors[4];
-			vz = params[5]; evz = par_errors[5];
-			if (params.size() == 7) {
-				t0 = params[6];
-				et0 = params[6];
-			}
-
-		}
-
-		std::vector<double> parameters(){
-			std::vector<double> p = { x0, y0, z0, vx, vy, vz };
-			return p;
-		}
-
-		void parameters(std::vector<double> pars){
-			x0 = pars[0];
-			y0 = pars[1];
-			z0 = pars[2];
-			vx = pars[3];
-			vy = pars[4];
-			vz = pars[5];
-			if (pars.size() == 7) t0 = pars[6];
-		}
-
-		void par_errors(std::vector<double> epars){
-			ex0 = epars[0];
-			ey0 = epars[1];
-			ez0 = epars[2];
-			evx = epars[3];
-			evy = epars[4];
-			evz = epars[5];
-			if (epars.size() == 7) et0 = epars[6];
-		}
-
-		double chi2(){
-			double chi_2 = 0.0;
-			double t;
-			double res_t, res_x, res_z;
-			for (auto hit : hits){
-				t = (hit->y - y0)/vy;
-				
-				res_x = ((x0 + vx*t) - hit->x)/hit->ex;
-				res_z = ((z0 + vz*t) - hit->z)/hit->ez;
-
-			//	res_t = ( (t0 + t) - hit->t)/hit->et;
-
-				chi_2 +=  res_x*res_x + res_z*res_z;
-
-			}
-
-			return chi_2;
-		}
-
-      double chi2_per_dof(){
-      	int n_track_params = 6;
-      	int ndof = (4.0*hits.size() - n_track_params );
-      	if (ndof < 1) ndof = 1;
-
-      	return chi2()/ndof; //FIX ME
-      }
-
-      double beta(){
-      	return TMath::Sqrt( vx*vx + vy*vy + vz*vz  )/constants::c;
-      }
-
-      double beta_err(){
-      	return 2.0*TMath::Sqrt( vx*vx*evx*evx +  vy*vy*evy*evy + vz*vz*evz*evz)/constants::c;
-      }
-
-    template<typename ahit>
-    double untimed_residual(ahit* hit){
-    	
-    	double hit_y = hit->y;
-
-    	double track_delta_t = (hit_y - y0)/vy;
-
-    	double track_x = x0 + vx*track_delta_t;
-    	double track_z = z0 + vz*track_delta_t;
-
-    	double ex2 = (hit->ex)*(hit->ex);
-    	double ez2 = (hit->ez)*(hit->ez);
-
-    	double res2 = (track_x - hit->x)*(track_x - hit->x)/ex2 + (track_z - hit->z)*(track_z - hit->z)/ez2;
-    	return TMath::Sqrt(  res2  );
-    }
-
-    template<typename ahit>
-    double distance_to_hit(ahit* hit){
-
-    	double hit_y = hit->y;
-
-    	double track_delta_t = (hit_y - y0)/vy;
-
-    	double track_x = x0 + vx*track_delta_t;
-    	double track_z = z0 + vz*track_delta_t;
 
-    	double res2 = (track_x - hit->x)*(track_x - hit->x) + (track_z - hit->z)*(track_z - hit->z);
-    	return TMath::Sqrt(  res2  );
+        void SetExpectedLayers(std::vector<int> lyrs){expected_layers = lyrs;}
+        
+        void missing_layers(std::vector<int> layers){_missing_layers = layers; };
 
+        //sets covariance matrix [arg mat] to more friendly form defined by the arg size 
+        template<typename matrix>
+        void CovMatrix(matrix mat, int size);
 
-    }
+        //constructor to automatically set the parameters and associated errors in declaration
+        track(std::vector<double> params, std::vector<double> par_errors);
+        
+        //returns track parameters in vector (when called with no arguments)
+        //see poorly named overload below
+        std::vector<double> parameters();
+         
+        //overload to SET track parameters to arg pars
+        void parameters(std::vector<double> pars);
 
-    template<typename ahit>
-    double residual(ahit* hit){
-    	
-    	double track_delta_t = hit->t - t0;
+        //SETS the paramter errros to arg epars
+        void par_errors(std::vector<double> epars);
+            
+        //chi2 calculated for current parameters using all the component hits
+        double chi2();
 
-    	double track_x = x0 + vx*track_delta_t;
-    	double track_y = y0 + vz*track_delta_t;
-    	double track_z = z0 + vz*track_delta_t;
+        //do I really have to comment what this is.. look at the name of the function
+        double chi2_per_dof();
 
-    	double ex2 = (hit->ex)*(hit->ex);
-    	double ey2 = (hit->ey)*(hit->ey);
-    	double ez2 = (hit->ez)*(hit->ez);
+        //track beta
+        double beta();
 
-    	double res2 = (track_x - hit->x)*(track_x - hit->x)/ex2 + (track_y - hit->y)*(track_y - hit->y)/ey2 + (track_z - hit->z)*(track_z - hit->z)/ez2;
-    	return TMath::Sqrt(  res2  );
-    }
+        //track beta error
+        double beta_err();
 
-    template<typename ahit>
-    double time_difference(ahit* hit){
-    	
-    	//calculate the time the track particle would enter layer
+        //2D residual (# std deviations in a given detector plane, ignores time)
+        template<typename ahit>
+        double untimed_residual(ahit* hit);
 
-    	double t_track = (hit->y - y0)/vy;
-    	double t_hit = hit->t - t0;
- 	
-    	return TMath::Abs(t_track - t_hit)/hit->et;
-    }
+        //2D distance to hit in a given detector element (ignores time)
+        template<typename ahit>
+        double distance_to_hit(ahit* hit);
 
+        //full 3D spatial residual at time of hit
+        template<typename ahit>
+        double residual(ahit* hit);
 
-    int nlayers(){
-    	//returns the number of layers that a track has hits in
-    	std::vector<int> layer_indices;
-    	for (auto hit : hits){
-    		bool new_layer = true;
-    		int layer_index = hit->det_id.layerIndex;
-    		for (int layer_n : layer_indices){
-    			if (layer_n == layer_index){
-    				new_layer = false;
-    				break;
-    			} 
-    		}
+        //1D time difference using fixed y-layer
+        template<typename ahit>
+        double time_difference(ahit* hit);
 
-	    	if (new_layer) layer_indices.push_back(layer_index);
+        //1D time residual using fixed y-layer
+        template<typename ahit>
+        double time_residual(ahit* hit);
 
-    	}
 
-    	return layer_indices.size();
-    } //nlayers
+        //returns sorted std::vector of indices of layers in which a track has hits
+        std::vector<int> layers();
 
-    std::vector<int> layers(){
-    	//returns  layers that a track has hits in
-    	std::vector<int> layer_indices;
-    	for (auto hit : hits){
-    		bool new_layer = true;
-    		int layer_index = hit->det_id.layerIndex;
-    		for (int layer_n : layer_indices){
-    			if (layer_n == layer_index){
-    				new_layer = false;
-    				break;
-    			} 
-    		}
+         //returns the number of distinct layers in which a track has hits
+        int nlayers();
 
-	    	if (new_layer) layer_indices.push_back(layer_index);
-    	}
+        //gives 3D spatial position of a track where it would pass through a layer at the arg y
+        Vector Position_at_Y(double y);
 
-        std::sort(layer_indices.begin(), layer_indices.end());
+        //gives velocity vector
+        Vector VelVector();
 
-    	return layer_indices;
-    } //nlayers
+        //unit vector in direction of track
+        Vector direction();
 
-    void AddHitToDrop(int index) { hits_to_drop.push_back(index); } 
-    
-    void DropHits(){
-    	
-    	for (int _index : hits_to_drop){
+        //returns x0, y0, z0 as 3-vector
+        Vector P0Vector();
 
-    		int hits_vector_index = 0;
+        //returns track position at GLOBAL time t
+        Vector position(double t);
 
-    		for (auto hit : hits){
-    			if (hit->index == _index){
-    				hits.erase(hits.begin() + hits_vector_index);
-    				break;
-    			} 
+        //gives distance between point and the track at GLOBAL time t
+        double distance_to(Vector point, double t);
 
-    			hits_vector_index++;
-    		}
+        //error in above distance_to calculation
+        double err_distance_to(Vector point, double t);
 
-    	}
-    }
+        //gives full spatial residual for track to a vertex with arg params
+        double vertex_residual(std::vector<double> params);
 
+        //timed distance of closest approach
+        double closest_approach(track* tr2);
 
-    std::vector<double> Position_at_Y(double y){
+        //closest approach of two tracks position of closest approach
+        Vector closest_approach_midpoint(track* tr2);
 
-    	double delta_t = (y-y0)/vy;
+        //angle the track direction forms with straight line from ip to initial point
+        double cos_angle_from_ip();
 
-    	//if (delta_t < 0) return {0.,0.,0.};
-
-    	return { x0 + delta_t*vx, y, z0 + delta_t*vz    };
-    }
-
-    std::vector<double> direction(){ 
-
-    	double velocity = beta()*constants::c;
-    	return { vx/velocity, vy/velocity, vz/velocity };
-    }
-
-
-    std::vector<double> position(double t){ //global time t
-
-    
-    	double dt = t-t0;
-
-    	return {x0 + vx*dt, y0 + vy*dt, z0 + vz*dt};
-    }
-
-
-    double distance_to(double x, double y, double z, double t){
-
-    	auto pos = position(t);
-
-    	return TMath::Sqrt( (pos[0] - x)*(pos[0] - x) + (pos[1] - y)*(pos[1] - y) + (pos[2] - z)*(pos[2] - z)     );
-
-    }
-
-    double err_distance_to(double x, double y, double z, double t){
-
-    	std::vector<double> derivatives = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0}; //partial derivates of position_at
-    	//note, we don't include the derivative with respect to y. y0 is fixed, and so it isnt included in the covariance matrix
-    	double dist = distance_to(x, y, z, t);
-
-    	derivatives[0] = ((t-t0)*vx - x + x0)/dist;
-    	//derivatives[1] = detector::scintillator_height;
-    	derivatives[1] = ((t-t0)*vz - z + z0)/dist;
-    	derivatives[2] = (t-t0)*((t-t0)*vx - x + x0)/dist;
-    	derivatives[3] = (t-t0)*((t-t0)*vy - y + y0)/dist;
-    	derivatives[4] = (t-t0)*((t-t0)*vz - z + z0)/dist;
-    	derivatives[5] = -1.0*(vx*((t-t0)*vx - x + x0) + vy*((t-t0)*vy - y + y0) + vz*((t-t0)*vz - z + z0))/dist;
-
-    	//now we calculate the actual error
-    	double error = 0.0;
-
-    	for (int i = 0; i < derivatives.size(); i++){
-    		for (int j = 0; j < derivatives.size(); j++){
-    			
-    			error += derivatives[i]*derivatives[j]*cov_matrix[i][j];
-    			
-    		}
-    	}
-
-    	return TMath::Sqrt(error);
-    }
-
-    double vertex_residual(std::vector<double> params){
-
-    	double x = params[0];
-    	double y = params[1];
-    	double z = params[2];
-    	double t = params[3];
-
-    	return distance_to(x, y, z, t)/err_distance_to(x, y, z, t);
-    }
-
-    double closest_approach(track* tr2){
-
-    	using namespace vector;
-
-        if (tr2->index == index) return 0.00;
-
-    	std::vector<double> rel_v = { tr2->vx - vx, tr2->vy - vy, tr2->vz - vz  };
-
-    	double rel_v2 = dot(rel_v, rel_v);
-
-    	std::vector<double> displacement = {x0 - tr2->x0 , y0 - tr2->y0 , z0 - tr2->z0  };
-
-    	double t_ca  = ( dot(displacement, rel_v)/rel_v2 ) - (   dot( add(scaler_multiply(-1.0*tr2->t0, {tr2->vx, tr2->vy, tr2->vz}), scaler_multiply(1.0*t0, {vx, vy, vz})), rel_v)/rel_v2  );    	
-
-    	std::vector<double> pos1 = {x0 + (t_ca - t0)*vx, y0 + (t_ca - t0)*vy, z0 + (t_ca - t0)*vz };
-    	std::vector<double> pos2 = {tr2->x0 + (t_ca - tr2->t0)*tr2->vx, tr2->y0 + (t_ca - tr2->t0)*tr2->vy, tr2->z0 + (t_ca - tr2->t0)*tr2->vz };
-
-    	auto disp = add(pos1, scaler_multiply(-1.0, pos2));
-
-    	return TMath::Sqrt( dot(disp, disp)      );
-    }
-
-    std::vector<double> closest_approach_midpoint(track* tr2){
-
-    	using namespace vector;
-
-    	std::vector<double> rel_v = { tr2->vx - vx, tr2->vy - vy, tr2->vz - vz  };
-
-    	double rel_v2 = dot(rel_v, rel_v);
-
-    	std::vector<double> displacement = { tr2->x0 - x0, tr2->y0 - y0, tr2->z0 - z0  };
-
-    	double t_ca  = ( dot(displacement, rel_v)/rel_v2 ) - (   dot(add(scaler_multiply(-1.0*tr2->t0, {tr2->vx, tr2->vy, tr2->vz}), scaler_multiply(1.0*t0, {vx, vy, vz})), rel_v)/rel_v2  );    	
-
-    	std::vector<double> pos1 = {x0 + (t_ca - t0)*vx, y0 + (t_ca - t0)*vy, z0 + (t_ca - t0)*vz, t_ca };
-    	std::vector<double> pos2 = {tr2->x0 + (t_ca - tr2->t0)*tr2->vx, tr2->y0 + (t_ca - tr2->t0)*tr2->vy, tr2->z0 + (t_ca - tr2->t0)*tr2->vz, t_ca };
-
-    	auto sum = add(pos1, pos2);
-
-    	return scaler_multiply(0.50, sum) ;
-    }
-
-    double cos_angle_from_ip(){
-
-        using namespace detector;
-
-        std::vector<double> ip_direction = {x0 - ip_x, y0 - ip_y, z0 - ip_z };
-        double ip_direction_mag = sqrt(pow(ip_direction[0], 2) + pow(ip_direction[1], 2) + pow(ip_direction[2], 2));
-        std::vector<double> track_direction = {vx, vy, vz};
-        double track_direction_mag = beta()*constants::c;
-
-        double cos_angle_w_ip = (ip_direction[0] * track_direction[0] + ip_direction[1] * track_direction[1] + ip_direction[2] * track_direction[2])/(track_direction_mag*ip_direction_mag);
-
-        return cos_angle_w_ip;
-
-    }
-
-    // calculate shortest dist. from point to line
-    double shortDistance(vector::Vector point = vector::Vector(detector::ip_x, detector::ip_y, detector::ip_z ))
-    {
-        //      std::cout << "222: " << line_point2 << " 111: " << line_point1 << "\n";
-        vector::Vector AB = vector::Vector(vx, vy, vz);
-        vector::Vector AC = point - vector::Vector(x0, y0, z0);
-        double area = vector::Vector(AB * AC).magnitude();
-        double CD = area / AB.magnitude();
-        return CD;
-    }
-    
+        // calculate shortest dist. from track to a spatial point, by default the IP
+        double shortDistance();
 
 
 
 	}; //track
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //NOTE: TEMPLATE FUNCTIONS NEED TO BE DECALARED IN HEADER
+    template<typename ahit>
+    double track::untimed_residual(ahit* hit){
+        double track_delta_t = (hit->y - y0)/vy;
+        double track_x = x0 + vx*track_delta_t;
+        double track_z = z0 + vz*track_delta_t;
+        double ex2 = (hit->ex)*(hit->ex);
+        double ez2 = (hit->ez)*(hit->ez);
+        double res2 = (track_x - hit->x)*(track_x - hit->x)/ex2 + (track_z - hit->z)*(track_z - hit->z)/ez2;
+
+        return TMath::Sqrt(  res2  );
+    }
+
+    template<typename ahit>
+    double track::distance_to_hit(ahit* hit){
+        double track_delta_t = (hit->y - y0)/vy;
+        double track_x = x0 + vx*track_delta_t;
+        double track_z = z0 + vz*track_delta_t;
+        double res2 = (track_x - hit->x)*(track_x - hit->x) + (track_z - hit->z)*(track_z - hit->z);
+        return TMath::Sqrt(  res2  );
+
+
+    }
+
+    template<typename ahit>
+    double track::residual(ahit* hit){
+        double track_delta_t = hit->t - t0;
+        Vector track_position = Vector(x0, y0, z0) + Vector(vx, vy, vz).Scale(track_delta_t);
+        return (track_position - hit.PosVector()).Magnitude( Vector(hit->ex*hit->ex, hit->ey*hit->ey, hit->ez*hit->ez ) );
+    }
+
+    template<typename ahit>
+    double track::time_difference(ahit* hit){
+        
+        double t_track = (hit->y - y0)/vy;
+        double t_hit = hit->t - t0;
+    
+        return TMath::Abs(t_track - t_hit);
+    }
+
+    template<typename ahit>
+    double track::time_residual(ahit* hit){
+        
+        double t_track = (hit->y - y0)/vy;
+        double t_hit = hit->t - t0;
+    
+        return TMath::Abs(t_track - t_hit)/hit->et;
+    }
+
+    template<typename matrix>
+    void track::CovMatrix(matrix mat, int size){
+
+            cov_matrix.ResizeTo(size, size);
+            for (int i = 0; i < size; i++){
+                for (int j = i; j < size; j++){
+                
+                    cov_matrix[i][j] = mat[i][j];
+                    cov_matrix[j][i] = cov_matrix[i][j];
+                }
+            }   
+
+    }
+
+
   
 
-};
+}; // physics
 
 
 

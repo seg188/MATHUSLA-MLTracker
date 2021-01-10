@@ -52,6 +52,7 @@ void TrackFinder::FindTracks(){
 
 	while (iterate) {
 		
+	
 		if (seeds.size() == 0) return;
 		if (hits.size() == 0) return;
 
@@ -67,21 +68,20 @@ void TrackFinder::FindTracks(){
 		//now we use the seed::residual function to get the residual from the seed of all of the available hits.
 		//if the residual is good, we add it to the track_pts vector 
 
+		for (auto hit : hits){\
 
-		for (auto hit : hits){
 
 			if ( (current_seed.timeless_residual(hit) < cuts::seed_residual or current_seed.distance_to_hit(hit) < cuts::distance_to_hit) 
 													and current_seed.time_difference(hit) < cuts::seed_time_difference) 
 			{
 				track_pts.push_back(hit);
 			} else {
-				//std::cout << current_seed.timeless_residual(hit) << std::endl;
+
 				unused_hits.push_back(hit);
 				
 			}
 		}
 
-	
 
 		//we check that there are at least cuts::nseed_hits hits in the track_pts
 		//if not, we move on to the next seed
@@ -89,7 +89,7 @@ void TrackFinder::FindTracks(){
 		if (track_pts.size() < cuts::nseed_hits) {
 			continue;
 		}
-	
+		
 
 
 		//at this point, all we have done is erase the seed, and none of the hits have been modified
@@ -97,6 +97,7 @@ void TrackFinder::FindTracks(){
 		auto track_status = fitter.fit(track_pts, current_seed.guess());
 	
 		if (track_status == 4) continue; //fit failed
+
 
 		auto current_track = new physics::track( fitter.parameters, fitter.parameter_errors);
 		for (auto hit : track_pts) current_track->AddHit(hit);
@@ -207,7 +208,7 @@ void TrackFinder::MergeTracks(){
 			int tr2_missing_hits = 0;
 
 
-			auto cos_theta = d1[0]*d2[0] + d1[1]*d2[1] + d1[2]*d2[2];
+			auto cos_theta = d1 ^ d2;
 
 			double distance = tr1->closest_approach(tr2);
 
@@ -378,8 +379,8 @@ void TrackFinder::CalculateMissingHits(Geometry* geo){
 			double y_center = (layer_lims[0] + layer_lims[1])/2.0;
 			auto track_position = track->Position_at_Y(y_center);
 
-			if (track_position[0] > detector::x_min and track_position[0] < detector::x_max){
-				if (track_position[2] > detector::z_min and track_position[2] < detector::z_max){
+			if (track_position.x > detector::x_min and track_position.x < detector::x_max){
+				if (track_position.z > detector::z_min and track_position.z < detector::z_max){
 					if ( ! (geo->GetDetID(track_position).IsNull()) ) expected_layers.push_back(layer_n);
 				}
 			}

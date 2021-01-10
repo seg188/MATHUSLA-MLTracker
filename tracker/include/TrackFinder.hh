@@ -1,5 +1,6 @@
 #include "physics.hh"
 #include "globals.hh"
+#include "LinearAlgebra.hh"
 #include <TMath.h>
 #include <TRandom.h>
 #include "Geometry.hh"
@@ -8,34 +9,37 @@
 #define TF_DEFINE
 
 
-
 class seed{
 public:
 	double score;
+
 	std::pair<physics::digi_hit*, physics::digi_hit*> hits;
 	seed() {}
 	seed(physics::digi_hit* hit1, physics::digi_hit* hit2) : hits(hit1, hit2)
 	{  }
 
-	std::vector<double> guess(){
-		double x0 = hits.first->x;
-		double y0 = hits.first->y;
-		double z0 = hits.first->z;
-
-		double dx = hits.second->x - x0;
-		double dy = hits.second->y - y0;
-		double dz = hits.second->z - z0;
+	vector::Vector VelVector(){
+		auto P1 = hits.first->PosVector();
+		auto P2 = hits.second->PosVector();
 		double dt = hits.second->t - hits.first->t;
 
-		return {x0, y0, z0, dx/dt, dy/dt, dz/dt, hits.first->t };
+		return (P2 - P1).Scale(1.0/dt);
+	}
+
+	std::vector<double> guess(){
+		auto P1 = hits.first->PosVector();
+		auto velocity = VelVector();
+
+		return {P1.x, P1.y, P1.z, velocity.x, velocity.y, velocity.z, hits.first->t };
 
 	}
 
 	template<typename hit>
 	double time_difference(hit AHit){
-		std::vector<double> pars = guess();
 
-		double seed_t = (AHit->y - pars[1])/pars[4];
+		auto P1 = hits.first->PosVector();
+		auto vel = VelVector();
+		double seed_t = (AHit->y - P1.y)/vel.y;
 
 		double hit_t = AHit->t - hits.first->t;
 
@@ -49,98 +53,35 @@ public:
 		//calculate residual from the track using the two hits 
 		//(assuming a straight line between them)
 
-		//here we calculate the velocity
-
-		//std::cout << "first hit: " << std::endl;
-		//std::cout << "{" << hits.first->x << ", " << hits.first->y << ", " << hits.first->z << ", " << hits.first->t << "}" << std::endl;
-		//std::cout << "second hit: " << std::endl;
-    	//std::cout << "{" << hits.second->x << ", " << hits.second->y << ", " << hits.second->z << ", " << hits.second->t << "}" << std::endl;
-		
-		double x0 = hits.first->x;
-		double y0 = hits.first->y;
-		double z0 = hits.first->z;
-		double t0 = hits.first->t;
-
-		double dx = hits.second->x - x0;
-		double dy = hits.second->y - y0;
-		double dz = hits.second->z - z0;
-		double dt = hits.second->t - t0;
-
-		double vx = dx/dt;
-		double vy = dy/dt;
-		double vz = dz/dt;
-
-	//	std::cout << x0 << ", " << y0 << ", " << z0 << ", " << vx << ", " << vy << ", " << vz << ", " << dt << std::endl;
+		auto P1 = hits.first->PosVector();
+		auto velocity = VelVector();
 
 		//NOW we use the TIMELESS residual!!!
 		//this gives us a measure of how far the hit is from the track when the track would be in that layer
 
-		double y1 = AHit->y;
-		double x1 = AHit->x;
-		double z1 = AHit->z;
-
-		double delta_t = (y1 - y0)/vy;
+		auto HitP = AHit->PosVector();
+		double delta_t = (HitP.y - P1.y)/velocity.y;
+		auto expectedPos = P1 + velocity.Scale(delta_t);
+		auto errMetric = vector::Vector(pow(AHit->ex, 2), pow(AHit->ex, 2), pow(AHit->ex, 2));
 		
-		double expected_x = x0 + delta_t*vx;
-		double expected_z = z0 + delta_t*vz;
-
-		double ex2 = (AHit->ex)*(AHit->ex);
-    	double ey2 = (AHit->ey)*(AHit->ey);
-    	double ez2 = (AHit->ez)*(AHit->ez);
-
-		double res2 = (x1 - expected_x)*(x1 - expected_x)/ex2 + (z1 - expected_z)*(z1 - expected_z)/ez2;
-
-
-		return TMath::Sqrt(res2);
+		return (expectedPos - HitP).Magnitude(errMetric);
 
 	}
 
 	template<typename hit>
 	double distance_to_hit(hit AHit){
 
-		//calculate residual from the track using the two hits 
-		//(assuming a straight line between them)
-
-		//here we calculate the velocity
-
-		//std::cout << "first hit: " << std::endl;
-		//std::cout << "{" << hits.first->x << ", " << hits.first->y << ", " << hits.first->z << ", " << hits.first->t << "}" << std::endl;
-		//std::cout << "second hit: " << std::endl;
-    	//std::cout << "{" << hits.second->x << ", " << hits.second->y << ", " << hits.second->z << ", " << hits.second->t << "}" << std::endl;
-		
-		double x0 = hits.first->x;
-		double y0 = hits.first->y;
-		double z0 = hits.first->z;
-		double t0 = hits.first->t;
-
-		double dx = hits.second->x - x0;
-		double dy = hits.second->y - y0;
-		double dz = hits.second->z - z0;
-		double dt = hits.second->t - t0;
-
-		double vx = dx/dt;
-		double vy = dy/dt;
-		double vz = dz/dt;
-
-	//	std::cout << x0 << ", " << y0 << ", " << z0 << ", " << vx << ", " << vy << ", " << vz << ", " << dt << std::endl;
+		auto P1 = hits.first->PosVector();
+		auto velocity = VelVector();
 
 		//NOW we use the TIMELESS residual!!!
 		//this gives us a measure of how far the hit is from the track when the track would be in that layer
 
-		double y1 = AHit->y;
-		double x1 = AHit->x;
-		double z1 = AHit->z;
+		auto HitP = AHit->PosVector();
+		double delta_t = (HitP.y - P1.y)/velocity.y;
+		auto expectedPos = P1 + velocity.Scale(delta_t);
 
-		double delta_t = (y1 - y0)/vy;
-		
-		double expected_x = x0 + delta_t*vx;
-		double expected_z = z0 + delta_t*vz;
-
-		double res2 = (x1 - expected_x)*(x1 - expected_x) + (z1 - expected_z)*(z1 - expected_z);
-
-
-		return TMath::Sqrt(res2);
-
+		return (expectedPos - HitP).Magnitude();
 	}
  
 

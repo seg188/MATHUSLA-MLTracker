@@ -45,7 +45,7 @@ void VertexFinder::FindVertices(){
 	
 
 		VertexFitter fitter;
-		auto status = fitter.fit(used_tracks, current_seed.guess());
+		auto status = fitter.fit(used_tracks, current_seed.guess().std() );
 
 		if (status == 4 or fitter.merit() > cuts::vertex_chi2){
 			std::cout << fitter.merit() << std::endl;
@@ -89,7 +89,7 @@ std::vector<double> VertexFitter::parameters = {};
 std::vector<double> VertexFitter::parameter_errors = {};
 bool VertexFitter::bad_fit = false;
 void VertexFitter::nll(int &npar, double *gin, double &f, double *pars, int iflag ){
-	
+	using Vector = vector::Vector;
 	double _x = pars[0];
 	double _y = pars[1];
 	double _z = pars[2];
@@ -102,9 +102,9 @@ void VertexFitter::nll(int &npar, double *gin, double &f, double *pars, int ifla
 
 	for (auto track : VertexFitter::track_list){
 
-		double dist = track->distance_to(_x, _y, _z, _t);
+		double dist = track->distance_to( Vector(_x, _y, _z), _t);
 		
-		double err = track->err_distance_to(_x, _y, _z, _t);
+		double err = track->err_distance_to( Vector(_x, _y, _z), _t);
 
 		error += 0.5*(dist/err)*(dist/err);
 

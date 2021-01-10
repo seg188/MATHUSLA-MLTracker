@@ -1,5 +1,6 @@
 #include "TMinuit.h"
 #include "physics.hh"
+#include "LinearAlgebra.hh"
 
 #ifndef STAT_HH
 #define STAT_HH

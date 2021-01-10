@@ -1,4 +1,5 @@
 #include "physics.hh"
+#include "LinearAlgebra.hh"
 
 #ifndef VF_H
 #define VF_H
@@ -19,7 +20,7 @@ public:
 		return ca1 < ca2 ? ca1 : ca2; 
 	}
 
-	std::vector<double> guess(){
+	vector::Vector guess(){
 
 		return tracks.first->closest_approach_midpoint(tracks.second);
 	}

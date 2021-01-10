@@ -8,7 +8,7 @@ namespace vector{
 using namespace std;
 Vector Vector::operator+(Vector v)
 {
-        int x1, y1, z1;
+        double x1, y1, z1;
         x1 = x + v.x;
         y1 = y + v.y;
         z1 = z + v.z;
@@ -18,7 +18,7 @@ Vector Vector::operator+(Vector v)
 // Subtract 2 vectors
 Vector Vector::operator-(Vector v)
 {
-        int x1, y1, z1;
+        double x1, y1, z1;
         x1 = x - v.x;
         y1 = y - v.y;
         z1 = z - v.z;
@@ -26,9 +26,9 @@ Vector Vector::operator-(Vector v)
 }
 
 // Dot product of 2 vectors
-int Vector::operator^(Vector v)
+double Vector::operator^(Vector v)
 {
-        int x1, y1, z1;
+        double x1, y1, z1;
         x1 = x * v.x;
         y1 = y * v.y;
         z1 = z * v.z;
@@ -38,13 +38,32 @@ int Vector::operator^(Vector v)
 // Cross product of 2 vectors
 Vector Vector::operator*(Vector v)
 {
-        int x1, y1, z1;
+        double x1, y1, z1;
         x1 = y * v.z - z * v.y;
         y1 = z * v.x - x * v.z;
         z1 = x * v.y - y * v.x;
         return Vector(x1, y1, z1);
 }
 
+//Scalar multiply
+Vector Vector::Scale(double c)
+{
+        return Vector(c*x, c*y, c*z);
+}
+
+double Vector::Magnitude(){
+
+        return sqrt(x*x + y*y + z*z);
+}
+
+double Vector::Magnitude(Vector DiagonalMetric){
+        
+        return sqrt(x*x/DiagonalMetric.x + y*y/DiagonalMetric.y + z*z/DiagonalMetric.z);
+}
+
+std::vector<double> Vector::std(){
+        return {x, y, z};
+}
 // Display Vector
 std::ostream& operator<<(std::ostream& out,
                                         const Vector& v)

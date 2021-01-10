@@ -1,4 +1,5 @@
 #include "globals.hh"
+#include "LinearAlgebra.hh"
 #include <cmath>
 #include <iostream>
 
@@ -205,12 +206,17 @@ public:
 
 	} //GetDetID
 
+	//pointer Hit
 	template<class Hit>
 	detID GetDetID(Hit _hit){
 		return GetDetID(_hit->x, _hit->y, _hit->z);
 	}
 
-
+	//for vector::Vector of position
+	detID GetDetID(vector::Vector _hit){
+		return GetDetID(_hit.x, _hit.y, _hit.z);
+	}
+	
 	detID GetDetID(std::vector<double> _hit){
 		return GetDetID(_hit[0], _hit[1], _hit[2]);
 	}

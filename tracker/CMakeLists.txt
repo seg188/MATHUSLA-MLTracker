@@ -17,14 +17,15 @@ include(${ROOT_USE_FILE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-
 add_library(tracker-lib SHARED
     src/RunManager.cc
     src/TrackFinder.cc
     src/Digitizer.cc
     src/VertexFinder.cc
-    src/LinearAlgebra.cc
+    src/Physics.cc
+	src/LinearAlgebra.cc
 )
+
 
 target_link_libraries(tracker-lib PUBLIC
     ${ROOT_LIBRARIES}
