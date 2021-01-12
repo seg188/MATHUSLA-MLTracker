@@ -161,7 +161,7 @@ namespace physics {
     	for (int i = 0; i < derivatives.size(); i++){
     		for (int j = 0; j < derivatives.size(); j++){
     			
-    			error += derivatives[i]*derivatives[j]*cov_matrix[i][j];
+    			error += derivatives[i]*derivatives[j]*_CovMatrix[i][j];
     			
     		}
     	}

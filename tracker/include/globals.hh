@@ -72,6 +72,7 @@ namespace detector{
 namespace constants{
 
 	const double c = 29.97*units::cm/units::ns;
+	const double optic_fiber_n = 1.500; //estimate for the optical fiber index of refraction
 
 };
 

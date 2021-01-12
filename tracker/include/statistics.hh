@@ -5,7 +5,7 @@
 #ifndef STAT_HH
 #define STAT_HH
 
-
+using par = std::pair<int, int>;
 
 class TrackFitter{
 public:
@@ -62,26 +62,22 @@ public:
 			if (vel_y_direction >= 0) minimizer.mnparm(4, "vy", guess[4], first_step_size, 0.0,constants::c,ierflg);
 			if (vel_y_direction  < 0) minimizer.mnparm(4, "vy", guess[4], first_step_size,constants::c,0.0,ierflg);
 			minimizer.mnparm(5, "vz", guess[5], first_step_size, -1.0*constants::c,constants::c,ierflg);
-			minimizer.mnparm(6, "t0", guess[6], first_step_size,0,0,ierflg);
+			minimizer.mnparm(6, "t0", guess[6], first_step_size,0.0,pow(10.0, 10.0),ierflg);
 
 			minimizer.FixParameter(1);
 			
 			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
-			//while (ierflg) minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
-
 			for (int k = 0; k < npar; k++){
 				minimizer.GetParameter(k, parameters[k], parameter_errors[k] );
-				//std::cout << parameters[k] << ", ";
 			}
 
-		//	minimizer.mnfree(0);
+		
 			minimizer.mnemat(&cov_matrix[0][0], npar);
-			//std::cout << std::endl;
+		
 
 			for (int k = 0; k < parameter_errors.size(); k++) parameter_errors[k] = TMath::Sqrt(cov_matrix[k][k]);
-
-
+			
 
 			return minimizer.GetStatus();
 

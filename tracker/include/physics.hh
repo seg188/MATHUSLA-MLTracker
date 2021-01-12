@@ -13,6 +13,7 @@
 
 using Vector = vector::Vector;
 
+
 namespace physics{
 	
 	//defines detector hit
@@ -120,6 +121,9 @@ namespace physics{
 	};
 
 	class track{
+    private:
+        TMatrixD _CovMatrix;
+
 	public:
         track(){}
 		std::size_t index;
@@ -133,8 +137,9 @@ namespace physics{
 		std::vector<int> hits_to_drop = {};
 		std::vector<int> _missing_layers;
         std::vector<int> expected_layers;
-        TMatrixD cov_matrix;
-
+    
+        //CovarianceMatrix CovMatrix(){return _CovMatrix;}
+        TMatrixD CovMatrix(){return _CovMatrix;}
         
         //list of component hits
 		std::vector<digi_hit*> hits;
@@ -296,12 +301,12 @@ namespace physics{
     template<typename matrix>
     void track::CovMatrix(matrix mat, int size){
 
-            cov_matrix.ResizeTo(size, size);
+        _CovMatrix.ResizeTo(size, size);
             for (int i = 0; i < size; i++){
                 for (int j = i; j < size; j++){
                 
-                    cov_matrix[i][j] = mat[i][j];
-                    cov_matrix[j][i] = cov_matrix[i][j];
+                    _CovMatrix[i][j] = mat[i][j];
+                    _CovMatrix[j][i] = _CovMatrix[i][j];
                 }
             }   
 

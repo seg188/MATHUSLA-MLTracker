@@ -25,10 +25,10 @@ public:
 	}
 	std::vector<double> uncertainty(){
 		if ( (index % 2 ) == 0){
-			return { detector::scintillator_width, max-min, detector::time_resolution*constants::c/sqrt(2) };
+			return { detector::scintillator_width, max-min, detector::time_resolution*(constants::c/constants::optic_fiber_n)/sqrt(2) };
 		} 
 
-		return {  detector::time_resolution*constants::c/sqrt(2), max-min, detector::scintillator_width  };
+		return {  detector::time_resolution * (constants::c/constants::optic_fiber_n)/ sqrt(2), max-min, detector::scintillator_width  };
 
 	}	
 

@@ -4,8 +4,14 @@
 #include <cmath>
 #include "LinearAlgebra.hh"
 // ADD 2 Vectors
+
 namespace vector{
 using namespace std;
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Vector class member functions
+////////////////////////////////////////////////////////////////////////////////////////////////
+
 Vector Vector::operator+(Vector v)
 {
         double x1, y1, z1;
@@ -78,4 +84,5 @@ std::ostream& operator<<(std::ostream& out,
         return out;
 }
 
-};
+}; //namespace vector
+

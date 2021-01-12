@@ -1,4 +1,6 @@
 #include <cstdlib>
+#include <iostream>
+#include <iomanip>
 
 #ifndef LIN_ALG_HH
 #define LIN_ALG_HH
@@ -36,7 +38,9 @@ public:
 };
 
 
-};
+
+
+}; // namespace vector
 
 
 #endif

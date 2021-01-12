@@ -337,6 +337,7 @@ std::vector<physics::digi_hit*> TrackFitter::digi_list = {};
 std::vector<double> TrackFitter::parameters = {};
 std::vector<double> TrackFitter::parameter_errors = {};
 double TrackFitter::cov_matrix[TrackFitter::npar][TrackFitter::npar];
+
 void TrackFitter::chi2_error(int &npar, double *gin, double &f, double *pars, int iflag ){
 	
 	double x0 = pars[0];
