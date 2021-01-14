@@ -18,7 +18,7 @@ public:
 	const static int npar = 7;
 	static double cov_matrix[npar][npar];
  
-	int fit(std::vector<physics::digi_hit*> _digi_list, std::vector<double> arg_guess = {}){
+	bool fit(std::vector<physics::digi_hit*> _digi_list, std::vector<double> arg_guess = {}){
 			digi_list = _digi_list;
 			parameters.resize(npar);
 			parameter_errors.resize(npar);
@@ -77,9 +77,26 @@ public:
 		
 
 			for (int k = 0; k < parameter_errors.size(); k++) parameter_errors[k] = TMath::Sqrt(cov_matrix[k][k]);
+
+				//GETTTING STATUS:
+			double fmin = 0.0;
+			double fedm = 0.0;
+			double errdef = 0.0;
+			int npari = 0;
+			int nparx = 0;
+			/////////////////////////////////////////////////////
+			int istat = 0; //this is the one we really care about
+			// 0 - no covariance
+			// 1 - not accurate, diagonal approximation
+			// 2 - forced positive definite
+			// 3 - full accurate matrix--succesful convergence
+
+			minimizer.mnstat(fmin, fedm, errdef, npari, nparx, istat);
+
+
 			
 
-			return minimizer.GetStatus();
+			return (istat == 3) ? true : false;
 
 
 	}
@@ -113,7 +130,7 @@ public:
 		return chi2/ndof;
 	}
 
-	int fit(std::vector<physics::track*> _track_list, std::vector<double> arg_guess = {}){
+	bool fit(std::vector<physics::track*> _track_list, std::vector<double> arg_guess = {}){
 
 			track_list = _track_list;
 
@@ -173,12 +190,18 @@ public:
 
 			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
-			if (bad_fit) {
-				std::cout << "bad fit" << std::endl;
-				return 4;
-			}
 
+			//GETTTING STATUS:
+			double fmin = 0.0;
+			double fedm = 0.0;
+			double errdef = 0.0;
+			int npari = 0;
+			int nparx = 0;
+			int istat = 0; //this is the one we really care about
 
+			minimizer.mnstat(fmin, fedm, errdef, npari, nparx, istat);
+
+		
 			//while (ierflg) minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
 
@@ -191,8 +214,8 @@ public:
 
 			minimizer.mnemat(&cov_matrix[0][0], npar);
 
-
-			return minimizer.GetStatus();
+		
+			return (istat == 3) ? true : false;
 
 
 	}

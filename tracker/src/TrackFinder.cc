@@ -96,7 +96,7 @@ void TrackFinder::FindTracks(){
 		TrackFitter fitter;
 		auto track_status = fitter.fit(track_pts, current_seed.guess());
 	
-		if (track_status == 4) continue; //fit failed
+		if (track_status == false) continue; //fit failed
 
 
 		auto current_track = new physics::track( fitter.parameters, fitter.parameter_errors);

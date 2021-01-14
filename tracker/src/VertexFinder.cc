@@ -47,7 +47,7 @@ void VertexFinder::FindVertices(){
 		VertexFitter fitter;
 		auto status = fitter.fit(used_tracks, current_seed.guess().std() );
 
-		if (status == 4 or fitter.merit() > cuts::vertex_chi2){
+		if (status == false or fitter.merit() > cuts::vertex_chi2){
 			continue;
 		} 
 
