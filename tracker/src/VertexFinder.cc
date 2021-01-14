@@ -106,7 +106,7 @@ void VertexFitter::nll(int &npar, double *gin, double &f, double *pars, int ifla
 		
 		double err = track->err_distance_to( Vector(_x, _y, _z), _t);
 
-		error += 0.5*(dist/err)*(dist/err);
+		error += 0.5*(dist/err)*(dist/err) + TMath::Log(err);
 
 		
 	
