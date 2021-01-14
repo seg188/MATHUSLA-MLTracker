@@ -479,6 +479,10 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
       vertex_x.push_back(v->x);
       vertex_y.push_back(v->y);
       vertex_z.push_back(v->z);
+      vertex_x_error.push_back(sqrt(v->CovMatrix()[0][0]));
+      vertex_y_error.push_back(sqrt(v->CovMatrix()[1][1]));
+      vertex_z_error.push_back(sqrt(v->CovMatrix()[2][2]));
+      vertex_t_error.push_back(sqrt(v->CovMatrix()[3][3]));
       
     }
 

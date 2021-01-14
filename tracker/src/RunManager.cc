@@ -55,7 +55,7 @@ int RunManager::StartTracking(){
 
 		events_handled++;
 
-		if (events_handled % 50 == 0) std::cout << "finished " << events_handled << " events" << std::endl;
+		if (events_handled % 1000 == 0) std::cout << "finished " << events_handled << " events" << std::endl;
 	}
 	
 	TH->Write();

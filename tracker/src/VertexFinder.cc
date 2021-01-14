@@ -48,7 +48,6 @@ void VertexFinder::FindVertices(){
 		auto status = fitter.fit(used_tracks, current_seed.guess().std() );
 
 		if (status == 4 or fitter.merit() > cuts::vertex_chi2){
-			std::cout << fitter.merit() << std::endl;
 			continue;
 		} 
 
@@ -68,6 +67,7 @@ void VertexFinder::FindVertices(){
 			good_vertex->track_indices.push_back(track->index);
 		}
 
+		good_vertex->CovMatrix(fitter.cov_matrix, fitter.npar);
 		vertices.push_back(good_vertex);
 		tracks = unused_tracks;
 
@@ -87,6 +87,8 @@ void VertexFinder::FindVertices(){
 std::vector<physics::track*> VertexFitter::track_list = {};
 std::vector<double> VertexFitter::parameters = {};
 std::vector<double> VertexFitter::parameter_errors = {};
+double VertexFitter::cov_matrix[VertexFitter::npar][VertexFitter::npar];
+
 bool VertexFitter::bad_fit = false;
 void VertexFitter::nll(int &npar, double *gin, double &f, double *pars, int iflag ){
 	using Vector = vector::Vector;

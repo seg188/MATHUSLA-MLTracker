@@ -106,8 +106,13 @@ namespace physics{
 	public:
 		double x, y, z, t;
 		std::vector<int> track_indices;
-
+        TMatrixD _CovMatrix;
+        TMatrixD CovMatrix(){return _CovMatrix;}
         double cos_opening_angle = -2.0;
+
+        //set cov matrix
+        template<typename matrix>
+        void CovMatrix(matrix mat, int size);
 
 		vertex(std::vector<double> pars, double cos_angle = -2){
 			x = pars[0];
@@ -311,6 +316,21 @@ namespace physics{
             }   
 
     }
+
+    template<typename matrix>
+    void vertex::CovMatrix(matrix mat, int size){
+
+        _CovMatrix.ResizeTo(size, size);
+            for (int i = 0; i < size; i++){
+                for (int j = i; j < size; j++){
+                
+                    _CovMatrix[i][j] = mat[i][j];
+                    _CovMatrix[j][i] = _CovMatrix[i][j];
+                }
+            }   
+
+    }
+
 
 
   

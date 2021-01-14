@@ -189,7 +189,7 @@ public:
 			}
 
 
-			//std::cout << std::endl;
+			minimizer.mnemat(&cov_matrix[0][0], npar);
 
 
 			return minimizer.GetStatus();
