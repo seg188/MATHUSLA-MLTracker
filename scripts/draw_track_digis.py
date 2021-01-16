@@ -80,7 +80,7 @@ def inside_box(x, y, z):
 	return False
 
 
-def track(x0, y0, z0, vx0, vy0, vz0):
+def track(x0, y0, z0, vx0, vy0, vz0, t0):
 	x, y, z = [], [], []
 	_x, _y, _z = x0, y0, z0
 	enterded_box = False
