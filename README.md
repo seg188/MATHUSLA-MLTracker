@@ -40,69 +40,6 @@ An example command to run the tracker:
 $ ./tracker path_to_input_file path_to_write_output 
 ```
 
-## Visualization and Understanding the Output
-
-There is a small python module made for visualization of the output of the tracker, i.e. visualization the spatial and timing information of the track and the hits. This can be accessed by:
-
-```bash
-$ mkdir plots
-$ cd visualization
-$ python main.py 
-```
-
-The main.py script is designed to be highly customizable.
-
-## Example Visualization Script
-
-```python
-
-import visualization
-import physics
-import ROOT as root 
-
-
-tracking_file_name = "../build/statistics0.root" ##CHANGE ME TO THE PATH TO YOUR TRACKER OUTPUT FILE
-
-tracking_file = root.TFile.Open(tracking_file_name)
-tree = tracking_file.Get("integral_tree")
-
-
-for event_number in range(int(tree.GetEntries())): #looping over events in the tree
-	
-	tree.GetEntry(event_number)
-	#we can add some cuts here if we would like
-
-	#for example, we add below a cut on the number of tracks-- we only want events with exactly 2 tracks
-	if not (tree.NumTracks == 2):
-		continue 
-	####################################################################################################3
-	
-	#now we do the visualization using the Display class
-	event_display = visualization.Display()
-
-	for k in range(int(tree.Digi_numHits)):
-		#points can be added to the display using the AddPoint function
-		#a point, in this case, is a list of [x, y, z, t]. In this case, it is used to draw the digitized Mu-Simulation output
-		event_display.AddPoint( [tree.Digi_x[k], tree.Digi_y[k], tree.Digi_z[k], tree.Digi_time[k]] )
-
-
-	for k in range(int(tree.NumTracks)):
-		#tracks can be added using the AddTrack function, that takes the arguments (x0, y0, z0, vx, vy, vz, t0) which define a track
-		x0, y0, z0, t0 = tree.Track_x0[k], tree.Track_y0[k], tree.Track_z0[k], tree.Track_t0[k]
-		vx, vy, vz = tree.Track_velX[k], tree.Track_velY[k], tree.Track_velZ[k]
-		event_display.AddTrack(x0, y0, z0, vx, vy, vz, t0)
-
-
-	plot_title = "event " + str(event_number)
-	png_file_name = "event" + str(event_number) + ".png"
-	
-	#the display is written to an output file using the method Display.Draw(title, file_name)
-	event_display.Draw( plot_title , png_file_name )
-
-
-
-```
-
 
 # Contact
 
