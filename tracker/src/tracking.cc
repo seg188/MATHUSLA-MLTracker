@@ -1,8 +1,7 @@
 #include <iostream>
 #include "RunManager.hh"
-#include "physics.hh"
-#include "globals.hh"
-#include <dlib/dnn.h>
+#include "TString.h"
+
 
 
 int main(int argc, char *argv[]){
