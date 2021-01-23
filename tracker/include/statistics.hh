@@ -163,9 +163,9 @@ public:
 			double max_y = detector::y_max + 10.0*units::cm;
 
 
-			minimizer.mnparm(0, "x", guess[0], first_step_size, detector::x_min,detector::x_max,ierflg);
-			minimizer.mnparm(1, "y", guess[1], first_step_size, min_y,max_y,ierflg);
-			minimizer.mnparm(2, "z", guess[2], first_step_size, detector::z_min,detector::z_max,ierflg);
+			minimizer.mnparm(0, "x", guess[0], first_step_size, 0,0,ierflg);
+			minimizer.mnparm(1, "y", guess[1], first_step_size, 0,0,ierflg);
+			minimizer.mnparm(2, "z", guess[2], first_step_size, 0,0,ierflg);
 			minimizer.mnparm(3, "t", guess[3], first_step_size, 0,0,ierflg); 
 
 
