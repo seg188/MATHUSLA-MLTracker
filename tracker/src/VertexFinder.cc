@@ -68,6 +68,7 @@ void VertexFinder::FindVertices(){
 		}
 
 		good_vertex->CovMatrix(fitter.cov_matrix, fitter.npar);
+		good_vertex->merit(fitter.merit());
 		vertices.push_back(good_vertex);
 		tracks = unused_tracks;
 

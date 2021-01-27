@@ -217,8 +217,8 @@ public:
       	OutputTree->Branch("Track_beta", &track_beta);
       	OutputTree->Branch("Track_ErrorBeta", &track_beta_error);
       	OutputTree->Branch("Track_angle", &track_angle);
-     	OutputTree->Branch("Track_ErrorAngle", &track_angle_error);
-     	OutputTree->Branch("Track_detCount", &unique_detector_count);
+       	OutputTree->Branch("Track_ErrorAngle", &track_angle_error);
+       	OutputTree->Branch("Track_detCount", &unique_detector_count);
       	OutputTree->Branch("Track_expectedHitLayer", &track_expected_hit_layer);
       	OutputTree->Branch("Track_missingHitLayer", &track_missing_hit_layer);
         OutputTree->Branch("Track_hitIndices", &track_hit_indices);
@@ -483,6 +483,7 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
       vertex_y_error.push_back(sqrt(v->CovMatrix()[1][1]));
       vertex_z_error.push_back(sqrt(v->CovMatrix()[2][2]));
       vertex_t_error.push_back(sqrt(v->CovMatrix()[3][3]));
+      vertex_chi2_per_dof.push_back(v->merit());
       
     }
 

@@ -110,6 +110,12 @@ namespace physics{
         TMatrixD CovMatrix(){return _CovMatrix;}
         double cos_opening_angle = -2.0;
 
+        double _merit;
+
+        double merit(){ return _merit; }
+
+        void merit(double merit){_merit = merit;}
+
         //set cov matrix
         template<typename matrix>
         void CovMatrix(matrix mat, int size);
