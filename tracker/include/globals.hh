@@ -108,7 +108,7 @@ namespace cuts{
 
 	//vertexing
 	const double seed_closest_approach = 100*units::cm;
-	const double vertex_chi2 = 100.0;
+	const double vertex_chi2 = 15.0;
 	const double closest_approach_add = 100*units::cm;
 
 
