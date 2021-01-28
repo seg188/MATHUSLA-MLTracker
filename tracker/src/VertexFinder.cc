@@ -88,6 +88,7 @@ void VertexFinder::FindVertices(){
 std::vector<physics::track*> VertexFitter::track_list = {};
 std::vector<double> VertexFitter::parameters = {};
 std::vector<double> VertexFitter::parameter_errors = {};
+double VertexFitter::_merit = 0.;
 double VertexFitter::cov_matrix[VertexFitter::npar][VertexFitter::npar];
 
 bool VertexFitter::bad_fit = false;
