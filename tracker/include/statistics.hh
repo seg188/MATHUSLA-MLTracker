@@ -117,7 +117,9 @@ public:
 	const static int npar = 4;
 	static bool bad_fit;
 	static double cov_matrix[npar][npar];
-
+	static double _merit;
+	double merit(){return _merit;}
+/*
 	double merit(){
 		double chi2 = 0.0;
 
@@ -130,6 +132,7 @@ public:
 		return chi2/ndof;
 	}
 
+*/
 	bool fit(std::vector<physics::track*> _track_list, std::vector<double> arg_guess = {}){
 
 			track_list = _track_list;
@@ -181,7 +184,7 @@ public:
 			int istat = 0; //this is the one we really care about
 
 			minimizer.mnstat(fmin, fedm, errdef, npari, nparx, istat);
-
+			_merit = fmin;
 		
 			//while (ierflg) minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
