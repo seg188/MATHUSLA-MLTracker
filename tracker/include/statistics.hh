@@ -118,8 +118,8 @@ public:
 	static bool bad_fit;
 	static double cov_matrix[npar][npar];
 	static double _merit;
-	double merit(){return _merit;}
-/*
+//	double merit(){return _merit;}
+
 	double merit(){
 		double chi2 = 0.0;
 
@@ -132,7 +132,7 @@ public:
 		return chi2/ndof;
 	}
 
-*/
+
 	bool fit(std::vector<physics::track*> _track_list, std::vector<double> arg_guess = {}){
 
 			track_list = _track_list;
