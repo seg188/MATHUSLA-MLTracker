@@ -150,7 +150,7 @@ public:
 
 			double first_step_size = 0.1;
 			auto maxcalls = 50000000.0;
-			auto tolerance = 0.10;
+			auto tolerance = 0.001;
 			double arglist[2];
 			arglist[0] = maxcalls;
 			arglist[1] = tolerance;
