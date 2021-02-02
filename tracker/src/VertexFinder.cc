@@ -48,6 +48,8 @@ void VertexFinder::FindVertices(){
 		auto status = fitter.fit(used_tracks, current_seed.guess().std() );
 
 		if (status == false or fitter.merit() > cuts::vertex_chi2){
+			if (status == false) noConverge += 1;
+			if (fitter.merit() > cuts::vertex_chi2) missedChi2 += 1;
 			continue;
 		} 
 

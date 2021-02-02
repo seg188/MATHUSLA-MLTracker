@@ -57,6 +57,9 @@ int RunManager::StartTracking(){
 
 		if (events_handled % 1000 == 0) std::cout << "finished " << events_handled << " events" << std::endl;
 	}
+
+	std::cout << "Vertices missing Chi2 cut: " << _vertexer->missedChi2 << std::endl;
+	std::cout << "Vertex fit not converging: " << _vertexer->noConverge << std::endl;
 	
 	TH->Write();
 	//delete _tracker;

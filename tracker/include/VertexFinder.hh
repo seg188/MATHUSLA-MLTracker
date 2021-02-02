@@ -33,6 +33,9 @@ public:
 	std::vector<physics::vertex*> vertices;
 	std::vector<vertex_seed> seeds;
 
+	int missedChi2 = 0;
+	int noConverge = 0;
+
 	void Seed();
 
 	void clear(){
