@@ -199,7 +199,7 @@ public:
 			minimizer.mnemat(&cov_matrix[0][0], npar);
 
 		
-			return (istat == 3) ? true : false;
+			return (istat >= 2) ? true : false;
 
 
 	}
