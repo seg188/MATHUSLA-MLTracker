@@ -148,7 +148,7 @@ public:
 			int ierflg = 0;
 			minimizer.SetFCN(nll);
 
-			double first_step_size = 0.00010;
+			double first_step_size = 0.000010;
 			auto maxcalls = 500000.0;
 			auto tolerance = 0.01;
 			double arglist[2];
@@ -172,7 +172,7 @@ public:
 			minimizer.mnparm(3, "t", guess[3], first_step_size, 0,0,ierflg); 
 
 
-			minimizer.mnexcm("MINIMIZE", arglist ,2,ierflg);
+			minimizer.mnexcm("MIGRAD", arglist ,2,ierflg);
 
 
 			//GETTTING STATUS:
