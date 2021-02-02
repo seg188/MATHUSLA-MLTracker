@@ -148,7 +148,7 @@ public:
 			int ierflg = 0;
 			minimizer.SetFCN(nll);
 
-			double first_step_size = 0.010;
+			double first_step_size = 0.00010;
 			auto maxcalls = 500000.0;
 			auto tolerance = 0.01;
 			double arglist[2];
