@@ -10,6 +10,7 @@
 int RunManager::StartTracking(){
 	
 	TreeHandler _handler(_InputTree_Name, _InputFile_Name, _OutputTree_Name, OutFileName());
+	if (_handler.IsNull()) return 0;
 	TH = &_handler;
 	int events_handled = 0;
 

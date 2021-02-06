@@ -13,9 +13,12 @@ public:
 	TFile* OutputFile;
 	int index = -1;
 	int NumEntries;
+  bool _Null = false;
+  bool IsNull(){return _Null;}
 
 	int Next(){
     index++;
+    if (index > 10) return -1;
 		if (index >= NumEntries) return -1;
 		return index;
 	}
@@ -52,6 +55,11 @@ public:
 	{
 
 		auto InputFile = TFile::Open(input_file_name);
+    if (! InputFile) {
+      _Null = true;
+      return;
+    }
+
 		InputTree = (TTree*) InputFile->Get(input_tree_name);
 	
 		InputTree->SetBranchAddress("NumHits", &sim_numhits);
