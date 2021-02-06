@@ -43,6 +43,7 @@ public:
 		OutputFile->Write();
 		OutputFile->Close();
 	}
+  
 
   template<class digi_hit>
   void ExportDigis(std::vector<digi_hit*>);
