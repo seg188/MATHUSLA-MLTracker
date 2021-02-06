@@ -11,6 +11,7 @@ public:
 	TTree* OutputTree; 
 	TTree* InputTree;
 	TFile* OutputFile;
+  TFile* InputFile;
 	int index = -1;
 	int NumEntries;
   bool _Null = false;
@@ -37,6 +38,7 @@ public:
 	}
 
 	void Write(){
+    InputFile->Close();
 		OutputFile->cd();
 		OutputFile->Write();
 		OutputFile->Close();
@@ -54,7 +56,7 @@ public:
 	TreeHandler(TString input_tree_name, TString input_file_name, TString output_tree_name, TString outfile_name) 
 	{
 
-		auto InputFile = TFile::Open(input_file_name);
+		InputFile = TFile::Open(input_file_name);
     if (! InputFile) {
       _Null = true;
       return;
