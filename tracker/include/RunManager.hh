@@ -16,8 +16,13 @@ public:
 
 	// called in main function to start algorithm
 	int StartTracking();
-	void SetInputFile(TString name){_InputFile_Name = name;}
+	void SetInputFile(TString name){_InputFile_Name = name; fileNumber++;}
 	void SetOutputFile(TString name){_OutputFile_Name = name;}
+	TString OutFileName(){ 
+		std::ostringstream strs;
+		strs << fileNumber;
+		return _OutputFile_Name + TString("/stat") + TString(strs.str()) + TString(".root"); 
+	}
 
 
 	RunManager(){
@@ -37,6 +42,7 @@ public:
 private:
 
 	//DATA AND TRACKING VARIABLES
+	int fileNumber = -1;
 	int LoadEvent(int);
 	TreeHandler* TH;
 

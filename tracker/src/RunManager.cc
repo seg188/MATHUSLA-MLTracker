@@ -9,7 +9,7 @@
 
 int RunManager::StartTracking(){
 	
-	TreeHandler _handler(_InputTree_Name, _InputFile_Name, _OutputTree_Name, _OutputFile_Name);
+	TreeHandler _handler(_InputTree_Name, _InputFile_Name, _OutputTree_Name, OutFileName());
 	TH = &_handler;
 	int events_handled = 0;
 
