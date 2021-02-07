@@ -43,7 +43,7 @@ public:
 		OutputFile->Write();
 		OutputFile->Close();
 	}
-  
+
 
   template<class digi_hit>
   void ExportDigis(std::vector<digi_hit*>);
@@ -64,6 +64,11 @@ public:
     }
 
 		InputTree = (TTree*) InputFile->Get(input_tree_name);
+
+    if (! InputTree){
+      _Null = true;
+      return;
+    }
 	
 		InputTree->SetBranchAddress("NumHits", &sim_numhits);
  		InputTree->SetBranchAddress("Hit_energy", &sim_hit_e);
