@@ -16,12 +16,14 @@ def in_layer(x):
 			return n 
 	return -1
 
-files = ["../tracker_files/jan23/w/stat0.root", "../tracker_files/jan23/h/stat0.root" ]
+files = ["../../tracker_files/feb2/wc/h2/stat0.root", "../../tracker_files/feb2/wc/h10/stat0.root"]#, "../../tracker_files/feb2/wc/w/stat0.root", "../../tracker_files/feb2/wc/w/stat1.root" ]
 
 c = 29.97
 
-mu_ip= root.TH1D("mu_ip", "IP Impact Paramter", 200, 0.0, 5000)
-el_ip = root.TH1D("el_ip", "IP Impact Paramter", 200, 0.0, 5000)
+mu_ip= root.TH1D("mu_ip", "Vertex y resolution", 50, 0.0, 800)
+el_ip = root.TH1D("el_ip", "Reconstructed Vertex distance from Truth", 50, 0.0, 800)
+
+dist_vs_chi2 = root.TH2D("dist_vs_chi2", "Distance to Truth vs. Figure of Merit", 20, 0.0, 1000, 10, 0., 5.)
 
 n = 0
 for file in files:
@@ -32,24 +34,27 @@ for file in files:
 
 		tree.GetEntry(event_number)
 
-		_minipip = 9999999.0
+		if (tree.NumVertices == 0):
+			continue
 
+		x, y, z, t = tree.Vertex_x[0], tree.Vertex_y[0], tree.Vertex_z[0], tree.Vertex_t[0]
+		ex, ey, ez = tree.Vertex_ErrorX[0], tree.Vertex_ErrorY[0], tree.Vertex_ErrorZ[0]
+				
 		if n == 0:
-			for i in range(int(tree.NumTracks)):
-				ip = tree.track_ipDistance[i]
-				if (ip < _minipip):
-					_minipip = ip
-			
-			mu_ip.Fill(_minipip)
-
+			mu_ip.Fill(ey)
 		else:
-			for i in range(int(tree.NumTracks)):
-				ip = tree.track_ipDistance[i]
-				if (ip < _minipip):
-					_minipip = ip
-			
-			el_ip.Fill(_minipip)
+			el_ip.Fill(ey)
+
+		
+
+				
+
+		
+
+
+		
 	n += 1
+
 line = root.TLine(350.0, 0.0, 350.0, 0.06)
 line.SetLineWidth(2)
 line.SetLineColor(3)
@@ -62,20 +67,24 @@ el_ip.SetLineWidth(2)
 mu_ip.Scale(1./mu_ip.Integral())
 el_ip.Scale(1./el_ip.Integral())
 
-mu_ip.GetXaxis().SetTitle("Impact Paramter [cm]")
+mu_ip.GetXaxis().SetTitle("error[cm]")
 mu_ip.GetXaxis().CenterTitle()
 mu_ip.GetYaxis().SetTitle("frequency")
 mu_ip.GetYaxis().CenterTitle()
 
 legend = root.TLegend(0.60, 0.57, 0.85, 0.82)
-legend.AddEntry(mu_ip, "Background")
-legend.AddEntry(el_ip, "Signal")
-legend.AddEntry(line, "Cut")
-c1 = root.TCanvas("c1")
+legend.AddEntry(mu_ip, "2 GeV Signal")
+legend.AddEntry(el_ip, "10 GeV Signal")
 
-mu_ip.Draw()
-el_ip.Draw("SAME")
-line.Draw("SAME")
+c1 = root.TCanvas("c1")
+c1.SetLogy()
+
+mu_ip.Draw("HIST")
+el_ip.Draw("SAME HIST")
 legend.Draw("SAME")
 
 c1.Print("ipdist.png", ".png")
+
+c2 = root.TCanvas("c2")
+dist_vs_chi2.Draw("COLZ")
+c2.Print("merit.png", ".png")

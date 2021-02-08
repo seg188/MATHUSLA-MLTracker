@@ -1,6 +1,9 @@
 import visualization
 import physics
 import ROOT as root 
+import numpy as np
+import detector
+import os
 
 LAYERS_Y=[[6001.0, 6004.0],  [6104.0, 6107.0]]
  												 	
@@ -15,13 +18,6 @@ def inside_box(x, y, z):
 
 	return False
 
-tracking1_file_name = "../tracker_files/w/statistics0.root" 
-tracking2_file_name = "../tracker_files/w/statistics1.root"
-
-
-
-total_passed_cuts = 0
-
 def in_layer(y_val):
 	for n in range(len(LAYERS_Y)):
 		_min = LAYERS_Y[n][0]
@@ -29,123 +25,189 @@ def in_layer(y_val):
 		if (y_val > _min) and (y_val < _max):
 			return n 
 
-	return 99
+	return 999
+
+
+det = physics.Detector()
+
+
+base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/tracker_files/feb6/w"
+
+files = []
+for file in os.listdir(base_dir):
+	if file.endswith(".root"):
+		files.append(file)
+
+w_ey = root.TH1D("wey", "ip assymetry", 100, 0., 10000.0)
+h_ey = root.TH1D("hey", "ip assymetry", 100, 0., 10000.0)
+
+ncuts = 7
 
 store = [0, 0, 0, 0, 0, 0, 0]
 real_total = 0.0
 
-files = [tracking1_file_name, tracking2_file_name]#], tracking3_file_name, tracking4_file_name]
-plots = [root.TH1D("file1", "cutflow", 6, 0.5, 6.5), root.TH1D("file2", "cutflow", 6, 0.5, 6.5), root.TH1D("file3", "cutflow", 6, 0.5, 6.5), root.TH1D("file4", "cutflow", 5, 0.5, 5.5)]
+files = [tracking1_file_name]#, tracking2_file_name, tracking3_file_name, tracking4_file_name]#, tracking5_file_name, tracking6_file_name]#, tracking4_file_name]
+plots = [root.TH1D("file" + str(n), "cutflow", ncuts, 0.5, ncuts + 0.5) for n in range(len(files))]
 
-c1 = root.TCanvas("c1")
+
 for i in range(len(files)):
 
 	file = files[i]
 	tracking_file = root.TFile.Open(file)
 	tree = tracking_file.Get("integral_tree")
 
-	passed = [0, 0, 0, 0, 0, 0, 0]
+	passed = [0.0 for n in range(ncuts)]
+
 	total = 0.0
+	signal_trigger = 0.0
 	for event_number in range(int(tree.GetEntries())):
-		total += 1.0
-		real_total += 1.
-		passed[0] += 1
+		count = 0
+		nparticles = 0
+		for k in range(int(tree.NumGenParticles)):
+			
+			if tree.GenParticle_G4index[k] > 0 and int(np.absolute(tree.GenParticle_pdgid[k]))==13:
+
+				nparticles += 1
+				
+				tx, ty, tz = tree.GenParticle_y[k]/10., tree.GenParticle_x[k]/10., (tree.GenParticle_z[k])/10.
+				px, py, pz = tree.GenParticle_py[k], tree.GenParticle_px[k], tree.GenParticle_pz[k]
+
+				if det.nLayers(tx, ty, tz, px, py, pz) > 4:
+					count += 1
+					
+		if count >= 2:
+			signal_trigger += 1.
+		
 		tree.GetEntry(event_number)
 
-	#we can add some cuts here if we would like
-		if (tree.NumTracks < 2):
+		if not (len(tree.Digi_x) > 3):
 			continue
 
-		passed[1] += 1
+		total += 1.0
+		#CUT #1-- NEED TO RECONSTRUCT >1 TRACK
 
-
-		if not (tree.NumVertices >= 1):
+		if not (tree.NumTracks > 1):
 			continue
 
+		passed[0] += 1.0
 
-		passed[2] += 1
+		#cut #2 -- NEED TO RECONSTRUCT A VERTEX
 
-		bottom_layer = False
-		for hitn in range(len(tree.Digi_y)):
-			y_ind = in_layer(tree.Digi_y[hitn])
-			if y_ind < 2:
-				bottom_layer = True
-				continue
-
-		if bottom_layer:
+		if not (tree.NumVertices > 0):
 			continue
 
-		passed[3] += 1
+		passed[1] += 1.0
 
-		## expected hits in bottom layer!!!
-		## 
+		#cut 3-- fiducial volume cut for vertex
+
+		vtxx, vtxy, vtxz = tree.Vertex_x[0], tree.Vertex_y[0], tree.Vertex_z[0]
+		evtxy = tree.Vertex_ErrorY[0]
+
+		if not inside_box(vtxx, vtxy, vtxz):
+			continue
+
+		passed[2] += 1.0
+
+		#cut 4 -- no hits in bottom layer
+		veto = False
+		for hity in tree.Digi_y:
+			if in_layer(hity) < 2:
+				veto = True
+
+		if veto:
+			continue
+
+		passed[3] += 1.0
+
+
+		y1 = (tree.Vertex_y[0] - tree.Track_y0[0])
+		e1 = (tree.Vertex_ErrorY[0])
+		y2 = (tree.Vertex_y[0] - tree.Track_y0[1])
+		e2 = (tree.Vertex_ErrorY[0])
+
+		ydiff = max([y1/e1, y2/e2])
+
+		t1 = (tree.Vertex_t[0] - tree.Track_t0[0])
+		e1 = (tree.Vertex_ErrorT[0])
+		t2 = (tree.Vertex_t[0] - tree.Track_t0[1])
+		e2 = (tree.Vertex_ErrorY[0])
+
+		tdiff = max([t1/e1, t2/e2])
+
+
+		if max([ydiff, tdiff]) > 0.:
+			continue
+
+		passed[4] += 1.0
+
+		##CHECK IF TRACKS ARE MISSING >2 HITS IN LAYERS 9,8,7,6,5
+		#if det.inLayer_w_Error(vtxy, 2.*evtxy) >= 0 and evtxy < 100.:
+		#	continue
+
+		missing_upper_layers = [ [] for i in range(len(tree.Track_x0))]
+		trackn = 0
+		for layern in tree.Track_missingHitLayer:
+			if layern == -1:
+				trackn += 1
+			else:
+				if layern >= 5:
+					missing_upper_layers[trackn].append(layern)
+
+		veto = False
+
+		for mh_list in missing_upper_layers:
+			if len(mh_list) > 0:
+				veto = True
+		if veto:
+			continue
+
+		passed[5] += 1.
+
+		if min(tree.track_ipDistance) < 250:
+			continue
+
+		passed[6] += 1
+
+		event_display = visualization.Display()
+
+		for k in range(int(len(tree.Digi_x))):
+			event_display.AddPoint( [tree.Digi_x[k], tree.Digi_y[k], tree.Digi_z[k], tree.Digi_energy[k]] )
+
+		for k in range(int(tree.NumTracks)):
+			x0, y0, z0, t0 = tree.Track_x0[k], tree.Track_y0[k], tree.Track_z0[k], tree.Track_t0[k]
+			vx, vy, vz = tree.Track_velX[k], tree.Track_velY[k], tree.Track_velZ[k]
+			event_display.AddTrack(x0, y0, z0, vx, vy, vz, t0)
+
+
+		event_display.Draw_NoTime( "event " + str(event_number), "event" + str(event_number) + ".png" )
+
 		
-		close_to_ip = False
-		for n in range(len(tree.track_ipDistance)):
-			if (tree.track_ipDistance[n] < 350.):
-				close_to_ip = True
-
-		if close_to_ip:
-			continue
-
-		passed[4] += 1
-		
-
-		expect_hit = False
-		for trn in range(len(tree.Track_x0)):
-			dy = 6510.0 - tree.Track_y0[trn] 
-			x1 = tree.Track_velX[trn]*dy/tree.Track_velY[trn] + tree.Track_x0[trn]
-			z1 = tree.Track_velZ[trn]*dy/tree.Track_velY[trn] + tree.Track_z0[trn]
-			if inside_box(x1, 6107.0, z1):
-				expect_hit = True
-				continue
-
-		if not expect_hit:
-			continue
-
-
-		passed[5] += 1
-	
 
 		
 
-	
 
 
-	#if tree.Vertex_cosOpeningAngle[0] < 0.93:
-	#	continue
 
 	print(file)
-	print(total)
+	print("total events: " + str(total))
+	print("signal trigger: " + str(signal_trigger))
 	print(passed)
 	print([x/total for x in passed])
-	
-#	print("********")
-#	print(real_total)
 
-	for kk in range(len(passed)):
-		store[kk] += passed[kk]
-
-#	print([x/real_total for x in store])
 
 	for j in range(len(passed)):
 		plots[i].SetBinContent(j+1, float(passed[j])/total)
 	plots[i].SetLineColor(50+2*i)
 	plots[i].SetLineWidth(2)
 	
-	if i == 0:
-		plots[i].Draw()
-	else:
-		plots[i].Draw("SAME")
+	#if i == 0:
+	#	plots[i].Draw()
+	#else:
+	#	plots[i].Draw("SAME")
 
 
-legend = root.TLegend(0.65, 0.75, 0.98, 0.95)
-legend.AddEntry(plots[0], "W sample")
-legend.AddEntry(plots[1], "H->aa sample")
 
-legend.Draw("SAME")
-c1.SetLogy()
-c1.Print("cutflow.png", ".png")
+
 
 
 		

@@ -3,7 +3,7 @@ import physics
 import ROOT as root 
 
 
-tracking_file_name = "~/Downloads/haotest.root" # ADD NAME OF TRACKING FILE THAT YOU WANT TO DO VISULATIZATION FOR HERE 
+tracking_file_name = "../../tracker_files/jan28/w/stat0.root"
 tracking_file = root.TFile.Open(tracking_file_name)
 tree = tracking_file.Get("integral_tree")
 
@@ -18,6 +18,10 @@ for event_number in range(int(tree.GetEntries())):
 	#we can add some cuts here if we would like
 	if (tree.NumTracks < 2):
 			continue
+	if tree.NumVertices < 1:
+		continue
+
+	
 
 	event_display = visualization.Display()
 
