@@ -19,7 +19,6 @@ public:
 
 	int Next(){
     index++;
-    if (index > 10) return -1;
 		if (index >= NumEntries) return -1;
 		return index;
 	}
