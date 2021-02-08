@@ -46,13 +46,13 @@ ncuts = 7
 store = [0, 0, 0, 0, 0, 0, 0]
 real_total = 0.0
 
-files = [tracking1_file_name]#, tracking2_file_name, tracking3_file_name, tracking4_file_name]#, tracking5_file_name, tracking6_file_name]#, tracking4_file_name]
 plots = [root.TH1D("file" + str(n), "cutflow", ncuts, 0.5, ncuts + 0.5) for n in range(len(files))]
 
-
+store_total = 0.
 for i in range(len(files)):
 
 	file = files[i]
+	print(file)
 	tracking_file = root.TFile.Open(file)
 	tree = tracking_file.Get("integral_tree")
 
@@ -204,7 +204,14 @@ for i in range(len(files)):
 	#	plots[i].Draw()
 	#else:
 	#	plots[i].Draw("SAME")
+	for i, val in enumerate(passed):
+		store[i] += val
+	store_total += total
 
+print("************************")
+print([store])
+print(store_total)
+print([x/store_total for x in store])
 
 
 
