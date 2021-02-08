@@ -36,7 +36,7 @@ base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/tracker_files/feb6
 files = []
 for file in os.listdir(base_dir):
 	if file.endswith(".root"):
-		files.append(file)
+		files.append(base_dir + "/" file)
 
 w_ey = root.TH1D("wey", "ip assymetry", 100, 0., 10000.0)
 h_ey = root.TH1D("hey", "ip assymetry", 100, 0., 10000.0)
@@ -167,26 +167,6 @@ for i in range(len(files)):
 			continue
 
 		passed[6] += 1
-
-		event_display = visualization.Display()
-
-		for k in range(int(len(tree.Digi_x))):
-			event_display.AddPoint( [tree.Digi_x[k], tree.Digi_y[k], tree.Digi_z[k], tree.Digi_energy[k]] )
-
-		for k in range(int(tree.NumTracks)):
-			x0, y0, z0, t0 = tree.Track_x0[k], tree.Track_y0[k], tree.Track_z0[k], tree.Track_t0[k]
-			vx, vy, vz = tree.Track_velX[k], tree.Track_velY[k], tree.Track_velZ[k]
-			event_display.AddTrack(x0, y0, z0, vx, vy, vz, t0)
-
-
-		event_display.Draw_NoTime( "event " + str(event_number), "event" + str(event_number) + ".png" )
-
-		
-
-		
-
-
-
 
 	print(file)
 	print("total events: " + str(total))
