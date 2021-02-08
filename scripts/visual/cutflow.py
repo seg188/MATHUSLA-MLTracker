@@ -36,7 +36,7 @@ base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/tracker_files/feb6
 files = []
 for file in os.listdir(base_dir):
 	if file.endswith(".root"):
-		files.append(base_dir + "/" file)
+		files.append(base_dir + "/" + file)
 
 w_ey = root.TH1D("wey", "ip assymetry", 100, 0., 10000.0)
 h_ey = root.TH1D("hey", "ip assymetry", 100, 0., 10000.0)
