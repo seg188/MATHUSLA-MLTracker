@@ -31,8 +31,8 @@ def in_layer(y_val):
 det = physics.Detector()
 
 
-base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/tracker_files/feb6/w"
-
+base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/tracker_files/feb11/w"
+#base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/h10"
 files = []
 for file in os.listdir(base_dir):
 	if file.endswith(".root"):
@@ -113,19 +113,22 @@ for i in range(len(files)):
 		for hity in tree.Digi_y:
 			if in_layer(hity) < 2:
 				veto = True
-		if not veto:
-			for track_n in range(tree.NumTracks):
-				x0, y0, z0 = tree.Track_x0[track_n], tree.Track_y0[track_n], tree.Track_z0[track_n]
-				vx, vy, vz = tree.Track_velX[track_n], tree.Track_velY[track_n], tree.Track_velZ[track_n]
-				y2 = det.LayerYMid(1)
-				delt = (y2-y0)/vy
-
-				exp_x, exp_z = x0 + delt * vx, z0 + delt * vz
-
-				if not det.inBox(exp_x, y2, exp_z):
-					veto = True
-
+		exp_passed = False
 		if veto:
+			continue
+
+		for track_n in range( int(tree.NumTracks) ):
+			x0, y0, z0 = tree.Track_x0[track_n], tree.Track_y0[track_n], tree.Track_z0[track_n]
+			vx, vy, vz = tree.Track_velX[track_n], tree.Track_velY[track_n], tree.Track_velZ[track_n]
+			y2 = det.LayerYMid(1)
+			delt = (y2-y0)/vy
+
+			exp_x, exp_z = x0 + delt * vx, z0 + delt * vz
+			if det.inBox(exp_x, y2, exp_z):
+				exp_passed = True
+
+
+		if (not exp_passed):
 			continue
 
 		passed[3] += 1.0

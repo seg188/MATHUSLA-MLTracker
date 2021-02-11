@@ -96,7 +96,7 @@ public:
 
 			
 
-			return (istat == 3) ? true : false;
+			return (istat >= 2) ? true : false;
 
 
 	}
