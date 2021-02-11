@@ -113,6 +113,17 @@ for i in range(len(files)):
 		for hity in tree.Digi_y:
 			if in_layer(hity) < 2:
 				veto = True
+		if not veto:
+			for track_n in range(tree.NumTracks):
+				x0, y0, z0 = tree.Track_x0[track_n], tree.Track_y0[track_n], tree.Track_z0[track_n]
+				vx, vy, vz = tree.Track_velX[track_n], tree.Track_velY[track_n], tree.Track_velZ[track_n]
+				y2 = det.LayerYMid(1)
+				delt = (y2-y0)/vy
+
+				exp_x, exp_z = x0 + delt * vx, z0 + delt * vz
+
+				if not det.inBox(exp_x, y2, exp_z):
+					veto = True
 
 		if veto:
 			continue

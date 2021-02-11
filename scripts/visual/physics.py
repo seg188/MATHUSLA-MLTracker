@@ -172,3 +172,28 @@ class Detector:
 			return min(above)
 
 		return -1
+
+	def nLayersWHit(self, list_of_hit_y_vals):
+		layers = set()
+
+		for y_val in list_of_hit_y_vals:
+			layer = self.inLayer(y_val)
+			if not (layer < 2 ):
+				layers.add(layer)
+
+		return len(layers)
+
+	def LayersWHit(self, list_of_hit_y_vals):
+		layers = set()
+
+		for y_val in list_of_hit_y_vals:
+			layer = self.inLayer(y_val)
+			if not (layer == -1):
+				layers.add(layer)
+		
+
+		return layers
+
+
+
+
