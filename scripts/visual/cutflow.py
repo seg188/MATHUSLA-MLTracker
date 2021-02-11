@@ -31,7 +31,7 @@ def in_layer(y_val):
 det = physics.Detector()
 
 
-base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/tracker_files/feb11/w"
+base_dir = "/cms/seg188/eos/mathusla/cutflow/MATHUSLA-MLTracker/build/tracker_files/feb11/w"
 #base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/h10"
 files = []
 for file in os.listdir(base_dir):
