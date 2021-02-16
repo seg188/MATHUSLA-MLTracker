@@ -24,6 +24,7 @@ public:
 		return _OutputFile_Name + TString("/stat") + TString(strs.str()) + TString(".root"); 
 	}
 
+	unsigned long long TotalEventsProcessed = 0;
 
 	RunManager(){
 		

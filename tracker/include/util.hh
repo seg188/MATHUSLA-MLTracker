@@ -40,7 +40,7 @@ std::vector<TString> ProcessDirectory(std::string directory, std::string current
 
       } else if(entity->d_type == DT_REG){
           TString file_name = TString(entity->d_name);
-          if (file_name.EndsWith(".root")) files.push_back( TString(new_path) + TString(entity->d_name) );
+          if (file_name.EndsWith(".root") and !(file_name.Contains("temp"))) files.push_back( TString(new_path) + TString(entity->d_name) );
           //ProcessFile(std::string(entity->d_name), new_path);
       }
 

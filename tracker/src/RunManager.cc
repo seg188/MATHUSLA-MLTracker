@@ -16,6 +16,7 @@ int RunManager::StartTracking(){
 
 //looping over every event in the loop.
 	while (TH->Next() >= 0){ 
+		TotalEventsProcessed++;
 		_digitizer->clear();
 		_tracker->clear();
 		_vertexer->clear();
@@ -65,6 +66,7 @@ int RunManager::StartTracking(){
 	TH->Write();
 	//delete _tracker;
 	//delete _digitizer;
+	std::cout << "Tracked " << TotalEventsProcessed << " Events" << std::endl;
 
 
 	return 0;
