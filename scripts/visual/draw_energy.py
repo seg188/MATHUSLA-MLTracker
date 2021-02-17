@@ -2,7 +2,7 @@ import visualization
 import physics
 import ROOT as root 
 
-tracking_file_name = "../../tracker_files/pgun/e250gev/stat0.root"
+tracking_file_name = "../../build/etarange/stat3.root"
 tracking_file = root.TFile.Open(tracking_file_name)
 tree = tracking_file.Get("integral_tree")
 
@@ -23,16 +23,16 @@ for event_number in range(int(tree.GetEntries())):
 #		continue
 
 	
-	nlayers = det.nLayersWHit(tree.Hit_y)
-	if nlayers < 2:
-		continue
+#	nlayers = det.nLayersWHit(tree.Hit_y)
+#	if nlayers < 2:
+#		continue
 
-	total[nlayers-2] += 1.
+#	total[nlayers-2] += 1.
 
-	if (tree.NumTracks >0 ):
-		count[nlayers-2] += 1.
+#	if (tree.NumTracks >0 ):
+#		count[nlayers-2] += 1.
 	
-	continue
+#	continue
 
 
 	event_display = visualization.Display()

@@ -31,7 +31,7 @@ def in_layer(y_val):
 det = physics.Detector()
 
 
-base_dir = "/cms/seg188/eos/mathusla/tracker/MATHUSLA-MLTracker/build/tracker_files/feb11/w"
+base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/output/feb15/w"
 #base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/h10"
 files = []
 for file in os.listdir(base_dir):
@@ -55,7 +55,8 @@ for i in range(len(files)):
 	print(file)
 	tracking_file = root.TFile.Open(file)
 	tree = tracking_file.Get("integral_tree")
-
+	if (not tree):
+		continue
 	passed = [0.0 for n in range(ncuts)]
 
 	total = 0.0
