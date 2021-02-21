@@ -196,6 +196,11 @@ for i in range(len(files)):
 			continue
 
 		passed[7] += 1.
+
+		print("*****event passed!!*****")
+		print("file: " + file)
+		print("Event number: " + str(event_number) )
+		
 		event_display = visualization.Display()
 
 		for k in range(int(len(tree.Digi_x))):
@@ -211,6 +216,8 @@ for i in range(len(files)):
 
 
 		event_display.Draw_NoTime( "event " + str(event_number), "event" + str(event_number) + ".png" )
+
+		
 
 	print(file)
 	print("total events: " + str(total))
