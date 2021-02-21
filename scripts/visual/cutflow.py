@@ -223,26 +223,22 @@ for i in range(len(files)):
 	print("total events: " + str(total))
 	print("signal trigger: " + str(signal_trigger))
 	print(passed)
-	print([x/total for x in passed])
+	if total > 0:
+		print([x/total for x in passed])
 
-
-	for j in range(len(passed)):
-		plots[i].SetBinContent(j+1, float(passed[j])/total)
-	plots[i].SetLineColor(50+2*i)
-	plots[i].SetLineWidth(2)
-	
-	#if i == 0:
-	#	plots[i].Draw()
-	#else:
-	#	plots[i].Draw("SAME")
 	for i, val in enumerate(passed):
 		store[i] += val
 	store_total += total
 
+	if store_total > 0:
+		print("totals:\n")
+		print([x/store_total for x in store_total])
+
 print("************************")
 print([store])
 print(store_total)
-print([x/store_total for x in store])
+if store_total > 0:
+	print([x/store_total for x in store])
 
 
 
