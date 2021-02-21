@@ -186,13 +186,9 @@ for i in range(len(files)):
 
 		##track beta cut
 		veto = False
-		for track_n in range(int(tree.NumTracks)):
-			beta = tree.Track_beta[track_n]
-			if beta < 0.8:
-				veto = True
-				continue
+		diff = np.absolute(tree.Track_y0[0] - tree.Track_y0[1])
 
-		if veto:
+		if diff > 1.0:
 			continue
 
 		passed[7] += 1.
