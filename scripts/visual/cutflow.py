@@ -232,7 +232,7 @@ for i in range(len(files)):
 
 	if store_total > 0:
 		print("totals:\n")
-		print([x/store_total for x in store_total])
+		print([x/store_total for x in store])
 
 print("************************")
 print([store])
