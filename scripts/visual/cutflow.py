@@ -31,8 +31,8 @@ def in_layer(y_val):
 det = physics.Detector()
 
 
-base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/build/output/feb15/w"
-#base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/h10"
+base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/output/w"
+#base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/w/stat0.root"
 files = []
 for file in os.listdir(base_dir):
 	if file.endswith(".root"):
@@ -41,9 +41,9 @@ for file in os.listdir(base_dir):
 w_ey = root.TH1D("wey", "ip assymetry", 100, 0., 10000.0)
 h_ey = root.TH1D("hey", "ip assymetry", 100, 0., 10000.0)
 
-ncuts = 7
+ncuts = 8
 
-store = [0, 0, 0, 0, 0, 0, 0]
+store = [0, 0, 0, 0, 0, 0, 0, 0]
 real_total = 0.0
 
 plots = [root.TH1D("file" + str(n), "cutflow", ncuts, 0.5, ncuts + 0.5) for n in range(len(files))]
@@ -182,6 +182,35 @@ for i in range(len(files)):
 			continue
 
 		passed[6] += 1
+
+
+		##track beta cut
+		veto = False
+		for track_n in range(int(tree.NumTracks)):
+			beta = tree.Track_beta[track_n]
+			if beta < 0.8:
+				veto = True
+				continue
+
+		if veto:
+			continue
+
+		passed[7] += 1.
+		event_display = visualization.Display()
+
+		for k in range(int(len(tree.Digi_x))):
+			event_display.AddPoint( [tree.Digi_x[k], tree.Digi_y[k], tree.Digi_z[k], tree.Digi_energy[k]] )
+
+#	event_display.AddPoint( [tree.Vertex_x[0], tree.Vertex_y[0], tree.Vertex_z[0], tree.Vertex_t[0]], "*" )
+
+	
+		for k in range(int(tree.NumTracks)):
+			x0, y0, z0, t0 = tree.Track_x0[k], tree.Track_y0[k], tree.Track_z0[k], tree.Track_t0[k]
+			vx, vy, vz = tree.Track_velX[k], tree.Track_velY[k], tree.Track_velZ[k]
+			event_display.AddTrack(x0, y0, z0, vx, vy, vz, t0)
+
+
+		event_display.Draw_NoTime( "event " + str(event_number), "event" + str(event_number) + ".png" )
 
 	print(file)
 	print("total events: " + str(total))
