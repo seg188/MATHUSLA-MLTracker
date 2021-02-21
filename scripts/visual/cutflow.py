@@ -31,7 +31,7 @@ def in_layer(y_val):
 det = physics.Detector()
 
 
-base_dir = "/cms/seg188/eos/mathusla/MATHUSLA-MLTracker/output/w"
+base_dir = "/cms/seg188/eos/mathusla/output/w"
 #base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/w/stat0.root"
 files = []
 for file in os.listdir(base_dir):
@@ -200,7 +200,7 @@ for i in range(len(files)):
 		print("*****event passed!!*****")
 		print("file: " + file)
 		print("Event number: " + str(event_number) )
-		
+
 		event_display = visualization.Display()
 
 		for k in range(int(len(tree.Digi_x))):
