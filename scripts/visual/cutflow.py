@@ -60,25 +60,7 @@ for i in range(len(files)):
 	passed = [0.0 for n in range(ncuts)]
 
 	total = 0.0
-	signal_trigger = 0.0
-	for event_number in range(int(tree.GetEntries())):
-		count = 0
-		nparticles = 0
-		for k in range(int(tree.NumGenParticles)):
-			
-			if tree.GenParticle_G4index[k] > 0 and int(np.absolute(tree.GenParticle_pdgid[k]))==13:
-
-				nparticles += 1
-				
-				tx, ty, tz = tree.GenParticle_y[k]/10., tree.GenParticle_x[k]/10., (tree.GenParticle_z[k])/10.
-				px, py, pz = tree.GenParticle_py[k], tree.GenParticle_px[k], tree.GenParticle_pz[k]
-
-				if det.nLayers(tx, ty, tz, px, py, pz) > 4:
-					count += 1
-					
-		if count >= 2:
-			signal_trigger += 1.
-		
+	for event_number in range(int(tree.GetEntries())):		
 		tree.GetEntry(event_number)
 
 		if not (len(tree.Digi_x) > 3):
@@ -185,11 +167,27 @@ for i in range(len(files)):
 
 
 		##track beta cut
-		veto = False
-		diff = np.absolute(tree.Track_y0[0] - tree.Track_y0[1])
+		track_hit_yvals = [ [] for i in range(len(tree.Track_x0))]
+		trackn = 0
+		for hitn in tree.Track_hitIndices:
+			if hitn == -1:
+				trackn += 1
+			else:
+				track_hit_yvals[trackn].append(tree.Digi_y[hitn])
 
-		if diff > 1.0:
+		min_layers = [ min(yvals_list) for yvals_list in track_hit_yvals ]
+
+		veto = False
+
+		start = min_layers[0]
+
+		for minval in min_layers:
+			if not minval==start:
+				veto = True
+				break
+		if veto:
 			continue
+
 
 		passed[7] += 1.
 
@@ -217,7 +215,7 @@ for i in range(len(files)):
 
 	print(file)
 	print("total events: " + str(total))
-	print("signal trigger: " + str(signal_trigger))
+
 	print(passed)
 	if total > 0:
 		print([x/total for x in passed])
@@ -228,6 +226,7 @@ for i in range(len(files)):
 
 	if store_total > 0:
 		print("totals:\n")
+		print(store_total)
 		print([x/store_total for x in store])
 
 print("************************")
