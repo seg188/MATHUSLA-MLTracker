@@ -100,7 +100,7 @@ for i in range(len(files)):
 		if veto:
 			continue
 
-		exp_passed = [False for i in range int(tree.NumTracks)]
+		exp_passed = [False for i in range(int(tree.NumTracks))]
 		for track_n in range( int(tree.NumTracks) ):
 			x0, y0, z0 = tree.Track_x0[track_n], tree.Track_y0[track_n], tree.Track_z0[track_n]
 			vx, vy, vz = tree.Track_velX[track_n], tree.Track_velY[track_n], tree.Track_velZ[track_n]
