@@ -96,22 +96,30 @@ for i in range(len(files)):
 		for hity in tree.Digi_y:
 			if in_layer(hity) < 2:
 				veto = True
-		exp_passed = False
+		
 		if veto:
 			continue
 
+		exp_passed = [False for i in range int(tree.NumTracks)]
 		for track_n in range( int(tree.NumTracks) ):
 			x0, y0, z0 = tree.Track_x0[track_n], tree.Track_y0[track_n], tree.Track_z0[track_n]
 			vx, vy, vz = tree.Track_velX[track_n], tree.Track_velY[track_n], tree.Track_velZ[track_n]
 			y2 = det.LayerYMid(1)
-			delt = (y2-y0)/vy
+			delt1 = (y2-y0)/vy
+			exp_x1, exp_z1 = x0 + delt1 * vx, z0 + delt1 * vz
 
-			exp_x, exp_z = x0 + delt * vx, z0 + delt * vz
-			if det.inBox(exp_x, y2, exp_z):
-				exp_passed = True
+			y1 = det.LayerYMid(0)
+			delt0 = (y1-y0)/vy
+			exp_x0, exp_z0 = x0 + delt0 * vx, z0 + delt0 * vz
+
+			if det.inBox(exp_x1, y2, exp_z1) or det.inBox(exp_x0, y1, exp_z0):
+				exp_passed[track_n] = True
 
 
-		if (not exp_passed):
+		for truthVal in exp_passed:
+			if truthVal == False:
+				veto = True
+		if veto:	
 			continue
 
 		passed[3] += 1.0
