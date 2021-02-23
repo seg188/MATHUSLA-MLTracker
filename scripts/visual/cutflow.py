@@ -112,7 +112,7 @@ for i in range(len(files)):
 			delt0 = (y1-y0)/vy
 			exp_x0, exp_z0 = x0 + delt0 * vx, z0 + delt0 * vz
 
-			if det.inBox(exp_x1, y2, exp_z1) or det.inBox(exp_x0, y1, exp_z0):
+			if det.inSensitiveElement(exp_x1, y2, exp_z1) or det.inSensitiveElement(exp_x0, y1, exp_z0):
 				exp_passed[track_n] = True
 
 
