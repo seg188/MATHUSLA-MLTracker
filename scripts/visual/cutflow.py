@@ -174,7 +174,7 @@ for i in range(len(files)):
 		passed[6] += 1
 
 
-		##track beta cut
+		##track in same layer cut
 		track_hit_yvals = [ [] for i in range(len(tree.Track_x0))]
 		trackn = 0
 		for hitn in tree.Track_hitIndices:
@@ -199,6 +199,7 @@ for i in range(len(files)):
 
 		passed[7] += 1.
 
+		continue
 		print("*****event passed!!*****")
 		print("file: " + file)
 		print("Event number: " + str(event_number) )
