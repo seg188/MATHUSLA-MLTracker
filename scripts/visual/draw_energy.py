@@ -1,15 +1,16 @@
 import visualization
-import physics
-import ROOT as root 
 
-tracking_file_name = "../../build/etarange/stat3.root"
+import ROOT as root
+from detector import Detector
+
+tracking_file_name = "../../build/output/pgun/klong/stat0.root"
 tracking_file = root.TFile.Open(tracking_file_name)
 tree = tracking_file.Get("integral_tree")
 
 
 LAYERS_Y=[[6001.0, 6004.0],  [6104.0, 6107.0]]
 
-det = physics.Detector() 												 	
+det = Detector() 												 	
 
 count = [0. for i in range(6)]
 total = [0. for i in range(6)]
@@ -17,11 +18,21 @@ for event_number in range(int(tree.GetEntries())):
 	
 	tree.GetEntry(event_number)
 	#we can add some cuts here if we would like
-#	if (tree.NumTracks < 2):
-#			continue
-#	if tree.NumVertices < 1:
-#		continue
+	if (tree.NumTracks < 2):
+			continue
+	if tree.NumVertices < 1:
+		continue
 
+	veto = False
+
+	for hit_y in tree.Digi_y:
+		layer = det.inLayer(hit_y)
+		if layer == 1 or layer == 0:
+			veto = True
+			continue
+
+	if veto:
+		continue
 	
 #	nlayers = det.nLayersWHit(tree.Hit_y)
 #	if nlayers < 2:

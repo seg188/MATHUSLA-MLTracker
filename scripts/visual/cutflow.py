@@ -32,7 +32,7 @@ det = detector.Detector()
 
 
 base_dir = "/cms/seg188/eos/mathusla/output/w"
-#base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/wc/w/stat0.root"
+#base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/w/"
 files = []
 for file in os.listdir(base_dir):
 	if file.endswith(".root"):
