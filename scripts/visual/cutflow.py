@@ -28,7 +28,7 @@ def in_layer(y_val):
 	return 999
 
 
-det = physics.Detector()
+det = detector.Detector()
 
 
 base_dir = "/cms/seg188/eos/mathusla/output/w"
