@@ -46,8 +46,6 @@ ncuts = 8
 store = [0, 0, 0, 0, 0, 0, 0, 0]
 real_total = 0.0
 
-plots = [root.TH1D("file" + str(n), "cutflow", ncuts, 0.5, ncuts + 0.5) for n in range(len(files))]
-
 store_total = 0.
 for i in range(len(files)):
 
@@ -111,7 +109,7 @@ for i in range(len(files)):
 			y1 = det.LayerYMid(0)
 			delt0 = (y1-y0)/vy
 			exp_x0, exp_z0 = x0 + delt0 * vx, z0 + delt0 * vz
-
+			       
 			if det.inSensitiveElement(exp_x1, y2, exp_z1) or det.inSensitiveElement(exp_x0, y1, exp_z0):
 				exp_passed[track_n] = True
 
