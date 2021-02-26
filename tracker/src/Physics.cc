@@ -80,7 +80,20 @@ namespace physics {
       }
 
     double track::beta_err(){
-      	return TMath::Sqrt( vx*vx*evx*evx +  vy*vy*evy*evy + vz*vz*evz*evz)/constants::c;
+        double norm = beta()*(constants::c * constants::c);
+        std::vector<double> derivatives = { 0., 0., vx/norm, vy/norm, vz/norm, 0.};
+
+      	double error = 0.0;
+
+        for (int i = 0; i < derivatives.size(); i++){
+            for (int j = 0; j < derivatives.size(); j++){
+                
+                error += derivatives[i]*derivatives[j]*_CovMatrix[i][j];
+                
+            }
+        }
+
+        return TMath::Sqrt(error);
       }
 
     
