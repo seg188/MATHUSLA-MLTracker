@@ -105,9 +105,9 @@ class Detector:
 		return -1
 
 	def inBox(self, x, y, z):
-		if x > self.xLims[0] and x < self.xLims[1]:
-			if y > self.yLims[0] and y < self.yLims[1]:
-				if z > self.zLims[0] and z < self.zLims[1]:
+		if x > self.xLims()[0] and x < self.xLims()[1]:
+			if y > self.yLims()[0] and y < self.yLims()[1]:
+				if z > self.zLims()[0] and z < self.zLims()[1]:
 					return True
 		return False
 
