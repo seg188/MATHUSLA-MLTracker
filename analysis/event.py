@@ -2,6 +2,7 @@ import numpy as np
 import physics
 import visualization
 from detector import Detector
+
 #########################################################################################
 ### DEFINITION OF EVENT CLASS ###########################################################
 
@@ -148,6 +149,9 @@ class Event:
 
 		self.visEngine.TrackDisplay(list_of_trackPt_lists, list_of_colors)
 		self.visEngine.Draw()
+
+
+		
 
 
 
