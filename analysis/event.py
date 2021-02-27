@@ -1,6 +1,7 @@
 import numpy as np
 import physics
 import visualization
+from detector import Detector
 #########################################################################################
 ### DEFINITION OF EVENT CLASS ###########################################################
 
@@ -8,14 +9,14 @@ import visualization
 class Event:
 	visEngine = visualization.Visualizer()
 	###########################################################################################################################################################################
-	TRUTH_PARTICLE_E_THRESHOLD = 0.25 #MeV
+	TRUTH_PARTICLE_E_THRESHOLD = 0.05 #MeV
 
 	t0 = 0.0
 	tm = 0.0
 
 	globalTime = 0.0
 	timeResolution = 1.0 #ns
-	timeRangeCut = 2.0 #ns
+	timeRangeCut = 0.1 #ns
 
 	tracksAtGlobalTime = []
 
@@ -30,14 +31,25 @@ class Event:
 	def __init__(self, Tree, EventNumber):
 		self.EventNumber = EventNumber
 		self.Tree = Tree
-
-		#self.ExtractTruthPhysics()
-		#self.RecordRecoPhysics()
+		self.Tree.SetBranchStatus("*", 0)
+		
 	###########################################################################################################################################################################
 
 	###########################################################################################################################################################################
 	def ExtractTruthPhysics(self):
+		self.Tree.SetBranchStatus("Hit_x", 1)
+		self.Tree.SetBranchStatus("Hit_y", 1)
+		self.Tree.SetBranchStatus("Hit_z", 1)
+		self.Tree.SetBranchStatus("Hit_particlePdgId", 1)
+		self.Tree.SetBranchStatus("Hit_G4ParentTrackId", 1)
+		self.Tree.SetBranchStatus("Hit_G4TrackId", 1)
+		self.Tree.SetBranchStatus("Hit_particlePx", 1)
+		self.Tree.SetBranchStatus("Hit_particlePy", 1)
+		self.Tree.SetBranchStatus("Hit_particlePz", 1)
+		self.Tree.SetBranchStatus("Hit_particleEnergy", 1)
+		
 		self.Tree.GetEntry(self.EventNumber)
+
 
 		particleSet = set()
 
@@ -83,7 +95,6 @@ class Event:
 		self.TruthAtTime(self.tm)
 		for track in self.truthTrackList:
 			print(track)
-			print(track.TimeRange())
 		colors = [self.truthTrackList[n].color() for n in range(len(self.truthTrackList))]
 		self.visEngine.TrackDisplay(self.tracksAtGlobalTime, colors)
 		self.visEngine.Draw()
@@ -112,6 +123,36 @@ class Event:
 			self.StepParticles()
 
 		return self.tracksAtGlobalTime
+
+	#draw reconstructed tracks in detector det
+	def DrawReco(self):
+		list_of_trackPt_lists = []
+		list_of_colors = []
+		det = Detector()
+
+		self.Tree.SetBranchStatus("Track_x0", 1)
+		self.Tree.SetBranchStatus("Track_y0", 1)
+		self.Tree.SetBranchStatus("Track_z0", 1)
+		self.Tree.SetBranchStatus("Track_velX", 1)
+		self.Tree.SetBranchStatus("Track_velY", 1)
+		self.Tree.SetBranchStatus("Track_velZ", 1)
+
+		self.Tree.GetEntry(self.EventNumber)
+
+		for trackNumber in range(int(self.Tree.NumTracks)):
+			x0, y0, z0 = self.Tree.Track_x0[trackNumber], self.Tree.Track_y0[trackNumber], self.Tree.Track_z0[trackNumber]
+			vx, vy, vz = self.Tree.Track_velX[trackNumber], self.Tree.Track_velY[trackNumber], self.Tree.Track_velZ[trackNumber]
+			xl, yl, zl = det.RecoTrackPoints(x0, y0, z0, vx, vy, vz)
+			list_of_trackPt_lists.append( [ physics.RecoTrackPt( xl[n], yl[n], zl[n]  ) for n in range(len(xl)) ] )
+			list_of_colors.append(list_of_trackPt_lists[trackNumber][0].c)
+
+		self.visEngine.TrackDisplay(list_of_trackPt_lists, list_of_colors)
+		self.visEngine.Draw()
+
+
+
+
+
 
 
 

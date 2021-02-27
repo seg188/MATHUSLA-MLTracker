@@ -57,7 +57,7 @@ class Particle:
 		self.parentTrackID = parentTrackID
 
 	def __str__(self):
-		_str = "PDG: " + str(self.pdgID) +  " TrackID " + str(self.trackID)
+		_str = "PDG: " + str(self.pdgID) +  " TrackID " + str(self.trackID) + " parentTrackID: " + str(self.parentTrackID)
 		return _str
 
 	def __repr__(self):
@@ -143,5 +143,13 @@ class Track:
 
 	def v0(self):
 		return self.pointList[0].velocity
+
+	def Energy(self):
+		print(self.pointList[0].energy)
 		
-		
+class RecoTrackPt:
+	def __init__(self, x, y, z, c=0):
+		self.x = x
+		self.y = y
+		self.z = z
+		self.c = c

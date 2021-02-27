@@ -4,42 +4,17 @@ import ROOT as root
 import numpy as np
 import detector
 import os
-
-LAYERS_Y=[[6001.0, 6004.0],  [6104.0, 6107.0]]
- 												 	
-
-box_lims = [[-5000., 5000.], [5900.0, 9000.0], [6900., 17100.]]
-
-def inside_box(x, y, z):
-	if box_lims[0][0] < x and box_lims[0][1] > x:
-		if box_lims[1][0] < y and box_lims[1][1] > y:
-			if box_lims[2][0] < z and box_lims[2][1] > z:
-				return True
-
-	return False
-
-def in_layer(y_val):
-	for n in range(len(LAYERS_Y)):
-		_min = LAYERS_Y[n][0]
-		_max = LAYERS_Y[n][1]
-		if (y_val > _min) and (y_val < _max):
-			return n 
-
-	return 999
-
+from time import time
 
 det = detector.Detector()
 
 
-base_dir = "/cms/seg188/eos/mathusla/output/w"
-#base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/w/"
+#base_dir = "/cms/seg188/eos/mathusla/output/w"
+base_dir = "/home/stephen/hex/mathusla_all/ml_tracker/tracker_files/feb2/w/"
 files = []
 for file in os.listdir(base_dir):
 	if file.endswith(".root"):
 		files.append(base_dir + "/" + file)
-
-w_ey = root.TH1D("wey", "ip assymetry", 100, 0., 10000.0)
-h_ey = root.TH1D("hey", "ip assymetry", 100, 0., 10000.0)
 
 ncuts = 8
 
@@ -55,9 +30,34 @@ for i in range(len(files)):
 	tree = tracking_file.Get("integral_tree")
 	if (not tree):
 		continue
+
+	#tree.SetBranchStatus("*", 0)
+	tree.SetBranchStatus("Digi_x", 1)
+	tree.SetBranchStatus("Digi_y", 1)
+	tree.SetBranchStatus("NumTracks", 1)
+	tree.SetBranchStatus("NumVertices", 1)
+	tree.SetBranchStatus("Vertex_x", 1)
+	tree.SetBranchStatus("Vertex_y", 1)
+	tree.SetBranchStatus("Vertex_z", 1)
+	tree.SetBranchStatus("Vertex_t", 1)
+	tree.SetBranchStatus("Vertex_ErrorY", 1)
+	tree.SetBranchStatus("Vertex_ErrorT", 1)
+	tree.SetBranchStatus("Track_velX", 1)
+	tree.SetBranchStatus("Track_velY", 1)
+	tree.SetBranchStatus("Track_velZ", 1)
+	tree.SetBranchStatus("Track_x0", 1)
+	tree.SetBranchStatus("Track_y0", 1)
+	tree.SetBranchStatus("Track_z0", 1)
+	tree.SetBranchStatus("Track_t0", 1)
+	tree.SetBranchStatus("Track_missingHitLayer", 1)
+	tree.SetBranchStatus("track_ipDistance", 1)
+
 	passed = [0.0 for n in range(ncuts)]
 
 	total = 0.0
+
+	start_time = time()
+
 	for event_number in range(int(tree.GetEntries())):		
 		tree.GetEntry(event_number)
 
@@ -84,7 +84,7 @@ for i in range(len(files)):
 		vtxx, vtxy, vtxz = tree.Vertex_x[0], tree.Vertex_y[0], tree.Vertex_z[0]
 		evtxy = tree.Vertex_ErrorY[0]
 
-		if not inside_box(vtxx, vtxy, vtxz):
+		if not det.inBox(vtxx, vtxy, vtxz):
 			continue
 
 		passed[2] += 1.0
@@ -92,7 +92,7 @@ for i in range(len(files)):
 		#cut 4 -- no hits in bottom layer
 		veto = False
 		for hity in tree.Digi_y:
-			if in_layer(hity) < 2:
+			if det.inLayer(hity) < 2:
 				veto = True
 		
 		if veto:
@@ -181,7 +181,7 @@ for i in range(len(files)):
 			else:
 				track_hit_yvals[trackn].append(tree.Digi_y[hitn])
 
-		min_layers = [ min(yvals_list) for yvals_list in track_hit_yvals ]
+		min_layers = [ det.inLayer(min(yvals_list)) for yvals_list in track_hit_yvals ]
 
 		veto = False
 
@@ -198,6 +198,7 @@ for i in range(len(files)):
 		passed[7] += 1.
 
 		continue
+
 		print("*****event passed!!*****")
 		print("file: " + file)
 		print("Event number: " + str(event_number) )
@@ -218,7 +219,8 @@ for i in range(len(files)):
 
 		event_display.Draw_NoTime( "event " + str(event_number), "event" + str(event_number) + ".png" )
 
-		
+	total_time = time() - start_time
+	print("total time: " + str(total_time))
 
 	print(file)
 	print("total events: " + str(total))

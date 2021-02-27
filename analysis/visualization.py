@@ -47,7 +47,7 @@ class Visualizer:
 
 		cols = []
 		
-		for layerN in range(det.nLayers()):
+		for layerN in range(det.numLayers()):
 			layerY = [det.LayerYMid(layerN) for x in range(len(layerX))]
 			verts = [list(zip(layerX, layerY, layerZ))]
 			cols.append(Poly3DCollection(verts, alpha=0.20))

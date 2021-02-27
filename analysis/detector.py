@@ -30,9 +30,93 @@ class Detector:
 	def LayerYMid(self, n):
 		return (self.LayerYLims[n][0] + self.LayerYLims[n][1])/2.
 
-	def nLayers(self):
+	def numLayers(self):
 		return len(self.LayerYLims)
 
 	def DrawColor(self):
 		return "tab:gray"
+
+	def inLayer(self, yVal):
+		for layerN, layerLims in enumerate(self.LayerYLims):
+			if yVal > layerLims[0] and yVal < layerLims[1]:
+				return layerN
+		return -1
+
+	def inLayer_w_Error(self, yVal, yErr):
+		for layerN, layerLims in enumerate(self.LayerYLims):
+
+			lower = yVal - yErr
+			upper = yVal + yErr
+
+			if lower < layerLims[0] and upper > layerLims[1]:
+				return layerN
+
+			if lower < layerLims[0] and upper > layerLims[0]:
+				return layerN
+
+			if lower < layerLims[1] and upper > layerLims[1]:
+				return layerN
+
+
+		return -1
+
+	def inBox(self, x, y, z):
+		if x > self.xLims()[0] and x < self.xLims()[1]:
+			if y > self.yLims()[0] and y < self.yLims()[1]:
+				if z > self.zLims()[0] and z < self.zLims()[1]:
+					return True
+		return False
+
 	
+	#determine number of layers a track goes through
+	def nLayers(self, x0, y0, z0, vx, vy, vz):
+		count = 0
+		for n in range(len(self.LayerYLims)):
+			layerY = self.LayerYMid(n)
+			if (layerY-y0)/vy < 0:
+				continue
+			else:
+				dt = (layerY - y0)/vy
+
+				x1 = x0 + dt*vx
+				z1 = y0 + dt*vz
+
+				if inBox(x1, layerY, z1):
+					count += 1
+
+		return count		
+
+
+	##get points inside the detector for reconstructed track
+	def RecoTrackPoints(self, x0, y0, z0, vx, vy, vz):
+		x, y, z = [], [], []
+		_x, _y, _z = x0, y0, z0
+
+		time_spacing = 0.1 #ns
+		
+		while self.inBox(_x, _y, _z):
+			x.append(_x)
+			y.append(_y)
+			z.append(_z)
+
+			_x += vx*time_spacing
+			_y += vy*time_spacing
+			_z += vz*time_spacing
+
+		_x, _y, _z = x0, y0, z0
+		for i in range(2000):
+			x.append(_x)
+			y.append(_y)
+			z.append(_z)
+
+			_x -= vx*time_spacing
+			_y -= vy*time_spacing
+			_z -= vz*time_spacing
+
+			if _y < 6005.:
+				print(_x, _y, _z)
+				break
+
+
+
+		return x, y, z
