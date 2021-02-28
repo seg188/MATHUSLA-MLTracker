@@ -105,7 +105,7 @@ class H_mumu_Analayzer:
 
 		###########################################
 		#nvertices cut
-		if self.Tree.NumVertices < 1:
+		if self.Tree.NumVertices == 0:
 			return False
 
 		self.events_passing_cuts[2] += 1.0
@@ -126,23 +126,15 @@ class H_mumu_Analayzer:
 				return False
 
 		expected_hits = util.unzip(self.Tree.Track_expectedHitLayer)
-		missing_hits = util.unzip(self.Tree.Track_missingHitLayer)
-
 
 		bottom_layer_expected_hits = []
-		bottom_layer_missing_hits = []
 
 		for exp_list in expected_hits:
 			for val in exp_list:
 				if val < 2:
 					bottom_layer_expected_hits.append(val)
 
-		for m_list in missing_hits:
-			for val in m_list:
-				if val < 2:
-					bottom_layer_missing_hits.append(val)
-
-		if len(bottom_layer_expected_hits) < 3 or len(bottom_layer_missing_hits) < 3:
+		if len(bottom_layer_expected_hits) < 3:
 			return False
 
 
@@ -166,11 +158,8 @@ class H_mumu_Analayzer:
 
 		trackn = 0
 		for layern in self.Tree.Track_missingHitLayer:
-			if layern == -1:
-				trackn += 1
-			else:
-				if layern >= 2:
-					return False
+			if layern >= 3:
+				return False
 
 		self.events_passing_cuts[6] += 1.0
 		###########################################
@@ -194,6 +183,7 @@ class H_mumu_Analayzer:
 
 		for minval in min_layers:
 			if not minval==start:
+				#check if there is expected hit in that layer
 				return False
 
 		self.events_passing_cuts[7] += 1.0
