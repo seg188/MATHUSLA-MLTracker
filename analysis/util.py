@@ -25,7 +25,7 @@ def unzip(concatlist, divider=-1):
 		if val == -1:
 			n += 1
 		else:
-			if len(lists) <= n:
+			while len(lists) <= n:
 				lists.append([])
 			lists[n].append(val)
 	return lists
