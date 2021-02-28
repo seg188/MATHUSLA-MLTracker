@@ -176,10 +176,10 @@ public:
  	//	OutputTree->Branch("GenParticle_mo2", "std::vector<double>", sim_GenParticle_mo2);
  	//	OutputTree->Branch("GenParticle_dau1", "std::vector<double>", sim_GenParticle_dau1);
  	//	OutputTree->Branch("GenParticle_dau2", "std::vector<double>", sim_GenParticle_dau2);
- 		OutputTree->Branch("GenParticle_mass", "std::vector<double>", sim_GenParticle_mass);
- 		OutputTree->Branch("GenParticle_pt", "std::vector<double>", sim_GenParticle_pt);
- 		OutputTree->Branch("GenParticle_eta", "std::vector<double>", sim_GenParticle_eta);
- 		OutputTree->Branch("GenParticle_phi", "std::vector<double>", sim_GenParticle_phi);
+ 	//	OutputTree->Branch("GenParticle_mass", "std::vector<double>", sim_GenParticle_mass);
+ //		OutputTree->Branch("GenParticle_pt", "std::vector<double>", sim_GenParticle_pt);
+ //		OutputTree->Branch("GenParticle_eta", "std::vector<double>", sim_GenParticle_eta);
+ //		OutputTree->Branch("GenParticle_phi", "std::vector<double>", sim_GenParticle_phi);
  //		OutputTree->Branch("COSMIC_EVENT_ID", "std::vector<double>", sim_COSMIC_EVENT_ID);
  //		OutputTree->Branch("COSMIC_CORE_X", "std::vector<double>", sim_COSMIC_CORE_X);
  //		OutputTree->Branch("COSMIC_CORE_Y", "std::vector<double>", sim_COSMIC_CORE_Y);
