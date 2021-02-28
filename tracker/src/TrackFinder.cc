@@ -148,7 +148,6 @@ void TrackFinder::FindTracks(){
 
 		
 		if ( current_track->nlayers() >= cuts::track_nlayers and current_track->chi2_per_dof() < cuts::track_chi2 and current_track->hits.size() > cuts::ntrack_hits) {
-			current_track->index = index++;
 			tracks.push_back(current_track);
 
 			
@@ -304,6 +303,12 @@ void TrackFinder::MergeTracks(){
 
 
 	tracks = good_tracks;
+
+	//at this point, the list of tracks is finalized. Now they will be indexed:
+	int trackn = 0;
+	for (auto tr : tracks){
+		tr->index = trackn++;
+	}
 
 }
 

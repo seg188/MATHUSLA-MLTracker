@@ -208,6 +208,7 @@ public:
       	OutputTree->Branch("Vertex_chi2", &vertex_chi2);
       	OutputTree->Branch("Vertex_chi2PerNdof", &vertex_chi2_per_dof);
       	OutputTree->Branch("Vertex_chi2PValue", &vertex_chi2_p_value);
+        OutputTree->Branch("Vertex_trackIndices", &vertex_track_indices);
 
 
       	OutputTree->Branch("NumTracks", &numtracks, "NumTracks/D");
@@ -315,6 +316,7 @@ public:
   	std::vector<double> vertex_x_error;
   	std::vector<double> vertex_y_error;
   	std::vector<double> vertex_z_error;
+    std::vector<int> vertex_track_indices;
   	Double_t numvertices;
 
 
@@ -499,6 +501,11 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
       vertex_z_error.push_back(sqrt(v->CovMatrix()[2][2]));
       vertex_t_error.push_back(sqrt(v->CovMatrix()[3][3]));
       vertex_chi2_per_dof.push_back(v->merit());
+      vertex_track_indices.clear();
+      
+      for (auto tr_index : v->track_indices){
+        vertex_track_indices.push_back(tr_index);
+      }
       
     }
 
