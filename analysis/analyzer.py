@@ -167,26 +167,26 @@ class H_mumu_Analayzer:
 		###########################################
 		#tracks in vertex start in same layer
 
-		track_hit_yvals = [ [] for i in range(len(self.Tree.Track_x0))]
-		trackn = 0
-		for hitn in self.Tree.Track_hitIndices:
-			if hitn == -1:
-				trackn += 1
-			else:
-				track_hit_yvals[trackn].append(self.Tree.Digi_y[hitn])
+		#track_hit_yvals = [ [] for i in range(len(self.Tree.Track_x0))]
+		#trackn = 0
+		#for hitn in self.Tree.Track_hitIndices:
+		#	if hitn == -1:
+		#		trackn += 1
+		#	else:
+		#		track_hit_yvals[trackn].append(self.Tree.Digi_y[hitn])
 
-		min_layers = [ self.det.inLayer(min(yvals_list)) for yvals_list in track_hit_yvals ]
+		#min_layers = [ self.det.inLayer(min(yvals_list)) for yvals_list in track_hit_yvals ]
 
-		veto = False
+		#veto = False
 
-		start = min_layers[0]
+		#start = min_layers[0]
 
-		for minval in min_layers:
-			if not minval==start:
-				#check if there is expected hit in that layer
-				return False
+		#for minval in min_layers:
+		#	if not minval==start:
+		#		#check if there is expected hit in that layer
+		#		return False
 
-		self.events_passing_cuts[7] += 1.0
+		#self.events_passing_cuts[7] += 1.0
 		###########################################
 
 
