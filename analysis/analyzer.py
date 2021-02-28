@@ -147,7 +147,7 @@ class H_mumu_Analayzer:
 		vtxTrackConsistencyY = max( [ (self.Tree.Vertex_y[0] - self.Tree.Track_y0[n])/self.Tree.Track_ErrorY0[n] for n in range(int(self.Tree.NumTracks)) ] )
 		#vtxTrackConsistencyT = max( [ (self.Tree.Vertex_t[0] - self.Tree.Track_t0[n])/self.Tree.Track_ErrorT0[n] for n in range(int(self.Tree.NumTracks)) ] )
 
-		if vtxTrackConsistencyY > 0.0:
+		if vtxTrackConsistencyY > 1.0:
 			return
 
 		self.events_passing_cuts[5] += 1.0
