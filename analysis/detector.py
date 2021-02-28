@@ -105,21 +105,6 @@ class Detector:
 			_y += vy*time_spacing
 			_z += vz*time_spacing
 
-		_x, _y, _z = x0, y0, z0
-		for i in range(2000):
-			x.append(_x)
-			y.append(_y)
-			z.append(_z)
-
-			_x -= vx*time_spacing
-			_y -= vy*time_spacing
-			_z -= vz*time_spacing
-
-			if _y < 6005.:
-				print(_x, _y, _z)
-				break
-
-
 
 		return x, y, z
 

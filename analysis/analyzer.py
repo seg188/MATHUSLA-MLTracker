@@ -2,7 +2,7 @@ from detector import Detector
 import os
 import ROOT as root
 import util
-
+from event import Event
 
 class H_mumu_Analayzer:
 
@@ -13,12 +13,16 @@ class H_mumu_Analayzer:
 
 	def __init__(self, loop_dir):
 		self.files = util.GetFilesInDir(loop_dir)
+		self.passed_files = []
+		self.passed_events= []
 
 	def SetPlotDir(self, dirname):
 		self.plot_dir = dirname
 
 	def Analyze(self, tree_name="integral_tree"):
+		self.tree_name = tree_name
 		for file in self.files:
+			passed_events = []
 			print("Working in file: " + file)
 			tfile = root.TFile.Open(file)
 			self.InitTree(tfile.Get(tree_name))
@@ -26,8 +30,27 @@ class H_mumu_Analayzer:
 				self.Tree.GetEntry(eventNumber)
 				if self.Selection():
 					print(file + ": " + str(eventNumber))
+					passed_events.append(eventNumber)
+			if len(passed_events) > 0:
+				self.passed_files.append(file)
+				self.passed_events.append(passed_events)
+		
+		print(self.passed_events)
 		print("H_mumu Analyzer Results:")
 		print(self.events_passing_cuts)
+
+	def StudyPassedEvents(self, n):
+		file = self.passed_files[n]
+		tfile = root.TFile.Open(file)
+		self.Tree = tfile.Get(self.tree_name)
+		for eventNumber in self.passed_events[n]:
+			self.Tree.GetEntry(eventNumber)
+			currEvent = Event(self.Tree, eventNumber)
+			#currEvent.ExtractTruthPhysics()
+			#currEvent.Print()
+			currEvent.GetRecoInfo()
+			currEvent.DrawReco()
+		
 
 	def InitTree(self, tree):
 		self.Tree = tree
@@ -50,6 +73,7 @@ class H_mumu_Analayzer:
 		self.Tree.SetBranchStatus("Track_z0", 1)
 		self.Tree.SetBranchStatus("Track_t0", 1)
 		self.Tree.SetBranchStatus("Track_missingHitLayer", 1)
+		self.Tree.SetBranchStatus("Track_expectedHitLayer", 1)
 		self.Tree.SetBranchStatus("track_ipDistance", 1)
 		self.Tree.SetBranchStatus("Track_hitIndices", 1)
 
@@ -99,24 +123,17 @@ class H_mumu_Analayzer:
 			if self.det.inLayer(hity) < 2:
 				return False
 
-		expected_hits = [False for k in range(int(self.Tree.NumTracks))]
-		for track_n in range( int(self.Tree.NumTracks) ):
-			x0, y0, z0 = self.Tree.Track_x0[track_n], self.Tree.Track_y0[track_n], self.Tree.Track_z0[track_n]
-			vx, vy, vz = self.Tree.Track_velX[track_n], self.Tree.Track_velY[track_n], self.Tree.Track_velZ[track_n]
+		expected_hits = util.unzip(self.Tree.Track_expectedHitLayer)
 
-			y1, y2 = self.det.LayerYMid(0), self.det.LayerYMid(1)
+		bottom_layer_expected_hits = []
 
-			dt1 = (y1-y0)/vy 
-			dt2 = (y2-y0)/vy
+		for exp_list in expected_hits:
+			for val in exp_list:
+				if val < 2:
+					bottom_layer_expected_hits.append(val)
 
-			x1 = x0 + dt1*vx 
-			z1 = z0 + dt1*vz
-
-			x2 = x0 + dt2*vx 
-			z2 = z0 + dt2*vz
-
-			if not (self.det.inSensitiveElement(x1, y1, z1) or self.det.inSensitiveElement(x2, y2, z2)):
-				return False
+		if len(bottom_layer_expected_hits) < 4:
+			return
 
 
 		self.events_passing_cuts[4] += 1.0

@@ -95,6 +95,8 @@ class TrackPoint:
 	def __ge__(self, other):
 		return self.time >= other.time
 
+	
+
 class Track:
 
 
@@ -122,6 +124,7 @@ class Track:
 
 	def __repr__(self):
 		_str = str(self.particle) + "\n"
+		_str += str(self.pointList[0].energy) + "\n"
 		#for point in (self.pointList):
 		#	_str += "time: " + str(point.time)
 		#	_str += " position: " + str(point.location)
@@ -153,3 +156,7 @@ class RecoTrackPt:
 		self.y = y
 		self.z = z
 		self.c = c
+
+	def __repr__(self):
+		_str = "location: " + "(" + str(self.x) + ", " + str(self.y) + ", " + str(self.z) + ")"
+		return _str

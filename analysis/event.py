@@ -2,6 +2,7 @@ import numpy as np
 import physics
 import visualization
 from detector import Detector
+import util
 
 #########################################################################################
 ### DEFINITION OF EVENT CLASS ###########################################################
@@ -147,8 +148,55 @@ class Event:
 			list_of_trackPt_lists.append( [ physics.RecoTrackPt( xl[n], yl[n], zl[n]  ) for n in range(len(xl)) ] )
 			list_of_colors.append(list_of_trackPt_lists[trackNumber][0].c)
 
+
 		self.visEngine.TrackDisplay(list_of_trackPt_lists, list_of_colors)
 		self.visEngine.Draw()
+
+	def GetRecoInfo(self):
+		self.Tree.SetBranchStatus("Digi_x", 1)
+		self.Tree.SetBranchStatus("Digi_y", 1)
+		self.Tree.SetBranchStatus("Digi_z", 1)
+		self.Tree.SetBranchStatus("NumTracks", 1)
+		self.Tree.SetBranchStatus("NumVertices", 1)
+		self.Tree.SetBranchStatus("Vertex_x", 1)
+		self.Tree.SetBranchStatus("Vertex_y", 1)
+		self.Tree.SetBranchStatus("Vertex_z", 1)
+		self.Tree.SetBranchStatus("Vertex_t", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorY", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorT", 1)
+		self.Tree.SetBranchStatus("Track_velX", 1)
+		self.Tree.SetBranchStatus("Track_velY", 1)
+		self.Tree.SetBranchStatus("Track_velZ", 1)
+		self.Tree.SetBranchStatus("Track_x0", 1)
+		self.Tree.SetBranchStatus("Track_y0", 1)
+		self.Tree.SetBranchStatus("Track_z0", 1)
+		self.Tree.SetBranchStatus("Track_t0", 1)
+		self.Tree.SetBranchStatus("Track_missingHitLayer", 1)
+		self.Tree.SetBranchStatus("Track_expectedHitLayer", 1)
+		self.Tree.SetBranchStatus("track_ipDistance", 1)
+		self.Tree.SetBranchStatus("Track_hitIndices", 1)
+		self.Tree.SetBranchStatus("Track_beta", 1)
+		self.Tree.SetBranchStatus("Track_ErrorBeta", 1)
+
+		self.Tree.GetEntry(self.EventNumber)
+
+		print("Number of Tracks: " + str(self.Tree.NumTracks))
+
+		associated_digis = util.unzip(self.Tree.Track_hitIndices)
+		missing_hits     = util.unzip(self.Tree.Track_missingHitLayer)
+		expected_hits    = util.unzip(self.Tree.Track_expectedHitLayer)
+
+		for n in range(int(self.Tree.NumTracks)):
+			print("**Track: " + str(n) + "**")
+			print("Start Point: (" + str(self.Tree.Track_x0[n]) + ", " + str(self.Tree.Track_y0[n]) + ", " + str(self.Tree.Track_z0[n]) + ")")
+			print("Velocity:    (" + str(self.Tree.Track_velX[n]) + ", " + str(self.Tree.Track_velY[n]) + ", " + str(self.Tree.Track_velZ[n]) + ")")
+			print("Beta: " + str(self.Tree.Track_beta[n]) + " +/- " + str(self.Tree.Track_ErrorBeta[n]))
+			print("Digis: ")
+			for digi_index in associated_digis[n]:
+				print("--Digi " + str(digi_index))
+				print("--(" + str(self.Tree.Digi_x[digi_index]) + ", " + str(self.Tree.Digi_y[digi_index]) + ", " + str(self.Tree.Digi_z[digi_index]) + ")" )
+			print("Missing Hits in Layers:  " + str(missing_hits[n]))
+			print("Expected Hits in Layers: " + str(expected_hits[n]))
 
 
 		

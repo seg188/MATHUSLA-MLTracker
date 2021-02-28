@@ -18,6 +18,20 @@ def sigfigs(number, n):
 	else:
 		return round(number, int(-1*order) + n)
 
+def unzip(concatlist, divider=-1):
+	lists = []
+	n = 0
+	for val in concatlist:
+		if val == -1:
+			n += 1
+		else:
+			if len(lists) <= n:
+				lists.append([])
+			lists[n].append(val)
+	return lists
+
+
+
 
 
 
