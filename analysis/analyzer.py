@@ -6,6 +6,7 @@ import util
 
 class H_mumu_Analayzer:
 
+	plot_dir = ""
 	NCUTS = 7
 	events_passing_cuts = [0.0 for n in range(NCUTS+1)]
 	det = Detector()
@@ -13,8 +14,12 @@ class H_mumu_Analayzer:
 	def __init__(self, loop_dir):
 		self.files = util.GetFilesInDir(loop_dir)
 
+	def SetPlotDir(self, dirname):
+		self.plot_dir = dirname
+
 	def Analyze(self, tree_name="integral_tree"):
 		for file in self.files:
+			print("Working in file: " + file)
 			tfile = root.TFile.Open(file)
 			self.InitTree(tfile.Get(tree_name))
 			for eventNumber in range(self.Tree.GetEntries()):
@@ -23,7 +28,6 @@ class H_mumu_Analayzer:
 					print(file + ": " + str(eventNumber))
 		print("H_mumu Analyzer Results:")
 		print(self.events_passing_cuts)
-		print([util.sigfigs(x/self.events_passing_cuts[0], 2) for x in self.events_passing_cuts])
 
 	def InitTree(self, tree):
 		self.Tree = tree
@@ -171,6 +175,10 @@ class H_mumu_Analayzer:
 
 		return True
 
+
+	def Plot1D(self, branch_name):
+		plotvar = 0.0
+		self.Tree.SetBranchStatus("")
 
 
 
