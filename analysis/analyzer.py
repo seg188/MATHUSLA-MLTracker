@@ -72,6 +72,8 @@ class H_mumu_Analayzer:
 		self.Tree.SetBranchStatus("Track_y0", 1)
 		self.Tree.SetBranchStatus("Track_z0", 1)
 		self.Tree.SetBranchStatus("Track_t0", 1)
+		self.Tree.SetBranchStatus("Track_ErrorY0", 1)
+		self.Tree.SetBranchStatus("Track_ErrorT0", 1)
 		self.Tree.SetBranchStatus("Track_missingHitLayer", 1)
 		self.Tree.SetBranchStatus("Track_expectedHitLayer", 1)
 		self.Tree.SetBranchStatus("track_ipDistance", 1)
@@ -142,11 +144,11 @@ class H_mumu_Analayzer:
 		###########################################
 		#vertex before track cut
 
-		if min([self.Tree.Track_y0[0], self.Tree.Track_y0[1]]) < self.Tree.Vertex_y[0]:
-			return False
+		vtxTrackConsistencyY = max( [ (self.Tree.Vertex_y[0] - self.Tree.Track_y0[n])/self.Tree.Track_ErrorY0[n] for n in range(int(self.Tree.NumTracks)) ] )
+		#vtxTrackConsistencyT = max( [ (self.Tree.Vertex_t[0] - self.Tree.Track_t0[n])/self.Tree.Track_ErrorT0[n] for n in range(int(self.Tree.NumTracks)) ] )
 
-		if min([self.Tree.Track_t0[0], self.Tree.Track_t0[1]]) < self.Tree.Vertex_t[0]:
-			return False
+		if vtxTrackConsistencyY > 0.0:
+			return
 
 		self.events_passing_cuts[5] += 1.0
 		###########################################
