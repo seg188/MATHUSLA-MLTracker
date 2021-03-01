@@ -44,6 +44,13 @@ class Detector:
 				return layerN
 		return -1
 
+	def nextLayer(self, yVal):
+		for n in range(len(self.LayerYLims)-1):
+			if yVal > self.LayerYLims[n][1] and yVal < self.LayerYLims[n+1][0]:
+				return n+1
+		return 999
+
+
 	def inLayer_w_Error(self, yVal, yErr):
 		for layerN, layerLims in enumerate(self.LayerYLims):
 
@@ -126,3 +133,5 @@ class Detector:
 				if self.inModuleZ(z) >= 0:
 					return True
 		return False
+
+

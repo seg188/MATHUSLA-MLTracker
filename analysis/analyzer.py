@@ -7,7 +7,7 @@ from event import Event
 class H_mumu_Analayzer:
 
 	plot_dir = ""
-	NCUTS = 7
+	NCUTS = 6
 	events_passing_cuts = [0.0 for n in range(NCUTS+1)]
 	det = Detector()
 
@@ -157,11 +157,14 @@ class H_mumu_Analayzer:
 		#missing hits in upper layers
 
 		trackn = 0
+		vertex_first_layer = self.det.nextLayer(self.Tree.Vertex_y[0])
 		for layern in self.Tree.Track_missingHitLayer:
-			if layern >= 3:
+			if layern >= vertex_first_layer:
 				return False
 
 		self.events_passing_cuts[6] += 1.0
+
+		#note the cut below isnt necessary when requiring no missing hits
 		###########################################
 
 		###########################################
