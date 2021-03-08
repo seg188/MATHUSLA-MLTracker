@@ -84,6 +84,7 @@ public:
  		InputTree->SetBranchAddress("Hit_particlePy", &sim_hit_py);
 		InputTree->SetBranchAddress("Hit_particlePz", &sim_hit_pz);
 		InputTree->SetBranchAddress("Hit_weight", &sim_hit_weight);
+    InputTree->SetBranchAddress("GenParticle_energy", &sim_GenParticle_energy);
 
     InputTree->SetBranchStatus("NumGenParticles", 0);
     InputTree->SetBranchStatus("GenParticle_index", 0);
@@ -94,7 +95,7 @@ public:
     InputTree->SetBranchStatus("GenParticle_x", 0);
     InputTree->SetBranchStatus("GenParticle_y", 0);
     InputTree->SetBranchStatus("GenParticle_z", 0);
-    InputTree->SetBranchStatus("GenParticle_energy", 0);
+   // InputTree->SetBranchStatus("GenParticle_energy", 0);
     InputTree->SetBranchStatus("GenParticle_px", 0);
     InputTree->SetBranchStatus("GenParticle_py", 0);
     InputTree->SetBranchStatus("GenParticle_pz", 0);
@@ -168,7 +169,7 @@ public:
  	//	OutputTree->Branch("GenParticle_x", "std::vector<double>", sim_GenParticle_x);
  	//	OutputTree->Branch("GenParticle_y", "std::vector<double>", sim_GenParticle_y);
  	//	OutputTree->Branch("GenParticle_z", "std::vector<double>", sim_GenParticle_z);
- 	//	OutputTree->Branch("GenParticle_energy", "std::vector<double>", sim_GenParticle_energy);
+ 		OutputTree->Branch("GenParticle_energy", "std::vector<double>", sim_GenParticle_energy);
  	//	OutputTree->Branch("GenParticle_px", "std::vector<double>", sim_GenParticle_px);
  	//	OutputTree->Branch("GenParticle_py", "std::vector<double>", sim_GenParticle_py);
  	//	OutputTree->Branch("GenParticle_pz", "std::vector<double>", sim_GenParticle_pz);
@@ -488,6 +489,7 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
     vertex_x_error.clear();
     vertex_y_error.clear();
     vertex_z_error.clear();
+    vertex_track_indices.clear();
 
     numvertices = vertices.size();
 
@@ -504,12 +506,14 @@ void TreeHandler::ExportVertices(std::vector<vertex*> vertices){
       vertex_z_error.push_back(sqrt(v->CovMatrix()[2][2]));
       vertex_t_error.push_back(sqrt(v->CovMatrix()[3][3]));
       vertex_chi2_per_dof.push_back(v->merit());
-      vertex_track_indices.clear();
+      
       
       for (auto tr_index : v->track_indices){
         vertex_track_indices.push_back(tr_index);
       }
       
+      vertex_track_indices.push_back(-1);
+
     }
 
 }
