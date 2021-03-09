@@ -26,7 +26,7 @@ if __name__ == "__main__":
 					continue
 
 				x, y, z = tree.GenParticle_y[k]/10., tree.GenParticle_x[k]/10., tree.GenParticle_z[k]/10.
-				px, py, pz = tree.GenParticle_px[k], tree.GenParticle_py[k], tree.GenParticle_pz[k]
+				px, py, pz = tree.GenParticle_py[k], tree.GenParticle_px[k], tree.GenParticle_pz[k]
 				#print(x, y, z)
 				#print(px, py, pz)
 				#print(det.nSensitiveLayers(x, y, z, px, py, pz))
