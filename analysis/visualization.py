@@ -15,7 +15,7 @@ class Visualizer:
 
 	writeDirectory = "../plots/"
 
-	trackPtSize = 1
+	trackPtSize = 2
 
 	def __init__(self):
 		print("Hi I'm a Visualizer")
@@ -56,14 +56,20 @@ class Visualizer:
 		
 		return det
 
-	def TrackDisplay(self, ListOf_trackPtLists, Listof_colors):
+	def TrackDisplay(self, ListOf_trackPtLists, Listof_colors, list_of_labels=None):
 		xs, ys, zs, cs = [], [], [], []
+		scatters = []
 		for n, trackPtList in enumerate(ListOf_trackPtLists):
 			xs += [trackPt.x for trackPt in trackPtList]
 			ys += [trackPt.y for trackPt in trackPtList]
 			zs += [trackPt.z for trackPt in trackPtList]
 			cs += [Listof_colors[n] for trackPt in trackPtList]
-		self.ax.scatter(xs, ys, zs, c=cs, s=self.trackPtSize)
+			scatters.append(self.ax.scatter(xs, ys, zs, c=cs[n][0], s=self.trackPtSize, label=list_of_labels[n]))
+			xs, ys, zs, cs = [], [], [], []
+		self.ax.set_xlabel("x [cm]")
+		self.ax.set_ylabel("y [cm]")
+		self.ax.set_zlabel("z [cm]")
+		self.ax.legend(markerscale=3, loc=2)
 		
 
 	def Draw(self):

@@ -4,7 +4,7 @@ import ROOT as root
 import util
 from event import Event
 
-class H_mumu_Analayzer:
+class H_mumu_Analyzer:
 
 	plot_dir = ""
 	NCUTS = 6
@@ -25,6 +25,7 @@ class H_mumu_Analayzer:
 			passed_events = []
 			print("Working in file: " + file)
 			tfile = root.TFile.Open(file)
+			self.events_passing_cuts_byfile = [0.0 for n in range(self.NCUTS+1)]
 			self.InitTree(tfile.Get(tree_name))
 			for eventNumber in range(self.Tree.GetEntries()):
 				self.Tree.GetEntry(eventNumber)
@@ -34,6 +35,8 @@ class H_mumu_Analayzer:
 			if len(passed_events) > 0:
 				self.passed_files.append(file)
 				self.passed_events.append(passed_events)
+
+			print(self.events_passing_cuts_byfile)
 		
 		print(self.passed_events)
 		print("H_mumu Analyzer Results:")
@@ -93,6 +96,7 @@ class H_mumu_Analayzer:
 		###########################################
 		#counting total events
 		self.events_passing_cuts[0] += 1.0
+		self.events_passing_cuts_byfile[0] += 1.0
 		###########################################
 		
 		###########################################
@@ -101,6 +105,7 @@ class H_mumu_Analayzer:
 			return False
 
 		self.events_passing_cuts[1] += 1.0
+		self.events_passing_cuts_byfile[1] += 1.0
 		###########################################
 
 		###########################################
@@ -109,6 +114,7 @@ class H_mumu_Analayzer:
 			return False
 
 		self.events_passing_cuts[2] += 1.0
+		self.events_passing_cuts_byfile[2] += 1.0
 		###########################################
 
 		###########################################
@@ -117,6 +123,7 @@ class H_mumu_Analayzer:
 			return False
 
 		self.events_passing_cuts[3] += 1.0
+		self.events_passing_cuts_byfile[3] += 1.0
 		###########################################
 
 		###########################################
@@ -139,6 +146,7 @@ class H_mumu_Analayzer:
 
 
 		self.events_passing_cuts[4] += 1.0
+		self.events_passing_cuts_byfile[4] += 1.0
 		###########################################
 
 		###########################################
@@ -151,6 +159,7 @@ class H_mumu_Analayzer:
 			return
 
 		self.events_passing_cuts[5] += 1.0
+		self.events_passing_cuts_byfile[5] += 1.0
 		###########################################
 
 		###########################################
@@ -163,6 +172,7 @@ class H_mumu_Analayzer:
 				return False
 
 		self.events_passing_cuts[6] += 1.0
+		self.events_passing_cuts_byfile[6] += 1.0
 
 		#note the cut below isnt necessary when requiring no missing hits
 		###########################################
@@ -190,6 +200,7 @@ class H_mumu_Analayzer:
 		#		return False
 
 		#self.events_passing_cuts[7] += 1.0
+		#self.events_passing_cuts_byfile[] += 1.0
 		###########################################
 
 
@@ -199,6 +210,239 @@ class H_mumu_Analayzer:
 	def Plot1D(self, branch_name):
 		plotvar = 0.0
 		self.Tree.SetBranchStatus("")
+
+###############################################################################################################################################################################
+###############################################################################################################################################################################
+
+
+class K_Long_Analayzer:
+
+	plot_dir = ""
+	NCUTS = 4
+	events_passing_cuts = [0.0 for n in range(NCUTS+1)]
+	det = Detector()
+
+	def __init__(self, loop_dir):
+		self.files = util.GetFilesInDir(loop_dir)
+		self.passed_files = []
+		self.passed_events= []
+
+	def SetPlotDir(self, dirname):
+		self.plot_dir = dirname
+
+	def Plot(self, tree_name="integral_tree"):
+		self.tree_name = tree_name
+		plot = root.TH1D("plot", "Track Beta for events w/ vertex", 20, 0.60, 1.20)
+		for file in self.files:
+			print("Working in file: " + file)
+			tfile = root.TFile.Open(file)
+			self.InitTree(tfile.Get(tree_name))
+			for eventNumber in range(self.Tree.GetEntries()):
+				self.Tree.GetEntry(eventNumber)
+				plotif, val = self.SelectionForPlot()
+				if plotif:
+					plot.Fill(val)
+		c1 = root.TCanvas("c1")
+		plot.Draw()
+		c1.Print(self.plot_dir + "plot1.png", ".png")
+
+	def SelectionForPlot(self):
+		if not self.Trigger():
+			return False, 0
+
+		###########################################
+		#counting total events
+		
+		###########################################
+		#ntracks cut
+		if (self.Tree.NumTracks < 2):
+			return False, 0
+
+
+		###########################################
+		#nvertices cut
+		if self.Tree.NumVertices == 0:
+			return False, 0
+
+
+		###########################################
+		#fiducial vertex cut
+		if not self.det.inBox(self.Tree.Vertex_x[0], self.Tree.Vertex_y[0], self.Tree.Vertex_z[0]):
+			return False, 0
+
+
+		###########################################
+		#floor veto w/ expected hit cuts
+		for hity in self.Tree.Digi_y:
+			if self.det.inLayer(hity) < 2:
+				return False, 0
+
+		expected_hits = util.unzip(self.Tree.Track_expectedHitLayer)
+
+		bottom_layer_expected_hits = []
+
+		for exp_list in expected_hits:
+			for val in exp_list:
+				if val < 2:
+					bottom_layer_expected_hits.append(val)
+
+		if len(bottom_layer_expected_hits) < 3:
+			return False, 0
+
+
+		###########################################
+		#vertex before track cut
+
+		
+		return True, min(self.Tree.Track_beta)
+
+
+	def Analyze(self, tree_name="integral_tree"):
+		self.tree_name = tree_name
+		for file in self.files:
+			passed_events = []
+			print("Working in file: " + file)
+			tfile = root.TFile.Open(file)
+			self.InitTree(tfile.Get(tree_name))
+			for eventNumber in range(self.Tree.GetEntries()):
+				self.Tree.GetEntry(eventNumber)
+				if self.Selection():
+					print(file + ": " + str(eventNumber))
+					passed_events.append(eventNumber)
+			if len(passed_events) > 0:
+				self.passed_files.append(file)
+				self.passed_events.append(passed_events)
+
+			print(self.events_passing_cuts_byfile)
+		
+		print(self.passed_events)
+		print("H_mumu Analyzer Results:")
+		print(self.events_passing_cuts)
+
+	def StudyPassedEvents(self, n):
+		file = self.passed_files[n]
+		tfile = root.TFile.Open(file)
+		self.Tree = tfile.Get(self.tree_name)
+		for eventNumber in self.passed_events[n]:
+			self.Tree.GetEntry(eventNumber)
+			currEvent = Event(self.Tree, eventNumber)
+			#currEvent.ExtractTruthPhysics()
+			#currEvent.Print()
+			currEvent.GetRecoInfo()
+			currEvent.DrawReco()
+		
+
+	def InitTree(self, tree):
+		self.Tree = tree
+		self.Tree.SetBranchStatus("*", 0)
+		self.Tree.SetBranchStatus("Digi_x", 1)
+		self.Tree.SetBranchStatus("Digi_y", 1)
+		self.Tree.SetBranchStatus("NumTracks", 1)
+		self.Tree.SetBranchStatus("NumVertices", 1)
+		self.Tree.SetBranchStatus("Vertex_x", 1)
+		self.Tree.SetBranchStatus("Vertex_y", 1)
+		self.Tree.SetBranchStatus("Vertex_z", 1)
+		self.Tree.SetBranchStatus("Vertex_t", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorY", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorT", 1)
+		self.Tree.SetBranchStatus("Track_velX", 1)
+		self.Tree.SetBranchStatus("Track_velY", 1)
+		self.Tree.SetBranchStatus("Track_velZ", 1)
+		self.Tree.SetBranchStatus("Track_x0", 1)
+		self.Tree.SetBranchStatus("Track_y0", 1)
+		self.Tree.SetBranchStatus("Track_z0", 1)
+		self.Tree.SetBranchStatus("Track_t0", 1)
+		self.Tree.SetBranchStatus("Track_ErrorY0", 1)
+		self.Tree.SetBranchStatus("Track_ErrorT0", 1)
+		self.Tree.SetBranchStatus("Track_missingHitLayer", 1)
+		self.Tree.SetBranchStatus("Track_expectedHitLayer", 1)
+		self.Tree.SetBranchStatus("track_ipDistance", 1)
+		self.Tree.SetBranchStatus("Track_hitIndices", 1)
+		self.Tree.SetBranchStatus("Track_beta", 1)
+
+
+	def Trigger(self):
+		if len(self.Tree.Digi_x) < 3:
+			return False 
+		return True
+
+	def Selection(self):
+		
+		if not self.Trigger():
+			return False
+
+		###########################################
+		#counting total events
+		self.events_passing_cuts[0] += 1.0
+		self.events_passing_cuts_byfile[0] += 1.0
+		###########################################
+		
+		###########################################
+		#ntracks cut
+		if (self.Tree.NumTracks < 2):
+			return False
+
+		self.events_passing_cuts[1] += 1.0
+		self.events_passing_cuts_byfile[1] += 1.0
+		###########################################
+
+		###########################################
+		#nvertices cut
+		if self.Tree.NumVertices == 0:
+			return False
+
+		self.events_passing_cuts[2] += 1.0
+		self.events_passing_cuts_byfile[2] += 1.0
+		###########################################
+
+		###########################################
+		#fiducial vertex cut
+		if not self.det.inBox(self.Tree.Vertex_x[0], self.Tree.Vertex_y[0], self.Tree.Vertex_z[0]):
+			return False
+
+		self.events_passing_cuts[3] += 1.0
+		self.events_passing_cuts_byfile[3] += 1.0
+		###########################################
+
+		###########################################
+		#floor veto w/ expected hit cuts
+		for hity in self.Tree.Digi_y:
+			if self.det.inLayer(hity) < 2:
+				return False
+
+		expected_hits = util.unzip(self.Tree.Track_expectedHitLayer)
+
+		bottom_layer_expected_hits = []
+
+		for exp_list in expected_hits:
+			for val in exp_list:
+				if val < 2:
+					bottom_layer_expected_hits.append(val)
+
+		if len(bottom_layer_expected_hits) < 3:
+			return False
+
+
+		self.events_passing_cuts[4] += 1.0
+		self.events_passing_cuts_byfile[4] += 1.0
+		###########################################
+
+		###########################################
+		#vertex before track cut
+
+		
+		return True
+
+
+	def Plot1D(self, branch_name):
+		plotvar = 0.0
+		self.Tree.SetBranchStatus("")
+
+
+
+
+
+
 
 
 

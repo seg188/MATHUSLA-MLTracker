@@ -3,6 +3,7 @@ import physics
 import visualization
 from detector import Detector
 import util
+import ROOT as root
 
 #########################################################################################
 ### DEFINITION OF EVENT CLASS ###########################################################
@@ -11,7 +12,7 @@ import util
 class Event:
 	visEngine = visualization.Visualizer()
 	###########################################################################################################################################################################
-	TRUTH_PARTICLE_E_THRESHOLD = 0.05 #MeV
+	TRUTH_PARTICLE_E_THRESHOLD = 70#MeV
 
 	t0 = 0.0
 	tm = 0.0
@@ -32,8 +33,10 @@ class Event:
 	###########################################################################################################################################################################
 	def __init__(self, Tree, EventNumber):
 		self.EventNumber = EventNumber
-		self.Tree = Tree
-		self.Tree.SetBranchStatus("*", 0)
+		self.tfile = root.TFile.Open(Tree)
+		self.Tree = self.tfile.Get("integral_tree")
+		#self.Tree = Tree
+		#self.Tree.SetBranchStatus("*", 0)
 		
 	###########################################################################################################################################################################
 
@@ -49,6 +52,7 @@ class Event:
 		self.Tree.SetBranchStatus("Hit_particlePy", 1)
 		self.Tree.SetBranchStatus("Hit_particlePz", 1)
 		self.Tree.SetBranchStatus("Hit_particleEnergy", 1)
+		self.Tree.SetBranchStatus("Track_NumHits")
 		
 		self.Tree.GetEntry(self.EventNumber)
 
@@ -98,7 +102,7 @@ class Event:
 		for track in self.truthTrackList:
 			print(track)
 		colors = [self.truthTrackList[n].color() for n in range(len(self.truthTrackList))]
-		self.visEngine.TrackDisplay(self.tracksAtGlobalTime, colors)
+		self.visEngine.TrackDisplay(self.tracksAtGlobalTime, colors, [ track.LabelString() for track in self.truthTrackList])
 		self.visEngine.Draw()
 
 	def ResetTracks(self):

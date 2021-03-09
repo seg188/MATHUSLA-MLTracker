@@ -124,12 +124,26 @@ class Track:
 
 	def __repr__(self):
 		_str = str(self.particle) + "\n"
-		_str += str(self.pointList[0].energy) + "\n"
+		_str += "Energy: " + str(round(self.pointList[0].energy, 2)) + " MeV\n"
 		#for point in (self.pointList):
 		#	_str += "time: " + str(point.time)
 		#	_str += " position: " + str(point.location)
 		#	_str += "\n"
 		return _str
+
+	def Name(self, pdg):
+		if pdg == 13:
+			return "mu-"
+		if pdg == -13:
+			return "mu+"
+		if pdg == 11:
+			return "e-"
+		if pdg == -11:
+			return "e+"
+		return "pdg: " + str(pdg)# + ", " + + str(round(self.pointList[0].energy, 2)) + "MeV"
+
+	def LabelString(self):
+		return self.Name(self.particle.pdgID)
 
 	def color(self):
 		return self.particle.color()
@@ -148,7 +162,7 @@ class Track:
 		return self.pointList[0].velocity
 
 	def Energy(self):
-		print(self.pointList[0].energy)
+		print(round(self.pointList[0].energy, 2))
 		
 class RecoTrackPt:
 	def __init__(self, x, y, z, c=0):
