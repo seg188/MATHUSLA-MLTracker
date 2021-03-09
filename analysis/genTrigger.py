@@ -33,7 +33,7 @@ if __name__ == "__main__":
 				if det.nSensitiveLayers(x, y, z, px, py, pz) >= 4:
 					n_good_tracks += 1.0
 
-		if n_good_tracks >= 2:
+		if n_good_tracks >= 3:
 			gen_trigger += 1.0
 
 
