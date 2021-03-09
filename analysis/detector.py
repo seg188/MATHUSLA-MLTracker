@@ -93,6 +93,24 @@ class Detector:
 				if inBox(x1, layerY, z1):
 					count += 1
 
+		return count	
+
+	#determine number of SENSITIVE layers a track goes through
+	def nSensitiveLayers(self, x0, y0, z0, vx, vy, vz):
+		count = 0
+		for n in range(len(self.LayerYLims)):
+			layerY = self.LayerYMid(n)
+			if (layerY-y0)/vy < 0:
+				continue
+			else:
+				dt = (layerY - y0)/vy
+
+				x1 = x0 + dt*vx
+				z1 = y0 + dt*vz
+		
+				if self.inSensitiveElement(x1, layerY, z1):
+					count += 1
+
 		return count		
 
 
