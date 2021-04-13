@@ -46,6 +46,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 
 		std::sort(current_hits.begin(), current_hits.end(), &physics::time_sort);
 
+
 		// going through all hits until they are either all added to digis, or dropped
 
 		while (current_hits.size() > 0){
@@ -100,10 +101,16 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 	for (auto digi : digis){
 		
 		auto current_id = digi->det_id;
+
 		auto center = _geometry->GetCenter(current_id);
 		auto layer = _geometry->layer_list[current_id.layerIndex];
 		auto long_direction_index = layer->long_direction_index;
 		auto uncertainty = layer->uncertainty();
+
+		if (current_id.isFloorElement){
+			//if (current_id.isFloorElement) std::cout << digi->hits.size() << std::endl;
+			uncertainty = _geometry->_floor.uncertainty();
+		}
 
 		double e_sum = 0;
 		double long_direction_sum = 0.0;
@@ -112,7 +119,6 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		for (auto hit : digi->hits){
 			e_sum += hit->e;
 			t_sum += hit->t * hit->e;
-
 
 			if (long_direction_index == 0){
 				long_direction_sum += hit->x * hit->e;
@@ -129,13 +135,18 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		digi->ez = uncertainty[2];
 
 		//note: et is the same for all of them and is set in the digi class defintion 
-
-		if (long_direction_index == 0){
-			digi->x = long_direction_sum/e_sum;
+		if (current_id.isFloorElement){
+			digi->x = center[0];
 			digi->z = center[2];
 		} else {
-			digi->z= long_direction_sum/e_sum;
-			digi->x = center[0];
+
+			if (long_direction_index == 0){
+				digi->x = long_direction_sum/e_sum;
+				digi->z = center[2];
+			} else {
+				digi->z= long_direction_sum/e_sum;
+				digi->x = center[0];
+			}
 		}
 
 
@@ -145,6 +156,9 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 
 
 		digi->t += generator.Gaus(0.0, digi->et);
+	
+		if (current_id.isFloorElement) continue;
+
 		if (long_direction_index == 0) {
 			double smeared_x = digi->x + generator.Gaus(0.0, digi->ex);
 			if (!(_geometry->GetDetID(smeared_x, digi->y, digi->z) == current_id) ){
@@ -172,7 +186,9 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 
 	//setting digi indices
 	int k = 0;
-	for (auto digi : digis) digi->index = k++;
+	for (auto digi : digis) {
+		digi->index = k++;
+	}
 
 	return digis;
 

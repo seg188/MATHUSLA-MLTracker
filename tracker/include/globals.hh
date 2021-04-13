@@ -65,6 +65,11 @@ namespace detector{
 	const double y_max = LAYERS_Y[LAYERS_Y.size()-1][1];
 	const double z_max = MODULE_Z[MODULE_Z.size()-1][1];
 
+	//FLOOR TILE WIDTHS
+
+	const double floor_x_width = 50.0*units::cm;
+	const double floor_z_width = 50.0*units::cm;
+
 
 
 };
@@ -93,7 +98,7 @@ namespace cuts{
 	const int track_nlayers = 3;
 	const int nseed_hits = 4;
 	const double time_difference_drop = 12.0; //sigma
-	const double seed_time_difference = 10.0; //sigma
+	const double seed_time_difference = 10.0; //ns
 	const int ntrack_hits = 4;
 	const double distance_to_hit = 75.0*units::cm;
 
