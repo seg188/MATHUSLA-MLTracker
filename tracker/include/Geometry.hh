@@ -300,7 +300,10 @@ public:
 	}
 
 	std::vector<double> GetCenter(detID _id){
-		if (_id.IsNull()) return {};
+		if (_id.IsNull()) {
+			std::cout << "detID is null" << std::endl;
+			return {};
+		}
 
 		if (_id.isFloorElement) return GetCenterFloor(_id);
 
