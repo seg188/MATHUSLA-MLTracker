@@ -60,7 +60,7 @@ public:
 			minimizer.mnparm(2, "z0", guess[2], first_step_size, detector::z_min,detector::z_max,ierflg);
 			minimizer.mnparm(3, "vx", guess[3], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			if (vel_y_direction >= 0) minimizer.mnparm(4, "vy", guess[4], first_step_size, 0.0,constants::c,ierflg);
-			if (vel_y_direction  < 0) minimizer.mnparm(4, "vy", guess[4], first_step_size,constants::c,0.0,ierflg);
+			if (vel_y_direction  < 0) minimizer.mnparm(4, "vy", guess[4], first_step_size,-1.0*constants::c,0.0,ierflg);
 			minimizer.mnparm(5, "vz", guess[5], first_step_size, -1.0*constants::c,constants::c,ierflg);
 			minimizer.mnparm(6, "t0", guess[6], first_step_size,0.0,pow(10.0, 10.0),ierflg);
 
