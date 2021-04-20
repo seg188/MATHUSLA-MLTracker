@@ -17,7 +17,7 @@ namespace detector{
 	const double ip_y = 0.0;
 	const double ip_z = 0.0;
 	//specifies the bottom and top y position of every layer
-	const std::vector<std::vector<double>> LAYERS_Y={{6001.0*cm, 6004.0*cm},  //layer 0
+	const std::vector<std::vector<double>> LAYERS_Y={{6000.0*cm, 6005.0*cm},  //layer 0
  												 	{6104.0*cm, 6107.0*cm}, //layer 1
  													{8001.0*cm, 8004.0*cm}, //layer 2
  													{8104.0*cm, 8107.0*cm}, //layer 3
