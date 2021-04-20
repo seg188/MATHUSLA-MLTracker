@@ -95,13 +95,13 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 
 	std::cout << "smearing" << std::endl;
 	
-
+	int counter = 0;
 	srand( time(NULL) );
 	TRandom generator;
 	generator.SetSeed( rand()*rand()*rand() % rand() );
 
 	for (auto digi : digis){
-		
+		std::cout << counter++ << std::endl;
 		auto current_id = digi->det_id;
 
 		auto center = _geometry->GetCenter(current_id);
@@ -112,7 +112,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		if (current_id.isFloorElement){
 			//if (current_id.isFloorElement) std::cout << digi->hits.size() << std::endl;
 			uncertainty = _geometry->_floor.uncertainty();
-
+			std::cout << "floor" << std::endl;
 		} else {
 			layer = _geometry->layer_list[current_id.layerIndex];
 			long_direction_index = layer->long_direction_index;
@@ -188,6 +188,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 			std::cout << "Warning!!! Smearing function error--digi was smeared to be outside of known detector element!!" << std::endl;
 		}
 
+		std::cout << "done w/ hit" << std::endl;
 		
 	}
 
