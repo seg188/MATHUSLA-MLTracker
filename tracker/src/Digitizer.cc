@@ -103,13 +103,18 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		auto current_id = digi->det_id;
 
 		auto center = _geometry->GetCenter(current_id);
-		auto layer = _geometry->layer_list[current_id.layerIndex];
+		auto layer = _geometry->layer_list[0];
 		auto long_direction_index = layer->long_direction_index;
 		auto uncertainty = layer->uncertainty();
 
 		if (current_id.isFloorElement){
 			//if (current_id.isFloorElement) std::cout << digi->hits.size() << std::endl;
 			uncertainty = _geometry->_floor.uncertainty();
+
+		} else {
+			layer = _geometry->layer_list[current_id.layerIndex];
+			long_direction_index = layer->long_direction_index;
+			uncertainty = layer->uncertainty();
 		}
 
 		double e_sum = 0;
