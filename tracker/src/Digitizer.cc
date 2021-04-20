@@ -137,7 +137,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		std::cout << "getting energy weighting" << std::endl;
 
 		std::cout << "uncertainty:" << std::endl;
-		for (int count = 0; count < len(uncertainty); count++){
+		for (int count = 0; count < uncertainty.size(); count++){
 			std::cout << "count: " << count << "  element: " << uncertainty[count] << std::endl;
 		}
 		digi->e = e_sum;
