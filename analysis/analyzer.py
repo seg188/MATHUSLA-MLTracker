@@ -110,20 +110,20 @@ class H_mumu_Analyzer:
 
 		###########################################
 		#nvertices cut
-		if self.Tree.NumVertices == 0:
-			return False
+	#	if self.Tree.NumVertices == 0:
+	#		return False
 
-		self.events_passing_cuts[2] += 1.0
-		self.events_passing_cuts_byfile[2] += 1.0
+	#	self.events_passing_cuts[2] += 1.0
+	#	self.events_passing_cuts_byfile[2] += 1.0
 		###########################################
 
 		###########################################
 		#fiducial vertex cut
-		if not self.det.inBox(self.Tree.Vertex_x[0], self.Tree.Vertex_y[0], self.Tree.Vertex_z[0]):
-			return False
+	#	if not self.det.inBox(self.Tree.Vertex_x[0], self.Tree.Vertex_y[0], self.Tree.Vertex_z[0]):
+	#		return False
 
-		self.events_passing_cuts[3] += 1.0
-		self.events_passing_cuts_byfile[3] += 1.0
+	#	self.events_passing_cuts[3] += 1.0
+	#	self.events_passing_cuts_byfile[3] += 1.0
 		###########################################
 
 		###########################################
