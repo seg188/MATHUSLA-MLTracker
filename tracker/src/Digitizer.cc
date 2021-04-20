@@ -107,18 +107,18 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		auto layer = _geometry->layer_list[0];
 		auto long_direction_index = layer->long_direction_index;
 		auto uncertainty = layer->uncertainty();
-		std::cout << "getting layer index" << std::endl;
+
 		if (current_id.isFloorElement){
 			//if (current_id.isFloorElement) std::cout << digi->hits.size() << std::endl;
 			uncertainty = _geometry->_floor.uncertainty();
-			std::cout << "floor" << std::endl;
+
 		} else {
 			layer = _geometry->layer_list[current_id.layerIndex];
 			long_direction_index = layer->long_direction_index;
 			uncertainty = layer->uncertainty();
-			std::cout << current_id.layerIndex << std::endl;
+		
 		}
-		std::cout << "done" << std::endl;
+
 
 		double e_sum = 0;
 		double long_direction_sum = 0.0;
@@ -140,6 +140,10 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		for (int count = 0; count < uncertainty.size(); count++){
 			std::cout << "count: " << count << "  element: " << uncertainty[count] << std::endl;
 		}
+		std::cout << "center:" << std::endl;
+		for (int count = 0; count < center.size(); count++){
+			std::cout << "count: " << count << "  element: " << center[count] << std::endl;
+		}
 		digi->e = e_sum;
 		digi->t = t_sum/e_sum;
 		digi->y = center[1];
@@ -149,7 +153,6 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 
 		std::cout << "done" << std::endl;
 
-		std::cout << "getting center" << std::endl;
 		//note: et is the same for all of them and is set in the digi class defintion 
 		if (current_id.isFloorElement){
 			digi->x = center[0];
@@ -164,17 +167,17 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 				digi->x = center[0];
 			}
 		}
-		std::cout << "done" << std::endl;
+	
 
 		//TIME AND POSITION SMEARING!!!!!!!!!!!!!!!
 		//we see the random number generator with a number that should be completly random:
 		//the clock time times the layer index times the number of digis
 
-		std::cout << "start smearing" << std::endl;
+	
 		digi->t += generator.Gaus(0.0, digi->et);
 	
 		if (current_id.isFloorElement) {
-			std::cout << "is floor...done" << std::endl;
+	
 			continue;
 		}
 
@@ -199,8 +202,6 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		if ( !(_geometry->GetDetID(digi->x, digi->y, digi->z) == current_id) ){
 			std::cout << "Warning!!! Smearing function error--digi was smeared to be outside of known detector element!!" << std::endl;
 		}
-		std::cout << "done" << std::endl;
-		std::cout << "done w/ hit" << std::endl;
 		
 	}
 
