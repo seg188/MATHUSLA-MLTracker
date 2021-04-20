@@ -92,6 +92,8 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 	//at this point, all of the digi_hits in the digi_vector have the hits which will make them up. However, they don't have any of their energy, position, or timing information added.
 	//Below, we compute the energy, time, and position of all of the digi hits
 	//We incoorporate the time and position smearing into this calculation as well
+
+	std::cout << "smearing" << std::endl;
 	
 
 	srand( time(NULL) );
