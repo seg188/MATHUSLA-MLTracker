@@ -135,6 +135,11 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 			}
 		}
 		std::cout << "getting energy weighting" << std::endl;
+
+		std::cout << "uncertainty:" << std::endl;
+		for (int count = 0; count < len(uncertainty); count++){
+			std::cout << "count: " << count << "  element: " << uncertainty[count] << std::endl;
+		}
 		digi->e = e_sum;
 		digi->t = t_sum/e_sum;
 		digi->y = center[1];
