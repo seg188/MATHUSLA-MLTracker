@@ -100,7 +100,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 	generator.SetSeed( rand()*rand()*rand() % rand() );
 
 	for (auto digi : digis){
-		std::cout << counter++ << std::endl;
+	//	std::cout << counter++ << std::endl;
 		auto current_id = digi->det_id;
 
 		auto center = _geometry->GetCenter(current_id);
@@ -134,16 +134,16 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 				long_direction_sum += hit->z * hit->e;
 			}
 		}
-		std::cout << "getting energy weighting" << std::endl;
+		//std::cout << "getting energy weighting" << std::endl;
 
-		std::cout << "uncertainty:" << std::endl;
-		for (int count = 0; count < uncertainty.size(); count++){
-			std::cout << "count: " << count << "  element: " << uncertainty[count] << std::endl;
-		}
-		std::cout << "center:" << std::endl;
-		for (int count = 0; count < center.size(); count++){
-			std::cout << "count: " << count << "  element: " << center[count] << std::endl;
-		}
+	//	std::cout << "uncertainty:" << std::endl;
+	//	for (int count = 0; count < uncertainty.size(); count++){
+	//		std::cout << "count: " << count << "  element: " << uncertainty[count] << std::endl;
+	//	}
+	//	std::cout << "center:" << std::endl;
+	//	for (int count = 0; count < center.size(); count++){
+	//		std::cout << "count: " << count << "  element: " << center[count] << std::endl;
+	//	}
 		digi->e = e_sum;
 		digi->t = t_sum/e_sum;
 		digi->y = center[1];
@@ -151,7 +151,7 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 		digi->ex = uncertainty[0];
 		digi->ez = uncertainty[2];
 
-		std::cout << "done" << std::endl;
+	//	std::cout << "done" << std::endl;
 
 		//note: et is the same for all of them and is set in the digi class defintion 
 		if (current_id.isFloorElement){
