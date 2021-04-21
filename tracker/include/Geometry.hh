@@ -25,10 +25,10 @@ public:
 	}
 	std::vector<double> uncertainty(){
 		if ( (index % 2 ) == 0){
-			return { detector::scintillator_width, max-min, detector::time_resolution*(constants::c/constants::optic_fiber_n)/sqrt(2) };
+			return { detector::scintillator_width/sqrt(12.), (max-min)/sqrt(12.), detector::time_resolution*(constants::c/constants::optic_fiber_n)/sqrt(2) };
 		} 
 
-		return {  detector::time_resolution * (constants::c/constants::optic_fiber_n)/ sqrt(2), max-min, detector::scintillator_width  };
+		return {  detector::time_resolution * (constants::c/constants::optic_fiber_n)/ sqrt(2), (max-min)/sqrt(12.), detector::scintillator_width/sqrt(12.) };
 
 	}	
 
@@ -126,7 +126,7 @@ public:
 	}
 
 	std::vector<double> uncertainty(){
-		return {x_width/sqrt(12.0), detector::LAYERS_Y[0][1] - detector::LAYERS_Y[0][0], z_width/sqrt(12)};
+		return {x_width/sqrt(12.0), (detector::LAYERS_Y[0][1] - detector::LAYERS_Y[0][0])/sqrt(12.), z_width/sqrt(12)};
 	}
 };
 
