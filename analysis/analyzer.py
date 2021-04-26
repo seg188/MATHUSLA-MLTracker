@@ -15,6 +15,7 @@ class H_mumu_Analyzer:
 		self.files = util.GetFilesInDir(loop_dir)
 		self.passed_files = []
 		self.passed_events= []
+		self.floor_hit_location = root.TH2D("floor_hit_location", "floor hit x,z", 1000, -5100., 5100., 1000, 6900., 17100. )
 
 	def SetPlotDir(self, dirname):
 		self.plot_dir = dirname
@@ -41,6 +42,10 @@ class H_mumu_Analyzer:
 		print(self.passed_events)
 		print("H_mumu Analyzer Results:")
 		print(self.events_passing_cuts)
+		c1 = root.TCanvas("c1")
+		self.floor_hit_location.SetMarkerSize(2)
+		self.floor_hit_location.Draw()
+		c1.Print("floor_hit.png")
 
 	def StudyPassedEvents(self, n):
 		file = self.passed_files[n]
@@ -130,6 +135,34 @@ class H_mumu_Analyzer:
 		self.events_passing_cuts[2] += 1.0
 		self.events_passing_cuts_byfile[2] += 1.0
 		###########################################
+
+
+		####
+		####
+
+		x00, y00, z00 = self.Tree.Track_x0[0], self.Tree.Track_y0[0], self.Tree.Track_z0[0]
+		x01, y01, z01 = self.Tree.Track_x0[1], self.Tree.Track_y0[1], self.Tree.Track_z0[1]
+
+		vx0, vy0, vz0 = self.Tree.Track_velX[0], self.Tree.Track_velY[0], self.Tree.Track_velZ[0]
+		vx1, vy1, vz1 = self.Tree.Track_velX[1], self.Tree.Track_velY[1], self.Tree.Track_velZ[1]
+
+		floor_y = 6002.5
+
+		delt0 = (y00 - floor_y)/vy0
+		delt1 = (y01 - floor_y)/vy1
+
+		expected_x0 = x00 + delt0*vx0
+		expected_x1 = x01 + deltq*vx1
+		expected_z0 = z00 + delt0*vz0
+		expected_z1 = z01 + deltq*vz1
+
+		#plotting the location of these hits
+		self.floor_hit_location.Fill(expected_x0, expected_z0)
+		self.floor_hit_location.Fill(expected_x1, expected_z1)
+
+
+		####
+		####
 
 		###########################################
 		#nvertices cut
