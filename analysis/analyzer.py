@@ -152,9 +152,9 @@ class H_mumu_Analyzer:
 		delt1 = (y01 - floor_y)/vy1
 
 		expected_x0 = x00 + delt0*vx0
-		expected_x1 = x01 + deltq*vx1
+		expected_x1 = x01 + delt1*vx1
 		expected_z0 = z00 + delt0*vz0
-		expected_z1 = z01 + deltq*vz1
+		expected_z1 = z01 + delt1*vz1
 
 		#plotting the location of these hits
 		self.floor_hit_location.Fill(expected_x0, expected_z0)
