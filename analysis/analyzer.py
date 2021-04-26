@@ -44,6 +44,7 @@ class H_mumu_Analyzer:
 		print(self.events_passing_cuts)
 		c1 = root.TCanvas("c1")
 		self.floor_hit_location.SetMarkerSize(2)
+		self.floor_hit_location.SetMarkerStyle(6)
 		self.floor_hit_location.Draw()
 		c1.Print("floor_hit.png")
 
