@@ -23,10 +23,10 @@ class H_mumu_Analyzer:
 		return False
 
 	def Plot(self, tree_name="integral_tree"):
-		plotx = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 50, -25, 25)
-		ploty = root.TH1D("y_res", "Vertex Y Resolution (truth-actual)/sigma", 50, -25, 25)
-		plotz = root.TH1D("z_res", "Vertex Z Resolution (truth-actual)/sigma", 50, -25, 25)
-		plott = root.TH1D("t_res", "Vertex t Resolution (truth-actual)/sigma", 50, -25, 25)
+		plotx = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 50, -50, 50)
+		ploty = root.TH1D("y_res", "Vertex Y Resolution (truth-actual)/sigma", 50, -50, 50)
+		plotz = root.TH1D("z_res", "Vertex Z Resolution (truth-actual)/sigma", 50, -50, 50)
+		plott = root.TH1D("t_res", "Vertex t Resolution (truth-actual)/sigma", 50, -50, 50)
 		self.tree_name = tree_name
 		for file in self.files:
 			print("Working in file: " + file)
@@ -46,15 +46,15 @@ class H_mumu_Analyzer:
 					for k in range(int(len(self.Tree.GenParticle_G4index))):
 						if self.Tree.GenParticle_G4index[k] > 0:
 							gen_x = self.Tree.GenParticle_x[k]/10.
-							plotx.Fill( (vx-gen_x)/evx )
+							plotx.Fill( (vx-gen_x))#/evx )
 							gen_y = self.Tree.GenParticle_y[k]/10.
-							ploty.Fill( (vy-gen_y)/evy )
+							ploty.Fill( (vy-gen_y))#/evy )
 							gen_z = self.Tree.GenParticle_z[k]/10.
-							plotz.Fill( (vz-gen_z)/evz )
+							plotz.Fill( (vz-gen_z))#/evz )
 							gen_t = self.Tree.GenParticle_time[k]/10.
-							plott.Fill( (vt-gen_t)/evt )
+							plott.Fill( (vt-gen_t))#/evt )
 
-							print( [(vt-gen_t)/evt, (vx-gen_x)/evx, (vy-gen_y)/evy, (vz-gen_z)/evz ])
+							print( [(vt-gen_t), (vx-gen_x), (vy-gen_y), (vz-gen_z)])
 							break
 					
 
