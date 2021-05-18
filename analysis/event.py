@@ -167,6 +167,10 @@ class Event:
 		self.Tree.SetBranchStatus("Vertex_z", 1)
 		self.Tree.SetBranchStatus("Vertex_t", 1)
 		self.Tree.SetBranchStatus("Vertex_ErrorY", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorX", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorZ", 1)
+		
+
 		self.Tree.SetBranchStatus("Vertex_ErrorT", 1)
 		self.Tree.SetBranchStatus("Track_velX", 1)
 		self.Tree.SetBranchStatus("Track_velY", 1)
