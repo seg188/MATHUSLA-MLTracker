@@ -90,17 +90,17 @@ public:
 
 
     InputTree->SetBranchAddress("NumGenParticles", &sim_NumGenParticles);
-    InputTree->SetBranchAddress("GenParticle_index", sim_GenParticle_index);
-    InputTree->SetBranchAddress("GenParticle_G4index", sim_GenParticle_G4index);
-    InputTree->SetBranchAddress("GenParticle_pdgid", sim_GenParticle_pdgid);
-    InputTree->SetBranchAddress("GenParticle_status", sim_GenParticle_status);
+    InputTree->SetBranchAddress("GenParticle_index", &sim_GenParticle_index);
+    InputTree->SetBranchAddress("GenParticle_G4index", &sim_GenParticle_G4index);
+    InputTree->SetBranchAddress("GenParticle_pdgid", &sim_GenParticle_pdgid);
+    InputTree->SetBranchAddress("GenParticle_status", &sim_GenParticle_status);
    
 
-    InputTree->SetBranchAddress("GenParticle_time", sim_GenParticle_time);
+    InputTree->SetBranchAddress("GenParticle_time", &sim_GenParticle_time);
     ////////////////////////////////////////////////////////
-    InputTree->SetBranchAddress("GenParticle_x", sim_GenParticle_x);
-    InputTree->SetBranchAddress("GenParticle_y", sim_GenParticle_y);
-    InputTree->SetBranchAddress("GenParticle_z", sim_GenParticle_z);
+    InputTree->SetBranchAddress("GenParticle_x", &sim_GenParticle_x);
+    InputTree->SetBranchAddress("GenParticle_y", &sim_GenParticle_y);
+    InputTree->SetBranchAddress("GenParticle_z", &sim_GenParticle_z);
    // InputTree->SetBranchStatus("GenParticle_energy", 0);
 
 
