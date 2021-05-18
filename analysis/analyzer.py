@@ -23,7 +23,7 @@ class H_mumu_Analyzer:
 		return False
 
 	def Plot(self, tree_name="integral_tree"):
-		plot = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 20, -5, 5)
+		plot = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 20, -50, 50)
 		self.tree_name = tree_name
 		for file in self.files:
 			print("Working in file: " + file)
