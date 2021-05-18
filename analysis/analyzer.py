@@ -18,9 +18,9 @@ class H_mumu_Analyzer:
 		self.floor_hit_location = root.TH2D("floor_hit_location", "floor hit x,z", 1000, -5100., 5100., 1000, 6900., 17100. )
 
 	def PlotSelection(self):
-		if not (self.Tree.NumVertices == 1):
-			return False
-		return True
+		if int(self.Tree.NumVertices) == 1:
+			return True
+		return False
 
 	def Plot(self, tree_name="integral_tree"):
 		plot = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 20, -5, 5)
