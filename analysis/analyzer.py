@@ -105,6 +105,8 @@ class H_mumu_Analyzer:
 		self.Tree.SetBranchStatus("Vertex_t", 1)
 		self.Tree.SetBranchStatus("Vertex_ErrorY", 1)
 		self.Tree.SetBranchStatus("Vertex_ErrorT", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorX", 1)
+		self.Tree.SetBranchStatus("Vertex_ErrorZ", 1)
 		self.Tree.SetBranchStatus("Track_velX", 1)
 		self.Tree.SetBranchStatus("Track_velY", 1)
 		self.Tree.SetBranchStatus("Track_velZ", 1)
