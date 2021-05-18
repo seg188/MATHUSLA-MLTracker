@@ -34,7 +34,7 @@ class H_mumu_Analyzer:
 				if self.PlotSelection():
 					vx = self.Tree.Vertex_x[0]
 					evx = self.Tree.Vertex_ErrorX
-					for k in range(int(self.Tree.NumGenParticles)):
+					for k in range(int(len(self.Tree.GenParticle_G4index))):
 						if self.Tree.GenParticle_G4index[k] > 0:
 							gen_x = self.Tree.GenParticle_x[k]
 							plot.Fill( (vx-gen_x)/evx )
