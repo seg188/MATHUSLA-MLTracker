@@ -51,7 +51,7 @@ class H_mumu_Analyzer:
 							ploty.Fill( (vy-gen_y)/evy )
 							gen_z = self.Tree.GenParticle_z[k]
 							plotz.Fill( (vz-gen_z)/evz )
-							gen_t = self.Tree.GenParticle_t[k]
+							gen_t = self.Tree.GenParticle_time[k]
 							plott.Fill( (vt-gen_t)/evt )
 							break
 					
