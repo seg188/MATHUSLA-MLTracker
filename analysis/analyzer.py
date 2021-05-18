@@ -37,8 +37,9 @@ class H_mumu_Analyzer:
 					for k in range(int(self.Tree.NumGenParticles)):
 						if self.Tree.GenParticle_G4index[k] > 0:
 							gen_x = self.Tree.GenParticle_x[k]
+							plot.Fill( (vx-gen_x)/evx )
 							break
-					plot.Fill( (vx-gen_x)/evx )
+					
 
 		c1 = root.TCanvas("c1")
 		plot.Draw()
