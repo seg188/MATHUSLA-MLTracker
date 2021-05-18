@@ -95,7 +95,7 @@ class H_mumu_Analyzer:
 
 	def InitTree(self, tree):
 		self.Tree = tree
-		self.Tree.SetBranchStatus("*", 0)
+		#self.Tree.SetBranchStatus("*", 0)
 		self.Tree.SetBranchStatus("Digi_x", 1)
 		self.Tree.SetBranchStatus("Digi_y", 1)
 		self.Tree.SetBranchStatus("NumTracks", 1)
