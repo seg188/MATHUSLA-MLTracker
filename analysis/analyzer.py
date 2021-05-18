@@ -45,13 +45,13 @@ class H_mumu_Analyzer:
 					evt = self.Tree.Vertex_ErrorX[0]
 					for k in range(int(len(self.Tree.GenParticle_G4index))):
 						if self.Tree.GenParticle_G4index[k] > 0:
-							gen_x = self.Tree.GenParticle_x[k]
+							gen_x = self.Tree.GenParticle_x[k]/10.
 							plotx.Fill( (vx-gen_x)/evx )
-							gen_y = self.Tree.GenParticle_y[k]
+							gen_y = self.Tree.GenParticle_y[k]/10.
 							ploty.Fill( (vy-gen_y)/evy )
-							gen_z = self.Tree.GenParticle_z[k]
+							gen_z = self.Tree.GenParticle_z[k]/10.
 							plotz.Fill( (vz-gen_z)/evz )
-							gen_t = self.Tree.GenParticle_time[k]
+							gen_t = self.Tree.GenParticle_time[k]/10.
 							plott.Fill( (vt-gen_t)/evt )
 
 							print( [(vt-gen_t)/evt, (vx-gen_x)/evx, (vy-gen_y)/evy, (vz-gen_z)/evz ])
