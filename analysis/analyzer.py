@@ -37,12 +37,12 @@ class H_mumu_Analyzer:
 				if self.PlotSelection():
 					vx = self.Tree.Vertex_x[0]
 					evx = self.Tree.Vertex_ErrorX[0]
-					vy = self.Tree.Vertex_x[0]
-					evy = self.Tree.Vertex_ErrorX[0]
-					vz = self.Tree.Vertex_x[0]
-					evz = self.Tree.Vertex_ErrorX[0]
-					vt = self.Tree.Vertex_x[0]
-					evt = self.Tree.Vertex_ErrorX[0]
+					vy = self.Tree.Vertex_y[0]
+					evy = self.Tree.Vertex_ErrorY[0]
+					vz = self.Tree.Vertex_z[0]
+					evz = self.Tree.Vertex_ErrorZ[0]
+					vt = self.Tree.Vertex_t[0]
+					evt = self.Tree.Vertex_ErrorT[0]
 					for k in range(int(len(self.Tree.GenParticle_G4index))):
 						if self.Tree.GenParticle_G4index[k] > 0:
 							gen_x = self.Tree.GenParticle_x[k]/10.
