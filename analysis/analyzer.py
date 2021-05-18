@@ -17,6 +17,37 @@ class H_mumu_Analyzer:
 		self.passed_events= []
 		self.floor_hit_location = root.TH2D("floor_hit_location", "floor hit x,z", 1000, -5100., 5100., 1000, 6900., 17100. )
 
+	def PlotSelection(self):
+		if not (self.Tree.NumVertices == 1):
+			return False
+		return True
+
+	def Plot(self, tree_name="integral_tree"):
+		plot = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 20, -5, 5)
+		self.tree_name = tree_name
+		for file in self.files:
+			print("Working in file: " + file)
+			tfile = root.TFile.Open(file)
+			self.InitTree(tfile.Get(tree_name))
+			for eventNumber in range(self.Tree.GetEntries()):
+				self.Tree.GetEntry(eventNumber)
+				if self.PlotSelection():
+					vx = self.Tree.Vertex_x[0]
+					evx = self.Tree.Vertex_ErrorX
+					for k in range(int(self.Tree.NumGenParticles)):
+						if self.Tree.GenParticle_G4index[k] > 0:
+							gen_x = self.Tree.GenParticle_x[k]
+							break
+					plot.Fill( (vx-gen_x)/evx )
+
+		c1 = root.TCanvas("c1")
+		plot.Draw()
+		c1.Print("plot.png")
+
+
+					
+
+
 	def SetPlotDir(self, dirname):
 		self.plot_dir = dirname
 
