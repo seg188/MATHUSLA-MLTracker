@@ -33,7 +33,7 @@ class H_mumu_Analyzer:
 				self.Tree.GetEntry(eventNumber)
 				if self.PlotSelection():
 					vx = self.Tree.Vertex_x[0]
-					evx = self.Tree.Vertex_ErrorX
+					evx = self.Tree.Vertex_ErrorX[0]
 					for k in range(int(len(self.Tree.GenParticle_G4index))):
 						if self.Tree.GenParticle_G4index[k] > 0:
 							gen_x = self.Tree.GenParticle_x[k]
