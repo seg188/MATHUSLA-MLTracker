@@ -86,16 +86,26 @@ public:
 		InputTree->SetBranchAddress("Hit_weight", &sim_hit_weight);
     InputTree->SetBranchAddress("GenParticle_energy", &sim_GenParticle_energy);
 
-    InputTree->SetBranchStatus("NumGenParticles", 0);
-    InputTree->SetBranchStatus("GenParticle_index", 0);
-    InputTree->SetBranchStatus("GenParticle_G4index", 0);
-    InputTree->SetBranchStatus("GenParticle_pdgid", 0);
-    InputTree->SetBranchStatus("GenParticle_status", 0);
-    InputTree->SetBranchStatus("GenParticle_time", 0);
-    InputTree->SetBranchStatus("GenParticle_x", 0);
-    InputTree->SetBranchStatus("GenParticle_y", 0);
-    InputTree->SetBranchStatus("GenParticle_z", 0);
+
+
+
+    InputTree->SetBranchAddress("NumGenParticles", &sim_NumGenParticles);
+    InputTree->SetBranchAddress("GenParticle_index", sim_GenParticle_index);
+    InputTree->SetBranchAddress("GenParticle_G4index", sim_GenParticle_G4index);
+    InputTree->SetBranchAddress("GenParticle_pdgid", sim_GenParticle_pdgid);
+    InputTree->SetBranchAddress("GenParticle_status", sim_GenParticle_status);
+   
+
+    InputTree->SetBranchAddress("GenParticle_time", sim_GenParticle_time);
+    ////////////////////////////////////////////////////////
+    InputTree->SetBranchAddress("GenParticle_x", sim_GenParticle_x);
+    InputTree->SetBranchAddress("GenParticle_y", sim_GenParticle_y);
+    InputTree->SetBranchAddress("GenParticle_z", sim_GenParticle_z);
    // InputTree->SetBranchStatus("GenParticle_energy", 0);
+
+
+
+
     InputTree->SetBranchStatus("GenParticle_px", 0);
     InputTree->SetBranchStatus("GenParticle_py", 0);
     InputTree->SetBranchStatus("GenParticle_pz", 0);
@@ -160,15 +170,15 @@ public:
         OutputTree->Branch("Digi_pdg_id", &digi_pdg);
         OutputTree->Branch("Digi_hitIndices", &digi_hit_indices);
 
- 	//	OutputTree->Branch("NumGenParticles", &sim_NumGenParticles);
- 	//	OutputTree->Branch("GenParticle_index", "std::vector<double>", sim_GenParticle_index);
- 	//	OutputTree->Branch("GenParticle_G4index", "std::vector<double>", sim_GenParticle_G4index);
- 	//	OutputTree->Branch("GenParticle_pdgid", "std::vector<double>", sim_GenParticle_pdgid);
- 	//	OutputTree->Branch("GenParticle_status", "std::vector<double>", sim_GenParticle_status);
- 	//	OutputTree->Branch("GenParticle_time", "std::vector<double>", sim_GenParticle_time);
- 	//	OutputTree->Branch("GenParticle_x", "std::vector<double>", sim_GenParticle_x);
- 	//	OutputTree->Branch("GenParticle_y", "std::vector<double>", sim_GenParticle_y);
- 	//	OutputTree->Branch("GenParticle_z", "std::vector<double>", sim_GenParticle_z);
+ 		OutputTree->Branch("NumGenParticles", &sim_NumGenParticles);
+ 		OutputTree->Branch("GenParticle_index", "std::vector<double>", sim_GenParticle_index);
+ 		OutputTree->Branch("GenParticle_G4index", "std::vector<double>", sim_GenParticle_G4index);
+ 		OutputTree->Branch("GenParticle_pdgid", "std::vector<double>", sim_GenParticle_pdgid);
+ 		OutputTree->Branch("GenParticle_status", "std::vector<double>", sim_GenParticle_status);
+ 		OutputTree->Branch("GenParticle_time", "std::vector<double>", sim_GenParticle_time);
+ 		OutputTree->Branch("GenParticle_x", "std::vector<double>", sim_GenParticle_x);
+ 		OutputTree->Branch("GenParticle_y", "std::vector<double>", sim_GenParticle_y);
+ 		OutputTree->Branch("GenParticle_z", "std::vector<double>", sim_GenParticle_z);
  		OutputTree->Branch("GenParticle_energy", "std::vector<double>", sim_GenParticle_energy);
  	//	OutputTree->Branch("GenParticle_px", "std::vector<double>", sim_GenParticle_px);
  	//	OutputTree->Branch("GenParticle_py", "std::vector<double>", sim_GenParticle_py);
