@@ -20,7 +20,8 @@ class H_mumu_Analyzer:
 
 	def PlotSelection(self):
 		if (int(self.Tree.NumVertices) == 1 and int(self.Tree.NumTracks) == 2):
-			return True
+			if self.det.inBox(self.Tree.Vertex_x[0], self.Tree.Vertex_y[0], self.Tree.Vertex_z[0]):
+				return True
 		return False
 
 	def Plot(self, tree_name="integral_tree"):
