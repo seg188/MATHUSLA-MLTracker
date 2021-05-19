@@ -25,10 +25,11 @@ class H_mumu_Analyzer:
 		return False
 
 	def Plot(self, tree_name="integral_tree"):
-		plotx = root.TH1D("x_res", "Vertex X Resolution (truth-actual)/sigma", 50, -50, 50)
-		ploty = root.TH1D("y_res", "Vertex Y Resolution (truth-actual)/sigma", 50, -50, 50)
-		plotz = root.TH1D("z_res", "Vertex Z Resolution (truth-actual)/sigma", 50, -50, 50)
-		plott = root.TH1D("t_res", "Vertex t Resolution (truth-actual)/sigma", 50, -50, 50)
+		plotx = root.TH1D("x_res", "Vertex X Resolution (truth-actual)", 100, -500, 500)
+		ploty = root.TH1D("y_res", "Vertex Y Resolution (truth-actual)", 100, -500, 500)
+		plotz = root.TH1D("z_res", "Vertex Z Resolution (truth-actual)", 100, -500, 500)
+		plott = root.TH1D("t_res", "Vertex t Resolution (truth-actual)", 100, -500, 500)
+
 		self.tree_name = tree_name
 		for file in self.files:
 			print("Working in file: " + file)
@@ -48,13 +49,13 @@ class H_mumu_Analyzer:
 					for k in range(int(len(self.Tree.GenParticle_G4index))):
 						if (self.Tree.GenParticle_G4index[k] == 1) and int(np.absolute(self.Tree.GenParticle_pdgid[k] == 13)) :
 							gen_x = self.Tree.GenParticle_y[k]/10.
-							plotx.Fill( (gen_x-vx)/evx )
+							plotx.Fill( (gen_x-vx))#/evx )
 							gen_y = self.Tree.GenParticle_x[k]/10.
-							ploty.Fill( (gen_y-vy)/evy )
+							ploty.Fill( (gen_y-vy))#/evy )
 							gen_z = self.Tree.GenParticle_z[k]/10.
-							plotz.Fill( (gen_z-vz)/evz )
+							plotz.Fill( (gen_z-vz))#/evz )
 							gen_t = self.Tree.GenParticle_time[k]
-							plott.Fill( (gen_t-vt)/evt )
+							plott.Fill( (gen_t-vt))#/evt )
 
 							print( [(vt-gen_t), (vx-gen_x), (vy-gen_y), (vz-gen_z)])
 							break
@@ -62,19 +63,23 @@ class H_mumu_Analyzer:
 
 		c1 = root.TCanvas("c1")
 		plotx.Draw()
-		c1.Print("plotx.png")
+		plotx.GetXaxis().SetTitle("distance [cm]")
+		c1.Print("plotxcm.png")
 
 		c2 = root.TCanvas("c2")
 		ploty.Draw()
-		c2.Print("ploty.png")
+		ploty.GetXaxis().SetTitle("distance [cm]")
+		c2.Print("plotycm.png")
 
 		c3 = root.TCanvas("c3")
 		plotz.Draw()
-		c3.Print("plotz.png")
+		plotz.GetXaxis().SetTitle("distance [cm]")
+		c3.Print("plotzcm.png")
 
 		c4 = root.TCanvas("c4")
 		plott.Draw()
-		c4.Print("plott.png")
+		plott.GetXaxis().SetTitle("time difference [ns]")
+		c4.Print("plottcm.png")
 
 
 					
