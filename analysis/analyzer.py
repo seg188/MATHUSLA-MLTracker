@@ -48,7 +48,7 @@ class H_mumu_Analyzer:
 						if (self.Tree.GenParticle_G4index[k] == 1) and int(np.absolute(self.Tree.GenParticle_pdgid[k] == 13)) :
 							gen_x = self.Tree.GenParticle_y[k]/10.
 							plotx.Fill( (gen_x-vx)/evx )
-							gen_y = self.Tree.GenParticle_x[k]/-10.
+							gen_y = self.Tree.GenParticle_x[k]/10.
 							ploty.Fill( (gen_y-vy)/evy )
 							gen_z = self.Tree.GenParticle_z[k]/10.
 							plotz.Fill( (gen_z-vz)/evz )
