@@ -19,7 +19,7 @@ class H_mumu_Analyzer:
 		self.floor_hit_location = root.TH2D("floor_hit_location", "floor hit x,z", 1000, -5100., 5100., 1000, 6900., 17100. )
 
 	def PlotSelection(self):
-		if int(self.Tree.NumVertices) == 1:
+		if (int(self.Tree.NumVertices) == 1 and int(self.Tree.NumTracks) == 2):
 			return True
 		return False
 
@@ -45,7 +45,7 @@ class H_mumu_Analyzer:
 					vt = self.Tree.Vertex_t[0]
 					evt = self.Tree.Vertex_ErrorT[0]
 					for k in range(int(len(self.Tree.GenParticle_G4index))):
-						if (self.Tree.GenParticle_G4index[k] == 0) or (self.Tree.GenParticle_G4index[k] == 1) and int(np.absolute(self.Tree.GenParticle_pdgid[k] == 13)) :
+						if (self.Tree.GenParticle_G4index[k] == 1) and int(np.absolute(self.Tree.GenParticle_pdgid[k] == 13)) :
 							gen_x = self.Tree.GenParticle_y[k]/10.
 							plotx.Fill( (gen_x-vx)/evx )
 							gen_y = self.Tree.GenParticle_x[k]/-10.
