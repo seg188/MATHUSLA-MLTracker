@@ -64,7 +64,23 @@ std::vector<physics::digi_hit*> Digitizer::Digitize(){
 					used_hits.push_back(hit);
 				} else { unused_hits.push_back(hit);}
 			}
-
+            
+            // ignoring all hits in ignored floors/walls or above wall y cut
+            
+            auto current_center = _geometry->GetCenter(current_id);
+            if (current_id.isFloorElement){
+                if (cuts::include_floor[current_id.layerIndex] != true){
+                    current_hits.erase(current_hits.begin());
+                    continue;
+                }
+            }
+            if (current_id.isWallElement){
+                if (cuts::include_wall != true || current_center[1] > cuts::wall_y_cut){
+                    current_hits.erase(current_hits.begin());
+                    continue;
+                }
+            }
+            
 			if (e_sum > cuts::SiPM_energy_threshold){
 				physics::digi_hit* current_digi = new physics::digi_hit();
 				current_digi->det_id = current_id;

@@ -81,10 +81,10 @@ namespace detector{
 
     const double wall_gap = 1.0*units::cm; //gap on each side of wall
     const double wall_height = 2000.0*units::cm;
+    const double wall_start_y = 6000.0*units::cm; //min y value of wall (casing included)
 
     //FOR statistics.hh ONLY - NEW MIN Z WITH WALL
     const double z_min_wall = z_min - wall_gap - scintillator_height;
-
 };
 
 namespace constants{
@@ -129,6 +129,11 @@ namespace cuts{
 	const double vertex_chi2 = 15.0;
 	const double closest_approach_add = 100*units::cm;
 
+    //digi hit cuts for floors and wall
+    const std::vector<bool> include_floor = { true, true, true }; //ith index for ith floor from bottom
+
+    const bool include_wall = true;
+    const double wall_y_cut = detector::wall_start_y + detector::wall_height; //all digi hits above this will be thrown out
 
 };
 
