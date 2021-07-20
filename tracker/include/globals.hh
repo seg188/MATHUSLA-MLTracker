@@ -41,16 +41,17 @@ namespace detector{
 													{3050.0*cm,  3950.0*cm},
 													{4050.0*cm,  4950.0*cm} };
 
-	const std::vector<std::vector<double>> MODULE_Z = {{7000.0*cm, 7900.0*cm},
-													{8000.0*cm, 8900.0*cm},
-													{9000.0*cm, 9900.0*cm},
-													{10000.0*cm, 10900.0*cm},
-													{11000.0*cm, 11900*cm},
-													{12000.0*cm, 12900.0*cm},
-													{13000.0*cm, 13900.0*cm},
-													{14000.0*cm, 14900.0*cm},
-													{15000.0*cm, 15900.0*cm},
-													{16000.0*cm, 16900.0*cm} };
+    const std::vector<std::vector<double>> MODULE_Z = {{-4950.0*cm, -4050.0*cm},
+													   {-3950.0*cm, -3050.0*cm},
+													   {-2950.0*cm, -2050.0*cm},
+													   {-1950.0*cm, -1050.0*cm},
+													   {-950.0*cm, -50.0*cm},
+													   {50.0*cm, 950.0*cm},
+													   {1050.0*cm, 1950.0*cm},
+													   {2050.0*cm, 2950.0*cm},
+													   {3050.0*cm,  3950.0*cm},
+													   {4050.0*cm,  4950.0*cm} };
+
 
 	const int n_modules = 100;
 	const double scintillator_length = 450.0*units::cm;
